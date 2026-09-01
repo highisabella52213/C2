@@ -72,6 +72,10 @@ try:
 except Exception:
     FIRST_BYTE_TIMEOUT = 6.0
 PROBE_TLS_TIMEOUT = 8.0
+try:
+    PROXY_TOTAL_TIMEOUT = max(1.0, float(os.environ.get("PROXYIP_TOTAL_TIMEOUT", "6") or 6))
+except Exception:
+    PROXY_TOTAL_TIMEOUT = 6.0
 
 _DOH_ENDPOINTS = (
     "https:" + "//1.1.1.1/dns-query",
@@ -583,8 +587,28 @@ def host_forces_proxy(host: str) -> bool:
     return any(pattern.match(target) for pattern in _compiled_force_patterns())
 
 
+def link_uses_proxyip(link: dict | None) -> bool:
+    """True only when this exact config opted in to ProxyIP.
+
+    A global legacy ProxyIP setting is intentionally ignored for real config
+    links so one broken relay can never take every user offline.
+    """
+    if not isinstance(link, dict):
+        return False
+    raw = str(link.get("proxyip") or "").strip()
+    enabled = link.get("proxyip_enabled")
+    if enabled is None:  # migrate legacy per-link values without enabling globals
+        enabled = bool(raw)
+    return bool(enabled and raw)
+
+
 def _effective(link: dict | None) -> dict:
-    """تنظیمات مؤثر: پیش‌فرض سراسری + override اختصاصی هر کانفیگ."""
+    """Build isolated outbound settings for one config.
+
+    Calls without a link retain the legacy/global behaviour for diagnostics and
+    backward-compatible tests. A real VLESS link is direct unless that link
+    explicitly enables its own ProxyIP. Per-config fallback is always on.
+    """
     effective = dict(SETTINGS)
     if isinstance(link, dict):
         override = link.get("outbound")
@@ -592,13 +616,18 @@ def _effective(link: dict | None) -> dict:
             for key, value in override.items():
                 if key in effective and value not in (None, ""):
                     effective[key] = value
-        legacy = link.get("proxyip")
-        if isinstance(legacy, str) and legacy.strip():
-            effective["proxyip"] = legacy.strip()
-            if effective.get("mode") == "direct":
-                effective["mode"] = "proxyip"
+        if link_uses_proxyip(link):
+            effective["mode"] = "proxyip"
+            effective["proxyip"] = str(link.get("proxyip") or "").strip()
+            effective["fallback"] = True
+            effective["concurrency"] = link.get("proxyip_concurrency", 2)
+        elif effective.get("mode") == "proxyip":
+            # Global ProxyIP no longer affects unrelated configs.
+            effective["mode"] = "direct"
+            effective["proxyip"] = ""
+            effective["fallback"] = True
     try:
-        effective["concurrency"] = max(1, min(16, int(effective.get("concurrency", 1))))
+        effective["concurrency"] = max(1, min(6, int(effective.get("concurrency", 1))))
     except Exception:
         effective["concurrency"] = 1
     return effective
@@ -721,7 +750,6 @@ async def connect_proxyip(
     concurrency: int,
 ) -> tuple[asyncio.StreamReader, asyncio.StreamWriter, tuple[str, int]]:
     """معادل connectProxyIP: دسته‌دسته، با اندیس چرخشی، و نوشتن بسته‌ی اول خام."""
-    global _pool_index
     if not pool:
         raise OSError("empty proxyip pool")
 
@@ -734,7 +762,7 @@ async def connect_proxyip(
         for step in range(batch):
             if offset + step >= total:
                 break
-            index = (_pool_index + offset + step) % total
+            index = offset + step
             candidates.append(pool[index])
             indices.append(index)
         if not candidates:
@@ -744,16 +772,15 @@ async def connect_proxyip(
             reader, writer, chosen = await _race_dial(candidates)
             _tune(writer)
             if first_packet:
-                writer.write(bytes(first_packet))
+                writer.write(first_packet)
                 await writer.drain()
                 if FIRST_BYTE_TIMEOUT > 0 and _looks_like_tls_client_hello(first_packet):
                     reader = await _verify_relay(reader, FIRST_BYTE_TIMEOUT)
-            _pool_index = indices[candidates.index(chosen)] if chosen in candidates else 0
             logger.info(
                 "ProxyIP connected via %s:%d (pool=%d)", chosen[0], chosen[1], total
             )
             return reader, writer, chosen
-        except Exception as exc:
+        except BaseException as exc:
             last_error = exc
             if writer is not None:
                 try:
@@ -964,31 +991,41 @@ async def open_outbound(
             _tune(writer)
             return reader, writer, False
 
-    # mode == "proxyip" — روش اصلی مرجع
+    # mode == "proxyip" — isolated per config with guaranteed direct fallback.
+    # A reverse-SNI ProxyIP can route only a complete TLS record. If the client
+    # speaks another protocol, splits the record too far, or sends no payload,
+    # direct mode is safer and prevents a silent ping=-1 hang.
+    packet = first_packet
+    packet_bytes = bytes(packet) if packet else b""
+    tls_record_complete = (
+        len(packet_bytes) >= 5
+        and _looks_like_tls_client_hello(packet_bytes)
+        and len(packet_bytes) >= 5 + int.from_bytes(packet_bytes[3:5], "big")
+    )
+    if not tls_record_complete:
+        logger.info("ProxyIP bypassed for non-complete TLS first packet; using direct")
+        reader, writer = await _dial(address, port)
+        _tune(writer)
+        return reader, writer, False
     try:
         pool = await resolve_pool(effective.get("proxyip"), address, uuid)
     except Exception as exc:
-        logger.warning("ProxyIP resolve failed: %s", exc)
+        logger.warning("ProxyIP resolve failed; using direct: %s", exc)
         pool = []
-    if not pool:
-        reader, writer = await _dial(address, port)
-        _tune(writer)
-        return reader, writer, False
-    try:
-        reader, writer, _chosen = await connect_proxyip(
-            pool, first_packet, int(effective.get("concurrency", 1))
-        )
-        return reader, writer, bool(first_packet)
-    except Exception as exc:
-        if not effective.get("fallback"):
-            # همان رفتار مرجع وقتی 反代兜底 خاموش است: اتصال قطع می‌شود.
-            raise OSError(
-                "all ProxyIP candidates failed and fallback is disabled"
-            ) from exc
-        logger.warning("ProxyIP failed, falling back to direct: %s", exc)
-        reader, writer = await _dial(address, port)
-        _tune(writer)
-        return reader, writer, False
+    if pool:
+        try:
+            async with asyncio.timeout(PROXY_TOTAL_TIMEOUT):
+                reader, writer, _chosen = await connect_proxyip(
+                    pool, packet, int(effective.get("concurrency", 2))
+                )
+            return reader, writer, True
+        except BaseException as exc:
+            # Per-config fallback is deliberately unconditional. A bad relay can
+            # add at most PROXY_TOTAL_TIMEOUT seconds and can never cut the user.
+            logger.warning("ProxyIP unavailable; direct fallback: %s", exc)
+    reader, writer = await _dial(address, port)
+    _tune(writer)
+    return reader, writer, False
 
 
 async def _relay_check(host: str, port: int, target_host: str) -> dict:

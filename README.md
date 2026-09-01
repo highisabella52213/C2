@@ -67,7 +67,7 @@
 
 
 
-## 🎛 رابط مدیریتی v12
+## 🎛 رابط مدیریتی v13
 
 - در دسکتاپ، منوها داخل **Command Rail سمت راست** قرار دارند؛ در موبایل همان منو به **داک پایین قابل پیمایش** تبدیل می‌شود.
 - فرم ساخت کانفیگ به Route Studio دو ناحیه‌ای تبدیل شده و ترتیب آن «هویت → شبکه → محدودیت‌ها → ساخت» است.
@@ -142,9 +142,10 @@ VLESS_SNI_NAMES=app.example.com, front.example.org
 | `VLESS_ADDRESSES` | گزینه‌های Address اضافه برای فرم ساخت کانفیگ؛ IPv4/IPv6/دامنه با کاما، فاصله، سمی‌کالن یا خط جدید | — |
 | `VLESS_SNI_NAMES` | گزینه‌های دامنه SNI اضافه؛ با کاما، فاصله، سمی‌کالن یا خط جدید | — |
 | `OUTBOUND_MODE` | مد آی‌پی خروجی: `direct` / `proxyip` / `socks5` / `http` / `https` | `direct` |
-| `PROXYIP` | لیست ProxyIP (ریلی معکوس) برای تغییر آی‌پی خروجی | — |
-| `PROXY_CONCURRENT_DIAL` | تعداد دایال موازی روی کاندیدهای ProxyIP | `1` |
-| `PROXYIP_FALLBACK` | اگر `1` باشد، خرابی همه‌ی کاندیدها → اتصال مستقیم | `true` |
+| `PROXYIP` | تنظیم قدیمی/تشخیصی ProxyIP؛ کانفیگ‌های واقعی فقط از مقدار اختصاصی خودشان استفاده می‌کنند | — |
+| `PROXY_CONCURRENT_DIAL` | تنظیم قدیمی تعداد دایال؛ مقدار هر کانفیگ از Route Studio می‌آید | `1` |
+| `PROXYIP_FALLBACK` | سازگاری قدیمی؛ در v13 بازگشت مستقیم برای کانفیگ‌ها همیشه فعال است | `true` |
+| `PROXYIP_TOTAL_TIMEOUT` | سقف کل زمان تلاش ProxyIP پیش از اتصال مستقیم | `6` ثانیه |
 | `SOCKS5` یا `OUTBOUND_PROXY` | پروکسی زنجیره‌ای، مثل `socks5://u:p@1.2.3.4:1080` | — |
 | `PROXY_GLOBAL` | اگر `1` باشد، پروکسی زنجیره‌ای برای همه‌ی مقصدها | `0` |
 | `GO2SOCKS5` | میزبان‌های اجباری پروکسی، مثل `*.ip111.cn,*google.com` | — |
@@ -154,8 +155,9 @@ VLESS_SNI_NAMES=app.example.com, front.example.org
 می‌توانی کاری کنی که سایت‌های مقصد به‌جای آی‌پی سرور، آی‌پی انتخابی خودت را ببینند
 (همان مکانیزم ProxyIP در `cmliu/edgetunnel`).
 
-- پنل وب: **Settings → Exit IP · ProxyIP**
-- ربات: `/admin` → **🌐 آی‌پی خروجی (ProxyIP)**
+- پنل وب: **Limited configs → Route Studio → ProxyIP for this config**
+- هر ProxyIP فقط روی همان UUID اثر دارد؛ کانفیگ‌های دیگر مستقیم و مستقل می‌مانند.
+- در خرابی، timeout، پاسخ‌ندادن، ترافیک غیر-TLS یا بسته‌ی ناقص، اتصال همان کانفیگ خودکار مستقیم می‌شود.
 
 راهنمای کامل فرمت‌ها، مدها و محدودیت‌ها: [PROXYIP-EXIT-IP.md](PROXYIP-EXIT-IP.md)
 

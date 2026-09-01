@@ -130,18 +130,18 @@ async def main():
         check("connection established", False, repr(exc))
 
     print()
-    print("[blackhole relay + fallback OFF -> must raise, not hang]")
+    print("[blackhole relay + fallback OFF -> still fails open to direct]")
     seen.clear()
     reset(mode="proxyip", proxyip=APP_IP + ":" + str(black_port), fallback=False, concurrency=1)
-    raised = None
     try:
-        await asyncio.wait_for(
-            outbound.open_outbound(APP_IP, dest_port, TLS_HELLO), timeout=10
-        )
+        reader, writer, written = await asyncio.wait_for(outbound.open_outbound(APP_IP, dest_port, TLS_HELLO), timeout=10)
+        if not written:
+            writer.write(TLS_HELLO); await writer.drain()
+        data = await asyncio.wait_for(reader.read(4096), timeout=3)
+        check("legacy fallback off cannot cut config", data.startswith(b"SRV-HELLO"), repr(data[:40]))
+        check("falls back to direct exit", seen and seen[0] == APP_IP, str(seen)); writer.close()
     except Exception as exc:
-        raised = exc
-    check("raises instead of hanging", raised is not None, "no exception")
-    check("never leaked to direct", not seen, str(seen))
+        check("legacy fallback off cannot cut config", False, repr(exc))
 
     print()
     print("[healthy relay -> works and loses no bytes]")

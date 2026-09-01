@@ -1,4 +1,4 @@
-# pages.py  -  Lumen Relay UI v12
+# pages.py  -  Lumen Relay UI v13
 # contains: LOGIN_HTML, DASHBOARD_HTML, get_public_page_html()
 
 
@@ -157,27 +157,27 @@ LANDING_HTML = r"""<!DOCTYPE html>
 <html lang="en" dir="ltr" data-theme="dark">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Lumen Relay · Live health</title>
+<title>Lumen · System status</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%}:root{color-scheme:dark;--p:#bdc7ff;--on-p:#22305f;--pc:#394777;--on-pc:#dee1ff;--ter:#f2b99a;--tc:#6d3b22;--on-tc:#ffdcc8;--surface:#111318;--low:#191b21;--mid:#1d1f25;--high:#27292f;--text:#e3e2e9;--muted:#c6c5d0;--outline:#46464f;--ok:#8fd6b8;--shape:32px;--ease:cubic-bezier(.2,0,0,1)}[data-theme="light"]{color-scheme:light;--p:#52639a;--on-p:#fff;--pc:#dee1ff;--on-pc:#0c1b4b;--ter:#865228;--tc:#ffdcc8;--on-tc:#311300;--surface:#faf8ff;--low:#f4f2fa;--mid:#eeecf4;--high:#e2e1e9;--text:#1a1b20;--muted:#45464f;--outline:#c7c6d0;--ok:#176b4f}body{font-family:'Vazirmatn','Segoe UI',Arial,sans-serif;color:var(--text);background:radial-gradient(circle at 10% 90%,color-mix(in srgb,var(--ter) 10%,transparent),transparent 32rem),radial-gradient(circle at 88% 4%,color-mix(in srgb,var(--p) 16%,transparent),transparent 34rem),var(--surface);display:grid;place-items:center;padding:24px;overflow-x:hidden}.shell{width:min(1120px,100%)}.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:12px;font-weight:780}.mark{width:46px;height:46px;border-radius:16px;background:var(--pc);box-shadow:inset 0 0 0 10px color-mix(in srgb,var(--p) 48%,transparent)}.actions{display:flex;gap:8px}.icon-btn,.lang-btn{min-height:46px;border:0;border-radius:999px;background:var(--high);color:var(--text);padding:0 16px;font:700 .8rem inherit;cursor:pointer}.icon-btn{width:46px;padding:0}.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}.hero,.health{background:color-mix(in srgb,var(--low) 94%,transparent);border:1px solid var(--outline);border-radius:var(--shape);overflow:hidden}.hero{min-height:560px;padding:54px;display:flex;flex-direction:column;justify-content:space-between;position:relative}.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--p);font-size:.75rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase}.live-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 6px color-mix(in srgb,var(--ok) 15%,transparent)}h1{font-size:clamp(3rem,7vw,6.4rem);line-height:.9;letter-spacing:-.07em;margin:28px 0 24px;max-width:7ch}.lead{max-width:50ch;color:var(--muted);font-size:1rem;line-height:1.8}.relay-scene{position:absolute;right:-70px;bottom:-80px;width:390px;height:390px;opacity:.76;pointer-events:none}.orbit{position:absolute;inset:48px;border:1px solid color-mix(in srgb,var(--p) 46%,transparent);border-radius:50%;animation:turn 34s linear infinite}.orbit::before,.orbit::after{content:'';position:absolute;width:18px;height:18px;border-radius:6px;background:var(--p);top:20px;left:48px;box-shadow:0 0 24px color-mix(in srgb,var(--p) 45%,transparent)}.orbit::after{width:12px;height:12px;top:auto;left:auto;right:18px;bottom:80px;background:var(--ter)}.core{position:absolute;inset:124px;border-radius:44px;background:var(--pc);transform:rotate(14deg);animation:breathe 6s var(--ease) infinite alternate}.core::after{content:'';position:absolute;inset:28px;border-radius:24px;background:var(--p);opacity:.42}@keyframes turn{to{transform:rotate(1turn)}}@keyframes breathe{to{transform:rotate(20deg) scale(1.05)}}.health{padding:24px;display:flex;flex-direction:column;gap:14px}.health-head{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 14px}.health-title{font-size:1.1rem;font-weight:760}.status{display:flex;align-items:center;gap:8px;background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok);padding:8px 12px;border-radius:999px;font-size:.75rem;font-weight:750}.metric{background:var(--mid);border-radius:22px;padding:20px;min-height:104px;display:flex;flex-direction:column;justify-content:space-between}.metric:nth-child(3){background:var(--pc);color:var(--on-pc)}.metric:nth-child(4){background:var(--tc);color:var(--on-tc)}.label{font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;opacity:.7}.value{font-size:1.72rem;font-weight:790;letter-spacing:-.035em}.foot{margin-top:auto;padding:18px 5px 3px;color:var(--muted);font-size:.72rem;display:flex;justify-content:space-between;gap:12px}.loading{opacity:.55}@media(max-width:800px){body{padding:14px}.grid{grid-template-columns:1fr}.hero{min-height:460px;padding:34px}.health{display:grid;grid-template-columns:1fr 1fr}.health-head,.foot{grid-column:1/-1}.relay-scene{width:280px;height:280px}.orbit{inset:38px}.core{inset:94px}h1{font-size:clamp(3.2rem,16vw,5rem)}}@media(max-width:480px){.health{grid-template-columns:1fr}.health-head,.foot{grid-column:auto}.hero{padding:28px;min-height:430px}.relay-scene{right:-110px;opacity:.5}.foot{flex-direction:column}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}:root{color-scheme:dark;--p:#bdc7ff;--on-p:#22305f;--pc:#394777;--on-pc:#dee1ff;--ter:#f2b99a;--tc:#6d3b22;--on-tc:#ffdcc8;--surface:#111318;--low:#191b21;--mid:#1d1f25;--high:#27292f;--text:#e3e2e9;--muted:#c6c5d0;--outline:#46464f;--ok:#8fd6b8;--shape:32px;--ease:cubic-bezier(.2,0,0,1)}[data-theme="light"]{color-scheme:light;--p:#52639a;--on-p:#fff;--pc:#dee1ff;--on-pc:#0c1b4b;--ter:#865228;--tc:#ffdcc8;--on-tc:#311300;--surface:#faf8ff;--low:#f4f2fa;--mid:#eeecf4;--high:#e2e1e9;--text:#1a1b20;--muted:#45464f;--outline:#c7c6d0;--ok:#176b4f}body{font-family:'Vazirmatn','Segoe UI',Arial,sans-serif;color:var(--text);background:radial-gradient(circle at 10% 90%,color-mix(in srgb,var(--ter) 10%,transparent),transparent 32rem),radial-gradient(circle at 88% 4%,color-mix(in srgb,var(--p) 16%,transparent),transparent 34rem),var(--surface);display:grid;place-items:center;padding:24px;overflow-x:hidden}.shell{width:min(1120px,100%)}.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:12px;font-weight:780}.mark{width:46px;height:46px;border-radius:16px;background:var(--pc);box-shadow:inset 0 0 0 10px color-mix(in srgb,var(--p) 48%,transparent)}.actions{display:flex;gap:8px}.icon-btn,.lang-btn{min-height:46px;border:0;border-radius:999px;background:var(--high);color:var(--text);padding:0 16px;font:700 .8rem inherit;cursor:pointer}.icon-btn{width:46px;padding:0}.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}.hero,.health{background:color-mix(in srgb,var(--low) 94%,transparent);border:1px solid var(--outline);border-radius:var(--shape);overflow:hidden}.hero{min-height:560px;padding:54px;display:flex;flex-direction:column;justify-content:space-between;position:relative}.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--p);font-size:.75rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase}.live-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 6px color-mix(in srgb,var(--ok) 15%,transparent)}h1{font-size:clamp(3rem,7vw,6.4rem);line-height:.9;letter-spacing:-.07em;margin:28px 0 24px;max-width:7ch}.lead{max-width:50ch;color:var(--muted);font-size:1rem;line-height:1.8}.signal-scene{position:absolute;right:-70px;bottom:-80px;width:390px;height:390px;opacity:.76;pointer-events:none}.orbit{position:absolute;inset:48px;border:1px solid color-mix(in srgb,var(--p) 46%,transparent);border-radius:50%;animation:turn 34s linear infinite}.orbit::before,.orbit::after{content:'';position:absolute;width:18px;height:18px;border-radius:6px;background:var(--p);top:20px;left:48px;box-shadow:0 0 24px color-mix(in srgb,var(--p) 45%,transparent)}.orbit::after{width:12px;height:12px;top:auto;left:auto;right:18px;bottom:80px;background:var(--ter)}.core{position:absolute;inset:124px;border-radius:44px;background:var(--pc);transform:rotate(14deg);animation:breathe 6s var(--ease) infinite alternate}.core::after{content:'';position:absolute;inset:28px;border-radius:24px;background:var(--p);opacity:.42}@keyframes turn{to{transform:rotate(1turn)}}@keyframes breathe{to{transform:rotate(20deg) scale(1.05)}}.health{padding:24px;display:flex;flex-direction:column;gap:14px}.health-head{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 14px}.health-title{font-size:1.1rem;font-weight:760}.status{display:flex;align-items:center;gap:8px;background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok);padding:8px 12px;border-radius:999px;font-size:.75rem;font-weight:750}.metric{background:var(--mid);border-radius:22px;padding:20px;min-height:104px;display:flex;flex-direction:column;justify-content:space-between}.metric:nth-child(3){background:var(--pc);color:var(--on-pc)}.metric:nth-child(4){background:var(--tc);color:var(--on-tc)}.label{font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;opacity:.7}.value{font-size:1.72rem;font-weight:790;letter-spacing:-.035em}.foot{margin-top:auto;padding:18px 5px 3px;color:var(--muted);font-size:.72rem;display:flex;justify-content:space-between;gap:12px}.loading{opacity:.55}@media(max-width:800px){body{padding:14px}.grid{grid-template-columns:1fr}.hero{min-height:460px;padding:34px}.health{display:grid;grid-template-columns:1fr 1fr}.health-head,.foot{grid-column:1/-1}.signal-scene{width:280px;height:280px}.orbit{inset:38px}.core{inset:94px}h1{font-size:clamp(3.2rem,16vw,5rem)}}@media(max-width:480px){.health{grid-template-columns:1fr}.health-head,.foot{grid-column:auto}.hero{padding:28px;min-height:430px}.signal-scene{right:-110px;opacity:.5}.foot{flex-direction:column}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 </style>
 </head>
 <body>
 <main class="shell">
-  <header class="bar"><div class="brand"><span class="mark"></span><span>Lumen Relay</span></div><div class="actions"><button class="lang-btn" id="lang" onclick="toggleLang()">FA</button><button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme"><i class="ti ti-sun" id="theme-icon"></i></button></div></header>
+  <header class="bar"><div class="brand"><span class="mark"></span><span>Lumen</span></div><div class="actions"><button class="lang-btn" id="lang" onclick="toggleLang()">FA</button><button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme"><i class="ti ti-sun" id="theme-icon"></i></button></div></header>
   <div class="grid">
     <section class="hero">
-      <div><div class="eyebrow"><span class="live-dot"></span><span data-en="Relay online" data-fa="رله آنلاین است">Relay online</span></div><h1 data-en="Quietly fast." data-fa="سریع، بی‌صدا.">Quietly fast.</h1><p class="lead" data-en="A lightweight WebSocket relay surface. Live service health is shown here without exposing administration controls." data-fa="یک سطح سبک برای رله WebSocket. سلامت زنده سرویس بدون نمایش کنترل‌های مدیریتی در این صفحه دیده می‌شود.">A lightweight WebSocket relay surface. Live service health is shown here without exposing administration controls.</p></div>
-      <div class="relay-scene"><div class="orbit"></div><div class="core"></div></div>
+      <div><div class="eyebrow"><span class="live-dot"></span><span data-en="System online" data-fa="سامانه آنلاین است">System online</span></div><h1 data-en="Quietly fast." data-fa="سریع، بی‌صدا.">Quietly fast.</h1><p class="lead" data-en="Public system availability and live health, presented without exposing administrative controls." data-fa="وضعیت دسترسی و سلامت زنده سامانه، بدون نمایش کنترل‌های مدیریتی.">Public system availability and live health, presented without exposing administrative controls.</p></div>
+      <div class="signal-scene"><div class="orbit"></div><div class="core"></div></div>
     </section>
     <aside class="health">
       <div class="health-head"><div class="health-title" data-en="Service health" data-fa="سلامت سرویس">Service health</div><div class="status"><span class="live-dot"></span><span id="health-status" data-en="Healthy" data-fa="سالم">Healthy</span></div></div>
       <div class="metric"><span class="label" data-en="Uptime" data-fa="زمان فعالیت">Uptime</span><strong class="value loading" id="uptime">—</strong></div>
       <div class="metric"><span class="label" data-en="Live connections" data-fa="اتصالات زنده">Live connections</span><strong class="value loading" id="connections">—</strong></div>
       <div class="metric"><span class="label" data-en="Active configs" data-fa="کانفیگ‌های فعال">Active configs</span><strong class="value loading" id="configs">—</strong></div>
-      <div class="metric"><span class="label" data-en="Transport" data-fa="پروتکل انتقال">Transport</span><strong class="value" id="transport">VLESS / WS</strong></div>
-      <div class="foot"><span id="version">Lumen Relay · v12</span><span data-en="Refreshes every 8 seconds" data-fa="به‌روزرسانی هر ۸ ثانیه">Refreshes every 8 seconds</span></div>
+      <div class="metric"><span class="label" data-en="Network" data-fa="شبکه">Network</span><strong class="value" id="transport">Operational</strong></div>
+      <div class="foot"><span id="version">Lumen · v13</span><span data-en="Refreshes every 8 seconds" data-fa="به‌روزرسانی هر ۸ ثانیه">Refreshes every 8 seconds</span></div>
     </aside>
   </div>
 </main>
@@ -186,7 +186,7 @@ let lang=localStorage.getItem('lumen-public-lang')||'en';
 function applyLang(){document.documentElement.lang=lang;document.documentElement.dir=lang==='fa'?'rtl':'ltr';document.querySelectorAll('[data-en]').forEach(e=>e.textContent=e.dataset[lang]);document.getElementById('lang').textContent=lang==='fa'?'EN':'FA'}
 function toggleLang(){lang=lang==='en'?'fa':'en';localStorage.setItem('lumen-public-lang',lang);applyLang()}
 function toggleTheme(){const h=document.documentElement;const light=h.dataset.theme==='light';h.dataset.theme=light?'dark':'light';document.getElementById('theme-icon').className='ti '+(light?'ti-sun':'ti-moon')}
-async function health(){try{const r=await fetch('/health',{cache:'no-store'}),d=await r.json();document.getElementById('uptime').textContent=d.uptime||'—';document.getElementById('connections').textContent=d.connections??'—';document.getElementById('configs').textContent=d.active_configs??'—';document.getElementById('transport').textContent=d.transport||'VLESS / WS';document.getElementById('version').textContent=(d.service||'Lumen Relay')+' · v'+(d.version||'12');document.querySelectorAll('.loading').forEach(e=>e.classList.remove('loading'))}catch(e){const s=document.getElementById('health-status');s.textContent=lang==='fa'?'در حال بررسی':'Checking';}}
+async function health(){try{const r=await fetch('/health',{cache:'no-store'}),d=await r.json();document.getElementById('uptime').textContent=d.uptime||'—';document.getElementById('connections').textContent=d.connections??'—';document.getElementById('configs').textContent=d.active_configs??'—';document.getElementById('transport').textContent=lang==='fa'?'پایدار':'Operational';document.getElementById('version').textContent='Lumen · v'+(d.version||'13');document.querySelectorAll('.loading').forEach(e=>e.classList.remove('loading'))}catch(e){const s=document.getElementById('health-status');s.textContent=lang==='fa'?'در حال بررسی':'Checking';}}
 applyLang();health();setInterval(health,8000);
 </script>
 </body></html>"""
@@ -1051,7 +1051,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Lumen Relay v12 · command rail + route studio
+   Lumen Relay v13 · command rail + route studio
    A second expressive composition, intentionally unlike the v11 sidebar.
    ═══════════════════════════════════════════════════════════════════════════ */
 :root{--command-rail-w:108px;--v12-card-gap:18px}
@@ -1064,6 +1064,7 @@ body{padding-right:0}
 .main{margin-left:0!important;margin-right:calc(var(--command-rail-w) + 34px)!important;padding:24px 24px 72px!important}.pg{max-width:1380px!important}.topbar{top:16px!important}.tb-title{font-size:1.55rem!important}.tb-title i{border-radius:18px 18px 8px 18px!important}.tb-sub{margin-inline-start:52px!important;margin-left:0!important}
 /* Builder composition */
 .create-panel{display:grid!important;grid-template-columns:minmax(220px,290px) minmax(0,1fr)!important;align-items:stretch!important;background:var(--md-sys-color-surface-container-lowest)!important;border-radius:36px!important;margin-bottom:26px!important}.cp-head{grid-column:1!important;grid-row:1!important;align-self:stretch!important;flex-direction:column!important;justify-content:flex-start!important;align-items:flex-start!important;gap:20px!important;padding:36px 28px!important;border-radius:36px 0 0 36px!important;background:linear-gradient(155deg,var(--md-sys-color-primary-container),color-mix(in srgb,var(--md-sys-color-tertiary-container) 56%,var(--md-sys-color-primary-container)))!important;position:relative!important;overflow:hidden!important}.cp-head::after{content:'';position:absolute;left:-70px;bottom:-85px;width:240px;height:240px;border-radius:50%;border:36px solid color-mix(in srgb,var(--md-sys-color-primary) 15%,transparent);opacity:.9}.cp-head-icon{width:68px!important;height:68px!important;border-radius:26px 26px 10px 26px!important;font-size:30px!important;box-shadow:0 18px 36px color-mix(in srgb,var(--md-sys-color-on-primary-container) 14%,transparent)!important}.cp-head-title{font-size:1.75rem!important;line-height:1.12!important;letter-spacing:-.045em!important;max-width:8ch}.cp-head-sub{font-size:.82rem!important;line-height:1.75!important;max-width:22ch!important}.cp-head-text{z-index:1!important}.cp-body{grid-column:2!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important;padding:22px!important}.create-panel .cp-row{display:contents!important}.create-panel .cp-body>.cp-block,.create-panel .endpoint-studio,.create-panel .cp-footer,.create-panel .cp-block:has(#nl-speed){grid-column:1/-1!important}.create-panel .cp-block{margin:0!important;padding:20px!important;border-radius:22px!important;background:var(--md-sys-color-surface-container-low)!important;border:1px solid transparent!important;transition:border-color 180ms,transform 260ms var(--md-sys-motion-easing-emphasized)!important}.create-panel .cp-block:focus-within{border-color:var(--md-sys-color-primary)!important;transform:translateY(-2px)!important}.cp-block-label{font-size:.73rem!important;letter-spacing:.055em!important;text-transform:uppercase!important}.cp-mini-row{margin-top:10px!important}.field-caption{font-size:.7rem;line-height:1.55;color:var(--md-sys-color-on-surface-variant);margin-top:10px}.endpoint-studio{padding:0!important;background:var(--md-sys-color-surface-container)!important;border:0!important}.endpoint-studio-head{padding:22px 24px!important}.endpoint-grid{padding:18px!important}.endpoint-field{background:var(--md-sys-color-surface-container-lowest)!important}.cp-footer{display:grid!important;grid-template-columns:1fr auto!important;align-items:center!important;gap:18px!important;padding:18px 4px 4px!important}.cp-footer-note{font-size:.72rem!important;line-height:1.6!important}.cp-submit-btn{min-width:190px!important;min-height:56px!important;border-radius:20px 20px 8px 20px!important;box-shadow:0 14px 30px color-mix(in srgb,var(--md-sys-color-primary) 18%,transparent)!important}
+.config-proxy-studio{grid-column:1/-1!important;background:var(--md-sys-color-surface-container)!important;padding:0!important;overflow:hidden}.config-proxy-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 22px;border-bottom:1px solid var(--md-sys-color-outline-variant)}.config-scope-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border-radius:999px;background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container);font-size:.68rem;font-weight:750;white-space:nowrap}.config-proxy-grid{padding:18px;display:grid;grid-template-columns:minmax(210px,.7fr) 1.3fr;gap:14px}.proxy-mode-card,.config-proxy-fields{padding:16px;border-radius:18px;background:var(--md-sys-color-surface-container-lowest)}.proxy-mode-card label,.config-proxy-fields label{display:block;font-size:.72rem;font-weight:700;margin-bottom:8px}.config-proxy-fields{grid-template-columns:1fr 130px;gap:12px}.config-proxy-fields:not([style*="display: none"]){display:grid!important}.config-proxy-fields textarea{resize:vertical;min-height:70px}.proxy-safe-note{margin:0 18px 18px;padding:13px 15px;display:flex;gap:9px;align-items:flex-start;border-radius:16px;background:color-mix(in srgb,var(--green) 12%,var(--md-sys-color-surface-container-low));color:var(--md-sys-color-on-surface-variant);font-size:.72rem;line-height:1.6}.proxy-safe-note i{color:var(--green);font-size:18px}.route-proxy{margin:10px 18px 0;min-height:38px;padding:8px 11px;border-radius:13px;display:flex;align-items:center;gap:7px;font-size:.68rem;font-weight:700;background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface-variant)}.route-proxy.enabled{background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container)}.route-proxy code{margin-inline-start:auto;max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr}.config-proxy-edit{padding:13px;border-radius:16px;background:var(--md-sys-color-surface-container-low)}@media(max-width:639px){.config-proxy-head{align-items:flex-start;flex-direction:column}.config-proxy-grid{grid-template-columns:1fr}.config-proxy-fields:not([style*="display: none"]){grid-template-columns:1fr!important}}
 /* Configs become a card gallery, not a compressed row/table. */
 .cfg-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:var(--v12-card-gap)!important}.route-card{min-width:0;display:flex;flex-direction:column;background:var(--md-sys-color-surface-container-low);border:1px solid var(--md-sys-color-outline-variant);border-radius:30px;overflow:hidden;transition:transform 320ms var(--md-sys-motion-easing-emphasized),box-shadow 320ms,border-color 180ms}.route-card:hover{transform:translateY(-5px);border-color:var(--md-sys-color-outline);box-shadow:var(--shadow)}.route-card.is-off{opacity:.7}.route-card.is-exp{border-color:color-mix(in srgb,var(--md-sys-color-tertiary) 46%,var(--md-sys-color-outline-variant))}.route-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:22px 22px 16px}.route-title-wrap{display:flex;align-items:flex-start;gap:12px;min-width:0}.route-status-light{width:12px;height:12px;margin-top:6px;border-radius:50%;background:var(--md-sys-color-error);box-shadow:0 0 0 6px color-mix(in srgb,var(--md-sys-color-error) 13%,transparent);flex-shrink:0}.route-status-light.on{background:var(--green);box-shadow:0 0 0 6px color-mix(in srgb,var(--green) 14%,transparent)}.route-label{font:750 1.06rem/1.35 var(--md-ref-typeface-brand);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.route-remark{display:flex;align-items:center;gap:6px;margin-top:5px;color:var(--md-sys-color-on-surface-variant);font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.route-remark i{color:var(--md-sys-color-tertiary)}.route-state{min-height:40px;border:0;border-radius:999px;padding:0 13px;display:flex;align-items:center;gap:6px;background:var(--md-sys-color-error-container);color:var(--md-sys-color-on-error-container);font:700 .7rem inherit;cursor:pointer;flex-shrink:0}.route-state.on{background:var(--green-bg);color:var(--green-t)}.route-network{margin:0 14px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr) auto;align-items:center;gap:10px;background:var(--md-sys-color-surface-container-high);border-radius:20px}.route-network>div{min-width:0}.route-network span,.route-data span{display:block;font-size:.62rem;letter-spacing:.07em;text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);margin-bottom:4px}.route-network strong{display:block;font:650 .76rem/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.route-arrow{color:var(--md-sys-color-tertiary);font-size:18px}.route-port{padding-inline-start:10px;border-inline-start:1px solid var(--md-sys-color-outline-variant)}.route-data{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;padding:16px 18px}.route-usage{min-width:0}.route-data-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.route-data-head b{font-size:.7rem}.route-meter{height:6px;margin-top:10px;border-radius:99px;background:var(--md-sys-color-surface-container-highest);overflow:hidden}.route-meter i{height:100%;display:block;background:var(--md-sys-color-primary);border-radius:inherit}.route-fact{padding-inline-start:10px;border-inline-start:1px solid var(--md-sys-color-outline-variant);min-width:0}.route-fact strong{font-size:.77rem;white-space:nowrap}.route-fact .exp-chip{font-size:.64rem!important;padding:5px 7px!important}.route-uuid{margin:0 18px 16px;min-height:42px;border:1px dashed var(--md-sys-color-outline-variant);border-radius:14px;background:transparent;color:var(--md-sys-color-on-surface-variant);display:flex;align-items:center;gap:8px;padding:0 12px;cursor:pointer}.route-uuid code{flex:1;min-width:0;text-align:left;direction:ltr;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.68rem}.route-uuid span{font-size:.66rem;font-weight:700;color:var(--md-sys-color-primary)}.route-actions{display:grid;grid-template-columns:minmax(125px,1.2fr) minmax(145px,1fr) repeat(4,48px);gap:7px;padding:12px;background:var(--md-sys-color-surface-container);border-top:1px solid var(--md-sys-color-outline-variant)}.route-action{min-height:48px;border:0;border-radius:16px;background:var(--md-sys-color-surface-container-highest);color:var(--md-sys-color-on-surface);display:flex;align-items:center;justify-content:center;gap:7px;padding:0 12px;cursor:pointer;font:700 .7rem inherit;transition:transform 160ms var(--md-sys-motion-easing-emphasized),border-radius 160ms,background 160ms}.route-action:hover{transform:translateY(-2px)}.route-action:active{transform:scale(.96);border-radius:10px}.route-action.primary{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);border-radius:18px 18px 7px 18px}.route-action.secondary{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}.route-action.compact{padding:0}.route-action.danger{background:var(--md-sys-color-error-container);color:var(--md-sys-color-on-error-container)}
 /* RTL and keyboard */
@@ -1158,6 +1159,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <div class="fg" style="flex:1"><label>Address (IPv4 / IPv6 / domain)</label><input class="fi endpoint-ltr" id="el-address" placeholder="Empty = current service" style="width:100%"></div>
       <div class="fg" style="flex:1"><label>TLS SNI (domain only)</label><input class="fi endpoint-ltr" id="el-sni" placeholder="Empty = automatic" style="width:100%"></div>
     </div>
+    <div class="fg config-proxy-edit" style="margin-bottom:13px">
+      <label>ProxyIP for this config</label>
+      <select class="fs" id="el-proxy-mode" onchange="syncConfigProxy('el')" style="width:100%"><option value="direct">Direct — safest default</option><option value="proxyip">ProxyIP — automatic direct fallback</option></select>
+      <div id="el-proxy-fields" style="display:none;margin-top:9px">
+        <textarea class="fi endpoint-ltr" id="el-proxyip" rows="2" placeholder="proxy.example.com:443, 1.2.3.4:443" style="width:100%;resize:vertical"></textarea>
+        <select class="fs" id="el-proxy-concurrency" style="width:100%;margin-top:8px"><option value="1">1 parallel check</option><option value="2">2 parallel checks</option><option value="4">4 parallel checks</option><option value="6">6 parallel checks</option></select>
+      </div>
+      <div class="field-caption"><i class="ti ti-shield-check"></i> Direct fallback is always enabled and cannot be disabled.</div>
+    </div>
     <div class="form-row" style="margin-bottom:13px">
       <div class="fg" style="flex:1"><label>Fingerprint (uTLS)</label>
         <select class="fs" id="el-fp" style="width:100%">
@@ -1206,7 +1216,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   <button class="sb-close" id="close-sb"><i class="ti ti-x"></i></button>
   <div class="logo">
     <div class="logo-img"><i class="ti ti-shield-bolt"></i></div>
-    <div><div class="logo-name">Lumen Relay</div><div class="logo-sub">Command Console · v12</div></div>
+    <div><div class="logo-name">Lumen Relay</div><div class="logo-sub">Command Console · v13</div></div>
   </div>
   <nav class="nav-wrap" aria-label="Workspace navigation">
     <div class="nav-sec">Workspace</div>
@@ -1269,7 +1279,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <div class="card-title"><i class="ti ti-activity"></i> Service status</div>
       <div class="sr"><span class="sr-k"><i class="ti ti-shield-check"></i> UUID Auth</span><span class="sr-v" style="color:var(--green-t)">● Active · strict</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-circle-check"></i> VLESS / WS Tunnel</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v12</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v13</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-rss"></i> Subscription API</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-clock"></i> Uptime</span><span class="sr-v" id="uptime-inline">—</span></div>
       <div class="sr" style="flex-direction:column;align-items:flex-start;gap:4px">
@@ -1283,7 +1293,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
   </div>
   <div class="dash-footer">
-    <span class="df-text">Lumen Relay · Version 12.0</span>
+    <span class="df-text">Lumen Relay · Version 13.0</span>
     <a class="df-link" href="https://t.me/Farajian2004f" target="_blank"><i class="ti ti-brand-telegram"></i> t.me/Farajian2004f</a>
     
   </div>
@@ -1394,6 +1404,26 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
           <i class="ti ti-arrow-right"></i>
           <div><span>TLS identity</span><code id="endpoint-preview-sni">current service</code></div>
         </div>
+      </div>
+      <div class="cp-block config-proxy-studio">
+        <div class="config-proxy-head">
+          <div><div class="cp-block-label"><i class="ti ti-shield-share"></i> ProxyIP for this config</div><div class="endpoint-studio-sub">Optional reverse-SNI exit path, isolated from every other user.</div></div>
+          <span class="config-scope-badge"><i class="ti ti-user-shield"></i> Only this config</span>
+        </div>
+        <div class="config-proxy-grid">
+          <div class="proxy-mode-card">
+            <label for="nl-proxy-mode">Connection mode</label>
+            <select class="cp-input-full fs" id="nl-proxy-mode" onchange="syncConfigProxy('nl')">
+              <option value="direct" selected>Direct — safest default</option>
+              <option value="proxyip">ProxyIP — automatic direct fallback</option>
+            </select>
+          </div>
+          <div class="config-proxy-fields" id="nl-proxy-fields" style="display:none">
+            <div><label for="nl-proxyip">ProxyIP candidates</label><textarea class="cp-input-full endpoint-ltr" id="nl-proxyip" rows="2" placeholder="proxy.example.com:443, 1.2.3.4:443"></textarea></div>
+            <div><label for="nl-proxy-concurrency">Parallel checks</label><select class="cp-input-full fs" id="nl-proxy-concurrency"><option value="1">1</option><option value="2" selected>2</option><option value="4">4</option><option value="6">6</option></select></div>
+          </div>
+        </div>
+        <div class="proxy-safe-note"><i class="ti ti-shield-check"></i><span>Failure-safe: invalid, silent, non-TLS, or unreachable ProxyIP automatically uses the direct connection. This setting never affects another config.</span></div>
       </div>
       <div class="cp-row">
         <div class="cp-block">
@@ -1599,7 +1629,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
     <div class="card">
       <div class="card-title"><i class="ti ti-shield-check"></i> Access control</div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-id-badge"></i> UUID Auth strict</span><span class="sr-v" style="color:var(--green-t)">● Active v12</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-id-badge"></i> UUID Auth strict</span><span class="sr-v" style="color:var(--green-t)">● Active v13</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-toggle-right"></i> Enable / disable config</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-gauge"></i> Traffic quota</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-calendar-x"></i> Expiry date</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
@@ -1646,7 +1676,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       </div>
       <div class="srv-tiles">
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-route"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Default port</div><div class="srv-tile-val">443 (TLS) · can be overridden per config</div></div></div>
-        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version</div><div class="srv-tile-val">v12.0</div></div></div>
+        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version</div><div class="srv-tile-val">v13.0</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-brand-fastapi"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Framework</div><div class="srv-tile-val">FastAPI + Uvicorn</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-cloud"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Platform</div><div class="srv-tile-val">Railway</div></div></div>
         <div class="srv-tile" style="grid-column:1/-1"><div class="srv-tile-icon"><i class="ti ti-device-floppy"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Storage</div><div class="srv-tile-val">JSON File (/data)</div></div></div>
@@ -1690,62 +1720,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
   </div>
 
-  <div class="srv-panel" style="margin-top:18px">
-    <div class="srv-hero">
-      <div class="srv-hero-icon"><i class="ti ti-route-alt-left"></i></div>
-      <div class="srv-hero-text">
-        <div class="srv-hero-domain">Exit IP &middot; ProxyIP</div>
-        <div class="srv-hero-sub" id="ob-state">The IP address seen by destination websites</div>
-      </div>
-    </div>
-    <div class="ob-body">
-      <div class="ob-field">
-        <label>Outbound mode</label>
-        <select id="ob-mode" onchange="obSyncMode()">
-          <option value="direct">Direct — server connection (default)</option>
-          <option value="proxyip">ProxyIP — reverse relay (edgetunnel method)</option>
-          <option value="socks5">SOCKS5 — chained proxy</option>
-          <option value="http">HTTP CONNECT</option>
-          <option value="https">HTTPS CONNECT</option>
-        </select>
-        <div class="ob-hint" id="ob-mode-hint"></div>
-      </div>
-
-      <div class="ob-field" id="ob-row-proxyip">
-        <label>ProxyIP list</label>
-        <textarea id="ob-proxyip" rows="3" placeholder="proxyip.example.com:443, 1.2.3.4, [2606:4700::1]:2053, ts.example.com.tp8443"></textarea>
-        <div class="ob-hint">Default port 443 &middot; supports <code>host:port</code>, <code>[IPv6]:port</code>, suffix <code>.tpNNNN</code> and TXT records. Separate with commas or new lines (up to 8 candidates are selected).</div>
-      </div>
-
-      <div class="ob-field" id="ob-row-proxyurl">
-        <label>Chained proxy address</label>
-        <input id="ob-proxyurl" placeholder="socks5://user:pass@1.2.3.4:1080">
-        <div class="ob-hint">The saved password is masked; enter the full value again to change it.</div>
-      </div>
-
-      <div class="ob-grid2">
-        <div class="ob-field">
-          <label>Parallel dial (PROXY_CONCURRENT_DIAL)</label>
-          <input id="ob-conc" type="number" min="1" max="16" value="1">
-          <div class="ob-hint">Higher values start faster but may rotate the exit IP more often.</div>
-        </div>
-        <div class="ob-field">
-          <label>Forced hosts (GO2SOCKS5)</label>
-          <input id="ob-force" placeholder="*.ip111.cn,*google.com یا *">
-          <div class="ob-hint">Only for chained proxy modes. <code>*</code> = all destinations.</div>
-        </div>
-      </div>
-
-      <label class="ob-check"><input type="checkbox" id="ob-fallback"> Connect directly if every candidate fails (fallback)</label>
-      <label class="ob-check"><input type="checkbox" id="ob-global"> Use chained proxy for every destination (global)</label>
-
-      <div class="ob-actions">
-        <button class="pw-submit" onclick="obSave()"><i class="ti ti-device-floppy"></i> Save settings</button>
-        <button class="pw-submit" onclick="obTest()"><i class="ti ti-plug-connected"></i> Test connection</button>
-      </div>
-      <pre id="ob-out" class="ob-out"></pre>
-    </div>
-  </div>
 </section>
 <section class="pg" id="pg-support">
   <div class="topbar"><div><div class="tb-title"><i class="ti ti-headset"></i> Support</div></div></div>
@@ -2023,7 +1997,23 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   "Copy": "کپی",
   "Open": "بازکردن",
   ",": "،",
-  ", suffix": "، پسوند"
+  ", suffix": "، پسوند",
+  "ProxyIP for this config": "ProxyIP برای همین کانفیگ",
+  "Optional reverse-SNI exit path, isolated from every other user.": "مسیر خروجی اختیاری مبتنی بر SNI که از تمام کاربران دیگر جداست.",
+  "Only this config": "فقط همین کانفیگ",
+  "Connection mode": "حالت اتصال",
+  "Direct — safest default": "مستقیم — امن‌ترین پیش‌فرض",
+  "ProxyIP — automatic direct fallback": "ProxyIP — بازگشت خودکار به اتصال مستقیم",
+  "ProxyIP candidates": "گزینه‌های ProxyIP",
+  "Parallel checks": "بررسی‌های موازی",
+  "Failure-safe: invalid, silent, non-TLS, or unreachable ProxyIP automatically uses the direct connection. This setting never affects another config.": "ایمن در برابر خرابی: ProxyIP نامعتبر، بی‌پاسخ، غیر TLS یا خارج از دسترس خودکار به اتصال مستقیم برمی‌گردد و روی هیچ کانفیگ دیگری اثر ندارد.",
+  "Direct fallback is always enabled and cannot be disabled.": "بازگشت مستقیم همیشه فعال است و غیرفعال نمی‌شود.",
+  "Direct · fallback ready": "مستقیم · آماده بازگشت",
+  "ProxyIP · this config only": "ProxyIP · فقط همین کانفیگ",
+  "1 parallel check": "۱ بررسی موازی",
+  "2 parallel checks": "۲ بررسی موازی",
+  "4 parallel checks": "۴ بررسی موازی",
+  "6 parallel checks": "۶ بررسی موازی"
 }</script>
 <script>
 const I18N_FA=JSON.parse(document.getElementById('dashboard-i18n').textContent);
@@ -2093,106 +2083,16 @@ async function authF(url,opts={}){
   return r;
 }
 
-/* ===== Exit IP / ProxyIP ===== */
-const OB_HINTS={
-  direct:'اتصال مستقیم از خود سرور. آی‌پی خروجی = آی‌پی سرور.',
-  proxyip:'به ریلی معکوس وصل می‌شود و بسته‌ی اول خام را می‌فرستد؛ سایت مقصد آی‌پی ProxyIP را می‌بیند. مناسب TLS روی 443 (مسیریابی با SNI).',
-  socks5:'آدرس واقعی مقصد به پروکسی اعلام می‌شود؛ برای هر پورت و هر پروتکلی کار می‌کند.',
-  http:'CONNECT روی پروکسی HTTP؛ برای هر پورتی کار می‌کند.',
-  https:'CONNECT روی پروکسی با TLS؛ برای هر پورتی کار می‌کند.'
-};
-let OB_LOADED_URL='';
-function obSyncMode(){
-  const m=document.getElementById('ob-mode').value;
-  document.getElementById('ob-mode-hint').textContent=OB_HINTS[m]||'';
-  document.getElementById('ob-row-proxyip').style.display=(m==='proxyip')?'':'none';
-  const chained=(m==='socks5'||m==='http'||m==='https');
-  document.getElementById('ob-row-proxyurl').style.display=chained?'':'none';
+/* ===== Per-config ProxyIP ===== */
+function syncConfigProxy(prefix){
+  const mode=document.getElementById(prefix+'-proxy-mode');
+  const fields=document.getElementById(prefix+'-proxy-fields');
+  if(fields)fields.style.display=mode&&mode.value==='proxyip'?'':'none';
 }
-async function obLoad(){
-  try{
-    const r=await authF('/api/outbound');
-    const d=await r.json();
-    const s=d.settings||{};
-    document.getElementById('ob-mode').value=s.mode||'direct';
-    document.getElementById('ob-proxyip').value=s.proxyip||'';
-    OB_LOADED_URL=s.proxy_url||'';
-    document.getElementById('ob-proxyurl').value=OB_LOADED_URL;
-    document.getElementById('ob-conc').value=s.concurrency||1;
-    document.getElementById('ob-force').value=s.force_hosts||'';
-    document.getElementById('ob-fallback').checked=!!s.fallback;
-    document.getElementById('ob-global').checked=!!s.global_proxy;
-    const badge=d.active
-      ?'<span class="ob-badge on"><i class="ti ti-circle-check"></i> فعال</span>'
-      :'<span class="ob-badge off"><i class="ti ti-circle-minus"></i> مستقیم</span>';
-    let extra='';
-    if(s.pool_preview&&s.pool_preview.length){extra=' &nbsp;·&nbsp; '+s.pool_preview.length+' مقصد';}
-    document.getElementById('ob-state').innerHTML=badge+' &nbsp;مد: <b>'+(s.mode||'direct')+'</b>'+extra;
-    obSyncMode();
-  }catch(e){}
+function configProxyValues(prefix){
+  const enabled=document.getElementById(prefix+'-proxy-mode')?.value==='proxyip';
+  return {proxyip_enabled:enabled,proxyip:document.getElementById(prefix+'-proxyip')?.value.trim()||'',proxyip_concurrency:Number(document.getElementById(prefix+'-proxy-concurrency')?.value)||2};
 }
-async function obSave(){
-  const mode=document.getElementById('ob-mode').value;
-  const body={
-    mode:mode,
-    proxyip:document.getElementById('ob-proxyip').value,
-    concurrency:parseInt(document.getElementById('ob-conc').value||'1',10),
-    force_hosts:document.getElementById('ob-force').value,
-    fallback:document.getElementById('ob-fallback').checked,
-    global_proxy:document.getElementById('ob-global').checked
-  };
-  const url=document.getElementById('ob-proxyurl').value;
-  // مقدار ماسک‌شده را دوباره نمی‌فرستیم تا رمز ذخیره‌شده خراب نشود.
-  if(url!==OB_LOADED_URL){body.proxy_url=url;}
-  try{
-    const r=await authF('/api/outbound',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const d=await r.json();
-    if(!r.ok){toast(d.detail||'خطا در ذخیره','err');return;}
-    toast('تنطیمات آی‌پی خروجی ذخیره شد','ok');
-    await obLoad();
-  }catch(e){toast('خطا در ارتباط با سرور','err')}
-}
-async function obTest(){
-  const out=document.getElementById('ob-out');
-  out.style.display='block';
-  out.textContent='در حال تست...';
-  try{
-    const r=await authF('/api/outbound/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:'www.cloudflare.com'})});
-    const d=await r.json();
-    const res=(d&&d.result)||{};
-    const lines=[];
-    lines.push('mode      : '+(res.mode||'?'));
-    lines.push('target    : '+(res.target||'?'));
-    if(res.proxy){lines.push('proxy     : '+res.proxy);}
-    lines.push('candidates: '+(res.pool_size||0));
-    if(res.error){lines.push('error     : '+res.error);}
-    (res.candidates||[]).forEach(function(c,i){
-      var tag;
-      if(!c.ok){
-        tag='FAIL  '+(c.error||'');
-      }else if(c.relay_ok===false){
-        tag='TCP OK '+(c.ms!=null?('('+c.ms+' ms)'):'')+'  ->  RELAY FAIL: '+(c.relay_error||'no forward');
-      }else if(c.relay_ok===true){
-        tag='OK  '+(c.ms!=null?(c.ms+' ms'):'')+'  +  relay/TLS '+(c.tls_ms!=null?(c.tls_ms+' ms'):'');
-      }else{
-        tag='OK  '+(c.ms!=null?(c.ms+' ms'):'');
-      }
-      lines.push('  ['+(i+1)+'] '+c.endpoint+'  ->  '+tag);
-    });
-    const tcpCount=(res.candidates||[]).filter(function(c){return c.ok}).length;
-    const okCount=(res.candidates||[]).filter(function(c){return c.ok&&c.relay_ok!==false}).length;
-    if(tcpCount>0&&okCount===0){
-      lines.push('');
-      lines.push('⚠ پورت باز است ولی ریلی ترافیک را فوروارد نمی‌کند.');
-      lines.push('  این آی‌پی یک ProxyIP واقعی نیست → همه‌ی کانفیگ‌ها پینگ -1 می‌دهند.');
-      lines.push('  یا آی‌پی درست بذار، یا مد را SOCKS5 کن.');
-    }
-    lines.push('');
-    lines.push('reachable : '+okCount+' / '+((res.candidates||[]).length));
-    out.textContent=lines.join('\n');
-  }catch(e){out.textContent='خطا در اجرای تست'}
-}
-obLoad();
 function setQuota(val,unit,el){
   document.getElementById('nl-val').value = val===0?'':val;
   document.getElementById('nl-unit').value = unit;
@@ -2381,6 +2281,7 @@ async function loadLinks(){
           <div><span>TLS SNI</span><strong>${esc(routeSni)}</strong></div>
           <div class="route-port"><span>Port</span><strong>${l.port||443}</strong></div>
         </div>
+        <div class="route-proxy ${l.proxyip_enabled?'enabled':'direct'}"><i class="ti ${l.proxyip_enabled?'ti-shield-share':'ti-route'}"></i><span>${l.proxyip_enabled?'ProxyIP · this config only':'Direct · fallback ready'}</span>${l.proxyip_enabled?`<code>${esc(l.proxyip||'')}</code>`:''}</div>
         <div class="route-data">
           <div class="route-usage">
             <div class="route-data-head"><span>Traffic used</span><b>${fmtB(l.used_bytes)} / ${lim}</b></div>
@@ -2420,8 +2321,9 @@ async function createLink(){
   const speed_limit_value=Number(document.getElementById('nl-speed').value)||0;
   const speed_limit_unit=document.getElementById('nl-speed-unit').value;
   const {address,sni}=selectedCreateEndpoints();
+  const {proxyip_enabled,proxyip,proxyip_concurrency}=configProxyValues('nl');
   try{
-    const r=await authF('/api/links',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label,remark,limit_value:val||0,limit_unit:unit,expires_days:exp||0,note,sub_id,protocol,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni})});
+    const r=await authF('/api/links',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label,remark,limit_value:val||0,limit_unit:unit,expires_days:exp||0,note,sub_id,protocol,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni,proxyip_enabled,proxyip,proxyip_concurrency})});
     const d=await r.json().catch(()=>({}));
     if(!r.ok)throw new Error(d.detail||'Could not create config');
     ['nl-label','nl-remark','nl-val','nl-exp','nl-note','nl-alpn'].forEach(id=>document.getElementById(id).value='');
@@ -2430,6 +2332,9 @@ async function createLink(){
     document.getElementById('nl-speed').value='0';
     document.getElementById('nl-alpn-preset').value='';
     document.getElementById('nl-alpn').style.display='none';
+    document.getElementById('nl-proxy-mode').value='direct';
+    document.getElementById('nl-proxyip').value='';
+    document.getElementById('nl-proxy-concurrency').value='2';syncConfigProxy('nl');
     toast('Config created ✓','ok');loadLinks();
   }catch(e){toast(e.message||'Could not create','err')}
 }
@@ -2448,6 +2353,9 @@ function openEditLink(uuid){
   document.getElementById('el-port').value=l.port||443;
   document.getElementById('el-address').value=l.address||'';
   document.getElementById('el-sni').value=l.sni||'';
+  document.getElementById('el-proxy-mode').value=l.proxyip_enabled?'proxyip':'direct';
+  document.getElementById('el-proxyip').value=l.proxyip||'';
+  document.getElementById('el-proxy-concurrency').value=String(l.proxyip_concurrency||2);syncConfigProxy('el');
   document.getElementById('el-iplimit').value=l.ip_limit||0;
   if(!l.speed_limit_bytes){document.getElementById('el-speed').value='0';document.getElementById('el-speed-unit').value='MBIT';}
   else{document.getElementById('el-speed').value=(l.speed_limit_bytes*8/1024/1024).toFixed(2);document.getElementById('el-speed-unit').value='MBIT';}
@@ -2469,7 +2377,8 @@ async function saveEditLink(){
   const speed_limit_unit=document.getElementById('el-speed-unit').value;
   const address=document.getElementById('el-address').value.trim();
   const sni=document.getElementById('el-sni').value.trim();
-  const body={label,remark,note,limit_value:val||0,limit_unit:unit,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni};
+  const {proxyip_enabled,proxyip,proxyip_concurrency}=configProxyValues('el');
+  const body={label,remark,note,limit_value:val||0,limit_unit:unit,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni,proxyip_enabled,proxyip,proxyip_concurrency};
   if(exp&&Number(exp)>0)body.expires_days=Number(exp);
   try{
     const r=await authF('/api/links/'+uuid,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});

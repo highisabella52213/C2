@@ -20,6 +20,9 @@ RELAY_EXIT_IP2 = "127.0.0.11"
 failures = []
 
 
+TLS_PAYLOAD = b"FIRST-PROXYIP"
+TLS_RECORD = b"\x16\x03\x01" + len(TLS_PAYLOAD).to_bytes(2, "big") + TLS_PAYLOAD
+
 def check(name, cond, detail=""):
     if cond:
         print("  ok   %s" % name)
@@ -160,7 +163,7 @@ async def test_exit_ip_changes():
         # proxyip mode
         outbound.configure(mode="proxyip", proxyip="%s:%d" % (APP_IP, rport))
         seen.clear()
-        r, w, written = await outbound.open_outbound(APP_IP, dport, b"FIRST-PROXYIP")
+        r, w, written = await outbound.open_outbound(APP_IP, dport, TLS_RECORD)
         banner = await asyncio.wait_for(r.read(16), 5)
         w.close()
         await asyncio.sleep(0.1)
@@ -168,7 +171,7 @@ async def test_exit_ip_changes():
               seen and seen[0] == RELAY_EXIT_IP,
               "expected %s got %r" % (RELAY_EXIT_IP, seen[:1]))
         check("first packet forwarded raw",
-              len(seen) > 1 and seen[1] == b"FIRST-PROXYIP", repr(seen[1:2]))
+              len(seen) > 1 and seen[1] == TLS_RECORD, repr(seen[1:2]))
         check("payload marked written", written is True)
         check("downstream readable", banner == b"DEST-OK", repr(banner))
     finally:
@@ -197,25 +200,22 @@ async def test_failover_and_fallback():
         )
         outbound.reset_caches()
         seen.clear()
-        r, w, _ = await outbound.open_outbound(APP_IP, dport, b"FAILOVER")
+        r, w, _ = await outbound.open_outbound(APP_IP, dport, TLS_RECORD)
         await asyncio.wait_for(r.read(16), 5)
         w.close()
         await asyncio.sleep(0.1)
         check("fails over to healthy relay",
               seen and seen[0] == RELAY_EXIT_IP2, repr(seen[:1]))
 
-        # all dead + fallback off -> must raise, never silently go direct
+        # Availability rule: even legacy fallback=False cannot cut a config.
         outbound.configure(proxyip="%s:%d" % (APP_IP, dead_port), fallback=False)
         outbound.reset_caches()
         seen.clear()
-        raised = False
-        try:
-            r, w, _ = await outbound.open_outbound(APP_IP, dport, b"NOPE")
-            w.close()
-        except OSError:
-            raised = True
-        check("fallback off raises", raised)
-        check("fallback off never leaks direct", not seen, repr(seen[:1]))
+        r, w, written = await outbound.open_outbound(APP_IP, dport, TLS_RECORD)
+        if not written:
+            w.write(TLS_RECORD); await w.drain()
+        await asyncio.wait_for(r.read(16), 5); w.close(); await asyncio.sleep(0.1)
+        check("broken ProxyIP always falls back direct", seen and seen[0] == APP_IP, repr(seen[:1]))
 
         # all dead + fallback on -> direct
         outbound.configure(fallback=True)

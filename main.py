@@ -104,6 +104,9 @@ async def load_state():
                 _link.setdefault("address", "")
                 _link.setdefault("sni", "")
                 _link.setdefault("remark", _link.get("label") or "Lumen Relay")
+                _link.setdefault("proxyip", "")
+                _link.setdefault("proxyip_enabled", bool(_link.get("proxyip")))
+                _link.setdefault("proxyip_concurrency", 2)
                 if not _link.get("alpn") or "h2" in str(_link.get("alpn")):
                     _link["alpn"] = "http/1.1"
             SUBS.update(data.get("subs", {}))
@@ -234,7 +237,7 @@ async def startup():
     await load_state()
     await _tg_start_bot()
     log_activity("system", "سرور راه‌اندازی شد", "ok")
-    logger.info(f"Lumen Relay WS-only v12 started on port {CONFIG['port']}")
+    logger.info(f"Lumen Relay WS-only v13 started on port {CONFIG['port']}")
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -262,6 +265,26 @@ def get_host(request: Request | None = None) -> str:
     return os.environ.get("RAILWAY_PUBLIC_DOMAIN", CONFIG["host"])
 
 
+BUILTIN_VLESS_ADDRESSES = ("railway.com", "69.46.46.18", "69.46.46.126")
+
+def normalize_link_proxyip(enabled, raw, concurrency=2) -> tuple[bool, str, int]:
+    """Validate an isolated config ProxyIP. Direct fallback is always implicit."""
+    value = str(raw or "").strip()[:1200]
+    active = bool(enabled)
+    try:
+        parallel = max(1, min(6, int(concurrency or 2)))
+    except (TypeError, ValueError):
+        parallel = 2
+    if value and any(token in value for token in ("://", "/", "@", "?")):
+        raise ValueError("ProxyIP فقط باید host، host:port، IPv4 یا [IPv6]:port باشد")
+    parsed = outbound.parse_endpoint_list(value) if value else []
+    if active and not parsed:
+        raise ValueError("برای فعال‌کردن ProxyIP حداقل یک آدرس معتبر وارد کنید")
+    for host, _port in parsed:
+        normalize_address(outbound.strip_brackets(host))
+    return active and bool(parsed), value, parallel
+
+
 def configured_endpoint_catalog(request: Request | None = None) -> dict:
     """Address/SNI choices exposed to the authenticated create-config form.
 
@@ -274,7 +297,7 @@ def configured_endpoint_catalog(request: Request | None = None) -> dict:
     except ValueError:
         service_host = normalize_address(CONFIG.get("host") or "localhost")
     extra_addresses = parse_address_list(os.environ.get("VLESS_ADDRESSES", ""))
-    addresses = unique_valid([service_host, *extra_addresses])
+    addresses = unique_valid([service_host, *BUILTIN_VLESS_ADDRESSES, *extra_addresses])
     extra_sni = parse_address_list(os.environ.get("VLESS_SNI_NAMES", ""))
     domain_addresses = [value for value in addresses if address_kind(value) == "domain"]
     snis = unique_valid([service_host, *domain_addresses, *extra_sni], sni=True)
@@ -454,6 +477,9 @@ async def ensure_default_link():
                     "speed_limit_bytes": DEFAULT_SPEED_LIMIT,
                     "address": "",
                     "sni": "",
+                    "proxyip": "",
+                    "proxyip_enabled": False,
+                    "proxyip_concurrency": 2,
                 }
                 asyncio.create_task(save_state())
         _default_link_created = True
@@ -469,7 +495,7 @@ async def health():
     return {
         "status": "ok",
         "service": "Lumen Relay",
-        "version": "12.0",
+        "version": "13.0",
         "transport": "VLESS / WebSocket",
         "connections": len(connections),
         "active_configs": active_links,
@@ -901,6 +927,9 @@ async def make_link(
     speed_limit_bytes: int = 0,
     address: str = "",
     sni: str = "",
+    proxyip: str = "",
+    proxyip_enabled: bool = False,
+    proxyip_concurrency: int = 2,
 ) -> tuple[str, dict]:
     if protocol not in PROTOCOLS:
         protocol = DEFAULT_PROTOCOL
@@ -911,6 +940,9 @@ async def make_link(
         port = DEFAULT_PORT
     address = normalize_address(address) if str(address or "").strip() else ""
     sni = normalize_sni(sni) if str(sni or "").strip() else ""
+    proxyip_enabled, proxyip, proxyip_concurrency = normalize_link_proxyip(
+        proxyip_enabled, proxyip, proxyip_concurrency
+    )
     uid = generate_uuid()
     async with LINKS_LOCK:
         LINKS[uid] = {
@@ -932,6 +964,9 @@ async def make_link(
             "speed_limit_bytes": max(0, speed_limit_bytes),
             "address": address,
             "sni": sni,
+            "proxyip": proxyip,
+            "proxyip_enabled": proxyip_enabled,
+            "proxyip_concurrency": proxyip_concurrency,
         }
     if sub_id:
         async with SUBS_LOCK:
@@ -1080,6 +1115,14 @@ async def create_link(request: Request, _=Depends(require_auth)):
     sv = float(body.get("speed_limit_value") or 0)
     su = body.get("speed_limit_unit") or "MBIT"
     speed_limit_bytes = 0 if sv <= 0 else parse_speed_to_bytes(sv, su)
+    try:
+        proxyip_enabled, proxyip_value, proxyip_concurrency = normalize_link_proxyip(
+            body.get("proxyip_enabled", False),
+            body.get("proxyip", ""),
+            body.get("proxyip_concurrency", 2),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
     uid, link = await make_link(
         label=body.get("label") or "لینک جدید",
@@ -1096,6 +1139,9 @@ async def create_link(request: Request, _=Depends(require_auth)):
         speed_limit_bytes=speed_limit_bytes,
         address=selected_address,
         sni=selected_sni,
+        proxyip=proxyip_value,
+        proxyip_enabled=proxyip_enabled,
+        proxyip_concurrency=proxyip_concurrency,
     )
 
     return {
@@ -1195,15 +1241,19 @@ async def update_link(uid: str, request: Request, _=Depends(require_auth)):
                 link["outbound"] = _validate_outbound(ob)
             else:
                 raise HTTPException(status_code=400, detail="outbound باید آبجکت باشد")
-        if "proxyip" in body:
-            pip = str(body.get("proxyip") or "").strip()
-            if pip and not outbound.parse_endpoint_list(pip):
-                raise HTTPException(status_code=400, detail="لیست ProxyIP قابل تحلیل نیست")
-            if pip:
-                link["proxyip"] = pip
-            else:
-                link.pop("proxyip", None)
-        if any(k in body for k in ("label", "note", "remark", "limit_value", "expires_days", "fingerprint", "alpn", "port", "ip_limit", "speed_limit_value", "address", "sni")):
+        if any(key in body for key in ("proxyip", "proxyip_enabled", "proxyip_concurrency")):
+            try:
+                penabled, pvalue, pconcurrency = normalize_link_proxyip(
+                    body.get("proxyip_enabled", link.get("proxyip_enabled", False)),
+                    body.get("proxyip", link.get("proxyip", "")),
+                    body.get("proxyip_concurrency", link.get("proxyip_concurrency", 2)),
+                )
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail=str(exc))
+            link["proxyip"] = pvalue
+            link["proxyip_enabled"] = penabled
+            link["proxyip_concurrency"] = pconcurrency
+        if any(k in body for k in ("label", "note", "remark", "limit_value", "expires_days", "fingerprint", "alpn", "port", "ip_limit", "speed_limit_value", "address", "sni", "proxyip", "proxyip_enabled", "proxyip_concurrency")):
             log_activity("link", f"کانفیگ «{link['label']}» ویرایش شد", "info")
         new_sub = body.get("sub_id", "UNCHANGED")
         if new_sub != "UNCHANGED":
