@@ -1,4 +1,4 @@
-# pages.py  -  Lumen Relay UI v11
+# pages.py  -  Lumen Relay UI v12
 # contains: LOGIN_HTML, DASHBOARD_HTML, get_public_page_html()
 
 
@@ -149,6 +149,45 @@ document.getElementById('form').addEventListener('submit',async e=>{
     btn.disabled=false;btn.innerHTML='<i class="ti ti-login-2"></i> Sign In';
   }
 });
+</script>
+</body></html>"""
+
+
+LANDING_HTML = r"""<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lumen Relay · Live health</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}:root{color-scheme:dark;--p:#bdc7ff;--on-p:#22305f;--pc:#394777;--on-pc:#dee1ff;--ter:#f2b99a;--tc:#6d3b22;--on-tc:#ffdcc8;--surface:#111318;--low:#191b21;--mid:#1d1f25;--high:#27292f;--text:#e3e2e9;--muted:#c6c5d0;--outline:#46464f;--ok:#8fd6b8;--shape:32px;--ease:cubic-bezier(.2,0,0,1)}[data-theme="light"]{color-scheme:light;--p:#52639a;--on-p:#fff;--pc:#dee1ff;--on-pc:#0c1b4b;--ter:#865228;--tc:#ffdcc8;--on-tc:#311300;--surface:#faf8ff;--low:#f4f2fa;--mid:#eeecf4;--high:#e2e1e9;--text:#1a1b20;--muted:#45464f;--outline:#c7c6d0;--ok:#176b4f}body{font-family:'Vazirmatn','Segoe UI',Arial,sans-serif;color:var(--text);background:radial-gradient(circle at 10% 90%,color-mix(in srgb,var(--ter) 10%,transparent),transparent 32rem),radial-gradient(circle at 88% 4%,color-mix(in srgb,var(--p) 16%,transparent),transparent 34rem),var(--surface);display:grid;place-items:center;padding:24px;overflow-x:hidden}.shell{width:min(1120px,100%)}.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:12px;font-weight:780}.mark{width:46px;height:46px;border-radius:16px;background:var(--pc);box-shadow:inset 0 0 0 10px color-mix(in srgb,var(--p) 48%,transparent)}.actions{display:flex;gap:8px}.icon-btn,.lang-btn{min-height:46px;border:0;border-radius:999px;background:var(--high);color:var(--text);padding:0 16px;font:700 .8rem inherit;cursor:pointer}.icon-btn{width:46px;padding:0}.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}.hero,.health{background:color-mix(in srgb,var(--low) 94%,transparent);border:1px solid var(--outline);border-radius:var(--shape);overflow:hidden}.hero{min-height:560px;padding:54px;display:flex;flex-direction:column;justify-content:space-between;position:relative}.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--p);font-size:.75rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase}.live-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 6px color-mix(in srgb,var(--ok) 15%,transparent)}h1{font-size:clamp(3rem,7vw,6.4rem);line-height:.9;letter-spacing:-.07em;margin:28px 0 24px;max-width:7ch}.lead{max-width:50ch;color:var(--muted);font-size:1rem;line-height:1.8}.relay-scene{position:absolute;right:-70px;bottom:-80px;width:390px;height:390px;opacity:.76;pointer-events:none}.orbit{position:absolute;inset:48px;border:1px solid color-mix(in srgb,var(--p) 46%,transparent);border-radius:50%;animation:turn 34s linear infinite}.orbit::before,.orbit::after{content:'';position:absolute;width:18px;height:18px;border-radius:6px;background:var(--p);top:20px;left:48px;box-shadow:0 0 24px color-mix(in srgb,var(--p) 45%,transparent)}.orbit::after{width:12px;height:12px;top:auto;left:auto;right:18px;bottom:80px;background:var(--ter)}.core{position:absolute;inset:124px;border-radius:44px;background:var(--pc);transform:rotate(14deg);animation:breathe 6s var(--ease) infinite alternate}.core::after{content:'';position:absolute;inset:28px;border-radius:24px;background:var(--p);opacity:.42}@keyframes turn{to{transform:rotate(1turn)}}@keyframes breathe{to{transform:rotate(20deg) scale(1.05)}}.health{padding:24px;display:flex;flex-direction:column;gap:14px}.health-head{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 14px}.health-title{font-size:1.1rem;font-weight:760}.status{display:flex;align-items:center;gap:8px;background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok);padding:8px 12px;border-radius:999px;font-size:.75rem;font-weight:750}.metric{background:var(--mid);border-radius:22px;padding:20px;min-height:104px;display:flex;flex-direction:column;justify-content:space-between}.metric:nth-child(3){background:var(--pc);color:var(--on-pc)}.metric:nth-child(4){background:var(--tc);color:var(--on-tc)}.label{font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;opacity:.7}.value{font-size:1.72rem;font-weight:790;letter-spacing:-.035em}.foot{margin-top:auto;padding:18px 5px 3px;color:var(--muted);font-size:.72rem;display:flex;justify-content:space-between;gap:12px}.loading{opacity:.55}@media(max-width:800px){body{padding:14px}.grid{grid-template-columns:1fr}.hero{min-height:460px;padding:34px}.health{display:grid;grid-template-columns:1fr 1fr}.health-head,.foot{grid-column:1/-1}.relay-scene{width:280px;height:280px}.orbit{inset:38px}.core{inset:94px}h1{font-size:clamp(3.2rem,16vw,5rem)}}@media(max-width:480px){.health{grid-template-columns:1fr}.health-head,.foot{grid-column:auto}.hero{padding:28px;min-height:430px}.relay-scene{right:-110px;opacity:.5}.foot{flex-direction:column}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="bar"><div class="brand"><span class="mark"></span><span>Lumen Relay</span></div><div class="actions"><button class="lang-btn" id="lang" onclick="toggleLang()">FA</button><button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme"><i class="ti ti-sun" id="theme-icon"></i></button></div></header>
+  <div class="grid">
+    <section class="hero">
+      <div><div class="eyebrow"><span class="live-dot"></span><span data-en="Relay online" data-fa="رله آنلاین است">Relay online</span></div><h1 data-en="Quietly fast." data-fa="سریع، بی‌صدا.">Quietly fast.</h1><p class="lead" data-en="A lightweight WebSocket relay surface. Live service health is shown here without exposing administration controls." data-fa="یک سطح سبک برای رله WebSocket. سلامت زنده سرویس بدون نمایش کنترل‌های مدیریتی در این صفحه دیده می‌شود.">A lightweight WebSocket relay surface. Live service health is shown here without exposing administration controls.</p></div>
+      <div class="relay-scene"><div class="orbit"></div><div class="core"></div></div>
+    </section>
+    <aside class="health">
+      <div class="health-head"><div class="health-title" data-en="Service health" data-fa="سلامت سرویس">Service health</div><div class="status"><span class="live-dot"></span><span id="health-status" data-en="Healthy" data-fa="سالم">Healthy</span></div></div>
+      <div class="metric"><span class="label" data-en="Uptime" data-fa="زمان فعالیت">Uptime</span><strong class="value loading" id="uptime">—</strong></div>
+      <div class="metric"><span class="label" data-en="Live connections" data-fa="اتصالات زنده">Live connections</span><strong class="value loading" id="connections">—</strong></div>
+      <div class="metric"><span class="label" data-en="Active configs" data-fa="کانفیگ‌های فعال">Active configs</span><strong class="value loading" id="configs">—</strong></div>
+      <div class="metric"><span class="label" data-en="Transport" data-fa="پروتکل انتقال">Transport</span><strong class="value" id="transport">VLESS / WS</strong></div>
+      <div class="foot"><span id="version">Lumen Relay · v12</span><span data-en="Refreshes every 8 seconds" data-fa="به‌روزرسانی هر ۸ ثانیه">Refreshes every 8 seconds</span></div>
+    </aside>
+  </div>
+</main>
+<script>
+let lang=localStorage.getItem('lumen-public-lang')||'en';
+function applyLang(){document.documentElement.lang=lang;document.documentElement.dir=lang==='fa'?'rtl':'ltr';document.querySelectorAll('[data-en]').forEach(e=>e.textContent=e.dataset[lang]);document.getElementById('lang').textContent=lang==='fa'?'EN':'FA'}
+function toggleLang(){lang=lang==='en'?'fa':'en';localStorage.setItem('lumen-public-lang',lang);applyLang()}
+function toggleTheme(){const h=document.documentElement;const light=h.dataset.theme==='light';h.dataset.theme=light?'dark':'light';document.getElementById('theme-icon').className='ti '+(light?'ti-sun':'ti-moon')}
+async function health(){try{const r=await fetch('/health',{cache:'no-store'}),d=await r.json();document.getElementById('uptime').textContent=d.uptime||'—';document.getElementById('connections').textContent=d.connections??'—';document.getElementById('configs').textContent=d.active_configs??'—';document.getElementById('transport').textContent=d.transport||'VLESS / WS';document.getElementById('version').textContent=(d.service||'Lumen Relay')+' · v'+(d.version||'12');document.querySelectorAll('.loading').forEach(e=>e.classList.remove('loading'))}catch(e){const s=document.getElementById('health-status');s.textContent=lang==='fa'?'در حال بررسی':'Checking';}}
+applyLang();health();setInterval(health,8000);
 </script>
 </body></html>"""
 
@@ -1010,6 +1049,34 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
 @media(hover:hover){.btn:hover,.nav-it:hover,.chip:hover{filter:brightness(1.04)}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Lumen Relay v12 · command rail + route studio
+   A second expressive composition, intentionally unlike the v11 sidebar.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root{--command-rail-w:108px;--v12-card-gap:18px}
+body{padding-right:0}
+.sidebar{left:auto!important;right:16px!important;top:16px!important;bottom:16px!important;width:var(--command-rail-w)!important;min-height:0!important;border-radius:38px!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;transform:none!important;background:color-mix(in srgb,var(--md-sys-color-surface-container) 96%,transparent)!important}
+.logo{padding:18px 10px 13px!important;gap:8px!important;flex-direction:column!important;text-align:center!important}.logo-img{width:44px!important;height:44px!important}.logo-name{font-size:.72rem!important;line-height:1.1!important}.logo-sub{display:none!important}.sb-close{display:none!important}
+.nav-wrap{display:flex!important;flex:1!important;min-height:0;flex-direction:column!important;gap:3px!important;padding:8px!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:none}.nav-wrap::-webkit-scrollbar{display:none}.nav-sec{display:none!important}
+.nav-it{position:relative!important;min-height:58px!important;margin:0!important;padding:8px 4px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:5px!important;text-align:center!important;border-radius:18px!important;font-size:.62rem!important;line-height:1.1!important;font-weight:650!important;transform:none!important;flex-shrink:0}.nav-it>i{width:auto!important;font-size:20px!important}.nav-it>span:not(.nav-badge){max-width:86px;overflow:hidden;text-overflow:ellipsis}.nav-it:hover{transform:none!important;background:var(--md-sys-color-surface-container-high)!important}.nav-it.on{border-radius:24px 24px 12px 24px!important;background:var(--md-sys-color-primary-container)!important;color:var(--md-sys-color-on-primary-container)!important}.nav-it.on i{color:var(--md-sys-color-on-primary-container)!important}.nav-badge{position:absolute!important;right:8px!important;top:6px!important;margin:0!important;min-width:18px!important;padding:2px 5px!important;font-size:.55rem!important;background:var(--md-sys-color-tertiary-container)!important;color:var(--md-sys-color-on-tertiary-container)!important}
+.sb-foot{padding:9px!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important;background:var(--md-sys-color-surface-container-low)!important}.lang-switch,.theme-btn,.logout-btn{width:100%!important;min-width:0!important;min-height:42px!important;margin:0!important;padding:0!important;border:0!important;border-radius:15px!important;display:grid!important;place-items:center!important;cursor:pointer!important}.lang-switch{background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container)}.lang-switch span,.theme-btn span,.logout-btn span{display:none}.logout-btn{grid-column:1/-1!important;background:var(--md-sys-color-error-container)!important;color:var(--md-sys-color-on-error-container)!important}.lang-switch i,.theme-btn i,.logout-btn i{font-size:18px!important}
+.main{margin-left:0!important;margin-right:calc(var(--command-rail-w) + 34px)!important;padding:24px 24px 72px!important}.pg{max-width:1380px!important}.topbar{top:16px!important}.tb-title{font-size:1.55rem!important}.tb-title i{border-radius:18px 18px 8px 18px!important}.tb-sub{margin-inline-start:52px!important;margin-left:0!important}
+/* Builder composition */
+.create-panel{display:grid!important;grid-template-columns:minmax(220px,290px) minmax(0,1fr)!important;align-items:stretch!important;background:var(--md-sys-color-surface-container-lowest)!important;border-radius:36px!important;margin-bottom:26px!important}.cp-head{grid-column:1!important;grid-row:1!important;align-self:stretch!important;flex-direction:column!important;justify-content:flex-start!important;align-items:flex-start!important;gap:20px!important;padding:36px 28px!important;border-radius:36px 0 0 36px!important;background:linear-gradient(155deg,var(--md-sys-color-primary-container),color-mix(in srgb,var(--md-sys-color-tertiary-container) 56%,var(--md-sys-color-primary-container)))!important;position:relative!important;overflow:hidden!important}.cp-head::after{content:'';position:absolute;left:-70px;bottom:-85px;width:240px;height:240px;border-radius:50%;border:36px solid color-mix(in srgb,var(--md-sys-color-primary) 15%,transparent);opacity:.9}.cp-head-icon{width:68px!important;height:68px!important;border-radius:26px 26px 10px 26px!important;font-size:30px!important;box-shadow:0 18px 36px color-mix(in srgb,var(--md-sys-color-on-primary-container) 14%,transparent)!important}.cp-head-title{font-size:1.75rem!important;line-height:1.12!important;letter-spacing:-.045em!important;max-width:8ch}.cp-head-sub{font-size:.82rem!important;line-height:1.75!important;max-width:22ch!important}.cp-head-text{z-index:1!important}.cp-body{grid-column:2!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important;padding:22px!important}.create-panel .cp-row{display:contents!important}.create-panel .cp-body>.cp-block,.create-panel .endpoint-studio,.create-panel .cp-footer,.create-panel .cp-block:has(#nl-speed){grid-column:1/-1!important}.create-panel .cp-block{margin:0!important;padding:20px!important;border-radius:22px!important;background:var(--md-sys-color-surface-container-low)!important;border:1px solid transparent!important;transition:border-color 180ms,transform 260ms var(--md-sys-motion-easing-emphasized)!important}.create-panel .cp-block:focus-within{border-color:var(--md-sys-color-primary)!important;transform:translateY(-2px)!important}.cp-block-label{font-size:.73rem!important;letter-spacing:.055em!important;text-transform:uppercase!important}.cp-mini-row{margin-top:10px!important}.field-caption{font-size:.7rem;line-height:1.55;color:var(--md-sys-color-on-surface-variant);margin-top:10px}.endpoint-studio{padding:0!important;background:var(--md-sys-color-surface-container)!important;border:0!important}.endpoint-studio-head{padding:22px 24px!important}.endpoint-grid{padding:18px!important}.endpoint-field{background:var(--md-sys-color-surface-container-lowest)!important}.cp-footer{display:grid!important;grid-template-columns:1fr auto!important;align-items:center!important;gap:18px!important;padding:18px 4px 4px!important}.cp-footer-note{font-size:.72rem!important;line-height:1.6!important}.cp-submit-btn{min-width:190px!important;min-height:56px!important;border-radius:20px 20px 8px 20px!important;box-shadow:0 14px 30px color-mix(in srgb,var(--md-sys-color-primary) 18%,transparent)!important}
+/* Configs become a card gallery, not a compressed row/table. */
+.cfg-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:var(--v12-card-gap)!important}.route-card{min-width:0;display:flex;flex-direction:column;background:var(--md-sys-color-surface-container-low);border:1px solid var(--md-sys-color-outline-variant);border-radius:30px;overflow:hidden;transition:transform 320ms var(--md-sys-motion-easing-emphasized),box-shadow 320ms,border-color 180ms}.route-card:hover{transform:translateY(-5px);border-color:var(--md-sys-color-outline);box-shadow:var(--shadow)}.route-card.is-off{opacity:.7}.route-card.is-exp{border-color:color-mix(in srgb,var(--md-sys-color-tertiary) 46%,var(--md-sys-color-outline-variant))}.route-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:22px 22px 16px}.route-title-wrap{display:flex;align-items:flex-start;gap:12px;min-width:0}.route-status-light{width:12px;height:12px;margin-top:6px;border-radius:50%;background:var(--md-sys-color-error);box-shadow:0 0 0 6px color-mix(in srgb,var(--md-sys-color-error) 13%,transparent);flex-shrink:0}.route-status-light.on{background:var(--green);box-shadow:0 0 0 6px color-mix(in srgb,var(--green) 14%,transparent)}.route-label{font:750 1.06rem/1.35 var(--md-ref-typeface-brand);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.route-remark{display:flex;align-items:center;gap:6px;margin-top:5px;color:var(--md-sys-color-on-surface-variant);font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.route-remark i{color:var(--md-sys-color-tertiary)}.route-state{min-height:40px;border:0;border-radius:999px;padding:0 13px;display:flex;align-items:center;gap:6px;background:var(--md-sys-color-error-container);color:var(--md-sys-color-on-error-container);font:700 .7rem inherit;cursor:pointer;flex-shrink:0}.route-state.on{background:var(--green-bg);color:var(--green-t)}.route-network{margin:0 14px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr) auto;align-items:center;gap:10px;background:var(--md-sys-color-surface-container-high);border-radius:20px}.route-network>div{min-width:0}.route-network span,.route-data span{display:block;font-size:.62rem;letter-spacing:.07em;text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);margin-bottom:4px}.route-network strong{display:block;font:650 .76rem/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.route-arrow{color:var(--md-sys-color-tertiary);font-size:18px}.route-port{padding-inline-start:10px;border-inline-start:1px solid var(--md-sys-color-outline-variant)}.route-data{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;padding:16px 18px}.route-usage{min-width:0}.route-data-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.route-data-head b{font-size:.7rem}.route-meter{height:6px;margin-top:10px;border-radius:99px;background:var(--md-sys-color-surface-container-highest);overflow:hidden}.route-meter i{height:100%;display:block;background:var(--md-sys-color-primary);border-radius:inherit}.route-fact{padding-inline-start:10px;border-inline-start:1px solid var(--md-sys-color-outline-variant);min-width:0}.route-fact strong{font-size:.77rem;white-space:nowrap}.route-fact .exp-chip{font-size:.64rem!important;padding:5px 7px!important}.route-uuid{margin:0 18px 16px;min-height:42px;border:1px dashed var(--md-sys-color-outline-variant);border-radius:14px;background:transparent;color:var(--md-sys-color-on-surface-variant);display:flex;align-items:center;gap:8px;padding:0 12px;cursor:pointer}.route-uuid code{flex:1;min-width:0;text-align:left;direction:ltr;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.68rem}.route-uuid span{font-size:.66rem;font-weight:700;color:var(--md-sys-color-primary)}.route-actions{display:grid;grid-template-columns:minmax(125px,1.2fr) minmax(145px,1fr) repeat(4,48px);gap:7px;padding:12px;background:var(--md-sys-color-surface-container);border-top:1px solid var(--md-sys-color-outline-variant)}.route-action{min-height:48px;border:0;border-radius:16px;background:var(--md-sys-color-surface-container-highest);color:var(--md-sys-color-on-surface);display:flex;align-items:center;justify-content:center;gap:7px;padding:0 12px;cursor:pointer;font:700 .7rem inherit;transition:transform 160ms var(--md-sys-motion-easing-emphasized),border-radius 160ms,background 160ms}.route-action:hover{transform:translateY(-2px)}.route-action:active{transform:scale(.96);border-radius:10px}.route-action.primary{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);border-radius:18px 18px 7px 18px}.route-action.secondary{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}.route-action.compact{padding:0}.route-action.danger{background:var(--md-sys-color-error-container);color:var(--md-sys-color-on-error-container)}
+/* RTL and keyboard */
+[dir="rtl"] .cp-head{border-radius:0 36px 36px 0!important}[dir="rtl"] .route-arrow{transform:rotate(180deg)}[dir="rtl"] .route-uuid code{text-align:right;direction:ltr}[dir="rtl"] .endpoint-preview>i{transform:rotate(180deg)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.nav-it:focus-visible{outline:3px solid color-mix(in srgb,var(--md-sys-color-primary) 72%,transparent)!important;outline-offset:3px!important}
+.pw-eye{width:44px!important;height:44px!important;right:4px!important;top:27px!important;padding:0!important;display:grid!important;place-items:center!important;border-radius:999px!important;background:var(--md-sys-color-surface-container-high)!important}
+.ob-check{min-height:48px!important;padding:10px 12px!important;border-radius:14px!important}
+.ob-check input{width:20px!important;height:20px!important;flex:0 0 20px!important}
+/* adaptive navigation: the right command rail becomes a bottom command dock */
+@media(max-width:1199px){.cfg-grid{grid-template-columns:1fr!important}.create-panel{grid-template-columns:230px minmax(0,1fr)!important}.route-actions{grid-template-columns:1fr 1fr repeat(4,48px)}}
+@media(max-width:900px){.sidebar{position:fixed!important;left:10px!important;right:10px!important;top:auto!important;bottom:10px!important;width:auto!important;height:84px!important;min-height:0!important;border-radius:28px!important;flex-direction:row!important;z-index:220!important}.logo,.sb-foot{display:none!important}.nav-wrap{width:100%!important;flex-direction:row!important;overflow-x:auto!important;overflow-y:hidden!important;padding:8px!important;gap:4px!important}.nav-it{min-width:82px!important;min-height:66px!important}.nav-it.on{border-radius:20px 20px 8px 20px!important}.main{margin-right:0!important;padding:92px 16px 126px!important}.mob-top{display:flex!important;top:10px!important;left:10px!important;right:10px!important;height:64px!important;border:1px solid var(--md-sys-color-outline-variant)!important;border-radius:24px!important;background:color-mix(in srgb,var(--md-sys-color-surface-container) 92%,transparent)!important;backdrop-filter:blur(20px)!important}.menu-btn{display:none!important}.topbar{position:relative!important;top:auto!important}.create-panel{grid-template-columns:1fr!important}.cp-head{grid-column:1!important;grid-row:auto!important;min-height:220px!important;border-radius:30px 30px 0 0!important}.cp-head-title{max-width:none!important}.cp-body{grid-column:1!important}.tb-sub{margin-inline-start:0!important}}
+@media(max-width:639px){.cp-body{grid-template-columns:1fr!important;padding:14px!important}.create-panel .cp-body>.cp-block,.create-panel .cp-block,.create-panel .endpoint-studio,.create-panel .cp-footer{grid-column:1!important}.cp-footer{grid-template-columns:1fr!important}.cp-submit-btn{width:100%!important}.route-network{grid-template-columns:1fr 20px 1fr!important}.route-port{grid-column:1/-1;border-inline-start:0;border-top:1px solid var(--md-sys-color-outline-variant);padding:10px 0 0}.route-data{grid-template-columns:1fr 1fr!important}.route-usage{grid-column:1/-1}.route-fact:nth-child(2){border-inline-start:0;padding-inline-start:0}.route-actions{grid-template-columns:1fr 1fr repeat(2,48px)!important}.route-action.compact:nth-last-child(-n+2){grid-row:2}.route-action span{font-size:.67rem}.route-head{padding:18px}.endpoint-grid{grid-template-columns:1fr!important}.endpoint-preview>i{transform:rotate(90deg)!important}.main{padding-left:10px!important;padding-right:10px!important}.topbar{padding:14px!important}.tb-title{font-size:1.3rem!important}}
+
 </style>
 </head>
 <body>
@@ -1080,6 +1147,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
     <div class="modal-title"><i class="ti ti-edit"></i> Edit config</div>
     <input type="hidden" id="el-uuid">
     <div class="fg" style="margin-bottom:13px"><label>Label</label><input class="fi" id="el-label" style="width:100%"></div>
+    <div class="fg" style="margin-bottom:13px"><label>Client remark</label><input class="fi" id="el-remark" maxlength="120" placeholder="Exact name shown in client apps" style="width:100%"></div>
     <div class="form-row" style="margin-bottom:13px">
       <div class="fg" style="flex:1"><label>Quota (0 = unlimited)</label><input class="fi" id="el-val" type="number" min="0" step="0.1" style="width:100%"></div>
       <div class="fg"><label>Unit</label><select class="fs" id="el-unit"><option value="GB">GB</option><option value="MB">MB</option></select></div>
@@ -1128,8 +1196,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
     <span class="mob-title">Lumen Relay</span>
   </div>
   <div class="mob-right">
-    <button class="theme-mob" id="theme-mob-btn" onclick="toggleTheme()"><i class="ti ti-sun" id="theme-mob-icon"></i></button>
-    <button class="menu-btn" id="open-sb"><i class="ti ti-menu-2"></i></button>
+    <button class="theme-mob" id="lang-mob-btn" onclick="toggleLanguage()" aria-label="Change language"><i class="ti ti-language"></i></button>
+    <button class="theme-mob" id="theme-mob-btn" onclick="toggleTheme()" aria-label="Change theme"><i class="ti ti-sun" id="theme-mob-icon"></i></button>
+    <button class="menu-btn" id="open-sb" aria-label="Open navigation"><i class="ti ti-layout-bottombar"></i></button>
   </div>
 </div>
 <div class="overlay" id="overlay"></div>
@@ -1137,28 +1206,29 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
   <button class="sb-close" id="close-sb"><i class="ti ti-x"></i></button>
   <div class="logo">
     <div class="logo-img"><i class="ti ti-shield-bolt"></i></div>
-    <div><div class="logo-name">Lumen Relay</div><div class="logo-sub">Expressive Console · v11</div></div>
+    <div><div class="logo-name">Lumen Relay</div><div class="logo-sub">Command Console · v12</div></div>
   </div>
-  <div class="nav-wrap">
-    <div class="nav-sec">Panel</div>
-    <div class="nav-it on" data-pg="overview"><i class="ti ti-layout-dashboard"></i> Control room</div>
-    <div class="nav-it" data-pg="links"><i class="ti ti-link-plus"></i> Configs <span class="nav-badge" id="links-nb">0</span></div>
-    <div class="nav-it" data-pg="subgroups"><i class="ti ti-folders"></i> Sub Groups <span class="nav-badge" id="subs-nb">0</span></div>
-    <div class="nav-it" data-pg="subscriptions"><i class="ti ti-rss"></i> Subscriptions</div>
-    <div class="nav-it" data-pg="traffic"><i class="ti ti-chart-area"></i> Traffic</div>
-    <div class="nav-it" data-pg="connections"><i class="ti ti-plug-connected"></i> Connections <span class="nav-badge" id="conns-nb">0</span></div>
-    <div class="nav-sec">System</div>
-    <div class="nav-it" data-pg="security"><i class="ti ti-shield-lock"></i> Security</div>
-    <div class="nav-it" data-pg="logs"><i class="ti ti-history"></i> Activity Log</div>
-    <div class="nav-it" data-pg="errors"><i class="ti ti-alert-triangle"></i> Errors</div>
-    <div class="nav-it" data-pg="testws"><i class="ti ti-wifi"></i> WebSocket Test</div>
-    <div class="nav-it" data-pg="settings"><i class="ti ti-settings"></i> Settings</div>
-    <div class="nav-it" data-pg="support"><i class="ti ti-headset"></i> Support</div>
-  </div>
+  <nav class="nav-wrap" aria-label="Workspace navigation">
+    <div class="nav-sec">Workspace</div>
+    <div class="nav-it on" data-pg="overview" title="Control room"><i class="ti ti-command"></i><span>Control room</span></div>
+    <div class="nav-it" data-pg="links" title="Route studio"><i class="ti ti-route-alt-left"></i><span>Route studio</span><span class="nav-badge" id="links-nb">0</span></div>
+    <div class="nav-it" data-pg="subscriptions" title="Subscriptions"><i class="ti ti-rss"></i><span>Subscriptions</span></div>
+    <div class="nav-it" data-pg="subgroups" title="Sub Groups"><i class="ti ti-folders"></i><span>Sub Groups</span><span class="nav-badge" id="subs-nb">0</span></div>
+    <div class="nav-sec">Observe</div>
+    <div class="nav-it" data-pg="connections" title="Connections"><i class="ti ti-plug-connected"></i><span>Connections</span><span class="nav-badge" id="conns-nb">0</span></div>
+    <div class="nav-it" data-pg="traffic" title="Traffic"><i class="ti ti-chart-area-line"></i><span>Traffic</span></div>
+    <div class="nav-it" data-pg="logs" title="Activity Log"><i class="ti ti-timeline-event"></i><span>Activity Log</span></div>
+    <div class="nav-it" data-pg="errors" title="Errors"><i class="ti ti-alert-hexagon"></i><span>Errors</span></div>
+    <div class="nav-sec">Tools</div>
+    <div class="nav-it" data-pg="security" title="Security"><i class="ti ti-shield-lock"></i><span>Security</span></div>
+    <div class="nav-it" data-pg="testws" title="WebSocket Test"><i class="ti ti-wave-sine"></i><span>WebSocket Test</span></div>
+    <div class="nav-it" data-pg="settings" title="Settings"><i class="ti ti-adjustments-horizontal"></i><span>Settings</span></div>
+    <div class="nav-it" data-pg="support" title="Support"><i class="ti ti-message-circle-question"></i><span>Support</span></div>
+  </nav>
   <div class="sb-foot">
-    <button class="theme-btn" onclick="toggleTheme()"><i class="ti ti-moon" id="theme-icon"></i> <span id="theme-label">Light mode</span></button>
-    
-    <button class="logout-btn" id="logout-btn"><i class="ti ti-logout"></i> Sign out</button>
+    <button class="lang-switch" onclick="toggleLanguage()" title="Change language"><i class="ti ti-language"></i><span id="lang-label">فارسی</span></button>
+    <button class="theme-btn" onclick="toggleTheme()" title="Change theme"><i class="ti ti-moon" id="theme-icon"></i><span id="theme-label">Light mode</span></button>
+    <button class="logout-btn" id="logout-btn" title="Sign out"><i class="ti ti-logout"></i><span>Sign out</span></button>
   </div>
 </aside>
 <main class="main">
@@ -1199,7 +1269,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
       <div class="card-title"><i class="ti ti-activity"></i> Service status</div>
       <div class="sr"><span class="sr-k"><i class="ti ti-shield-check"></i> UUID Auth</span><span class="sr-v" style="color:var(--green-t)">● Active · strict</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-circle-check"></i> VLESS / WS Tunnel</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v11</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v12</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-rss"></i> Subscription API</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-clock"></i> Uptime</span><span class="sr-v" id="uptime-inline">—</span></div>
       <div class="sr" style="flex-direction:column;align-items:flex-start;gap:4px">
@@ -1213,32 +1283,36 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
     </div>
   </div>
   <div class="dash-footer">
-    <span class="df-text">Lumen Relay · Version 11.0</span>
+    <span class="df-text">Lumen Relay · Version 12.0</span>
     <a class="df-link" href="https://t.me/Farajian2004f" target="_blank"><i class="ti ti-brand-telegram"></i> t.me/Farajian2004f</a>
     
   </div>
 </section>
 <section class="pg" id="pg-links">
   <div class="topbar">
-    <div><div class="tb-title"><i class="ti ti-link-plus"></i> Configs</div><div class="tb-sub">Create and manage configs with quota, expiry and grouping</div></div>
+    <div><div class="tb-title"><i class="ti ti-route-alt-left"></i> Route studio</div><div class="tb-sub">Compose, inspect, and deliver every connection from one workspace</div></div>
     <div class="tb-right"><span class="badge bg-blue" id="links-pg-cnt">0 config</span></div>
   </div>
   <div class="create-panel">
     <div class="cp-head">
       <div class="cp-head-icon"><i class="ti ti-square-rounded-plus"></i></div>
       <div class="cp-head-text">
-        <div class="cp-head-title">Create a new config</div>
-        <div class="cp-head-sub">Build a complete WS route with quota, TLS identity, and delivery controls</div>
+        <div class="cp-head-title">Compose a new route</div>
+        <div class="cp-head-sub">Identity first, network second, delivery controls last</div>
       </div>
     </div>
     <div class="cp-body">
       <div class="cp-row">
         <div class="cp-block">
           <div class="cp-block-label"><i class="ti ti-id-badge-2"></i> Config identity</div>
-          <input class="cp-input-full" id="nl-label" placeholder="e.g. Alex Doe">
+          <input class="cp-input-full" id="nl-label" placeholder="Internal label · e.g. Alex Doe">
           <div class="cp-mini-row">
-            <input class="cp-input-full" id="nl-note" placeholder="Note (optional)">
+            <input class="cp-input-full" id="nl-remark" maxlength="120" placeholder="Client remark · e.g. Lumen Premium Amsterdam">
           </div>
+          <div class="cp-mini-row">
+            <input class="cp-input-full" id="nl-note" placeholder="Private note (optional)">
+          </div>
+          <div class="field-caption">Label is for the panel. Remark is the exact name shown inside the client app.</div>
         </div>
         <div class="cp-block">
           <div class="cp-block-label"><i class="ti ti-folders"></i> Sub group & expiry</div>
@@ -1387,7 +1461,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
       </div>
       <div class="cp-footer">
         <div class="cp-footer-note"><i class="ti ti-info-circle"></i> Every UUID is fully random · only registered UUIDs may connect · the protocol cannot be changed later.</div>
-        <button class="cp-submit-btn" onclick="createLink()"><i class="ti ti-link-plus"></i> Create config</button>
+        <button class="cp-submit-btn" onclick="createLink()"><i class="ti ti-sparkles"></i> Build route</button>
       </div>
     </div>
   </div>
@@ -1525,7 +1599,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
     </div>
     <div class="card">
       <div class="card-title"><i class="ti ti-shield-check"></i> Access control</div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-id-badge"></i> UUID Auth strict</span><span class="sr-v" style="color:var(--green-t)">● Active v11</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-id-badge"></i> UUID Auth strict</span><span class="sr-v" style="color:var(--green-t)">● Active v12</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-toggle-right"></i> Enable / disable config</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-gauge"></i> Traffic quota</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-calendar-x"></i> Expiry date</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
@@ -1572,7 +1646,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
       </div>
       <div class="srv-tiles">
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-route"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Default port</div><div class="srv-tile-val">443 (TLS) · can be overridden per config</div></div></div>
-        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version</div><div class="srv-tile-val">v11.0</div></div></div>
+        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version</div><div class="srv-tile-val">v12.0</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-brand-fastapi"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Framework</div><div class="srv-tile-val">FastAPI + Uvicorn</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-cloud"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Platform</div><div class="srv-tile-val">Railway</div></div></div>
         <div class="srv-tile" style="grid-column:1/-1"><div class="srv-tile-icon"><i class="ti ti-device-floppy"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Storage</div><div class="srv-tile-val">JSON File (/data)</div></div></div>
@@ -1621,16 +1695,16 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
       <div class="srv-hero-icon"><i class="ti ti-route-alt-left"></i></div>
       <div class="srv-hero-text">
         <div class="srv-hero-domain">Exit IP &middot; ProxyIP</div>
-        <div class="srv-hero-sub" id="ob-state">آی‌پی‌ای که سایت‌های مقصد می‌بینند</div>
+        <div class="srv-hero-sub" id="ob-state">The IP address seen by destination websites</div>
       </div>
     </div>
     <div class="ob-body">
       <div class="ob-field">
-        <label>مد خروجی</label>
+        <label>Outbound mode</label>
         <select id="ob-mode" onchange="obSyncMode()">
-          <option value="direct">Direct — اتصال مستقیم سرور (پیش‌فرض)</option>
-          <option value="proxyip">ProxyIP — ریلی معکوس (روش edgetunnel)</option>
-          <option value="socks5">SOCKS5 — پروکسی زنجیره‌ای</option>
+          <option value="direct">Direct — server connection (default)</option>
+          <option value="proxyip">ProxyIP — reverse relay (edgetunnel method)</option>
+          <option value="socks5">SOCKS5 — chained proxy</option>
           <option value="http">HTTP CONNECT</option>
           <option value="https">HTTPS CONNECT</option>
         </select>
@@ -1638,36 +1712,36 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
       </div>
 
       <div class="ob-field" id="ob-row-proxyip">
-        <label>لیست ProxyIP</label>
+        <label>ProxyIP list</label>
         <textarea id="ob-proxyip" rows="3" placeholder="proxyip.example.com:443, 1.2.3.4, [2606:4700::1]:2053, ts.example.com.tp8443"></textarea>
-        <div class="ob-hint">پورت پیش‌فرض 443 &middot; پشتیبانی از <code>host:port</code>، <code>[IPv6]:port</code>، پسوند <code>.tpNNNN</code> و رکورد TXT. با کاما یا خط جدید جدا کنید (حداکثر 8 کاندید انتخاب می‌شود).</div>
+        <div class="ob-hint">Default port 443 &middot; supports <code>host:port</code>, <code>[IPv6]:port</code>, suffix <code>.tpNNNN</code> and TXT records. Separate with commas or new lines (up to 8 candidates are selected).</div>
       </div>
 
       <div class="ob-field" id="ob-row-proxyurl">
-        <label>آدرس پروکسی زنجیره‌ای</label>
+        <label>Chained proxy address</label>
         <input id="ob-proxyurl" placeholder="socks5://user:pass@1.2.3.4:1080">
-        <div class="ob-hint">رمز ذخیره‌شده در نمایش ماسک می‌شود؛ برای تغییر، مقدار کامل را دوباره وارد کنید.</div>
+        <div class="ob-hint">The saved password is masked; enter the full value again to change it.</div>
       </div>
 
       <div class="ob-grid2">
         <div class="ob-field">
-          <label>دایال موازی (PROXY_CONCURRENT_DIAL)</label>
+          <label>Parallel dial (PROXY_CONCURRENT_DIAL)</label>
           <input id="ob-conc" type="number" min="1" max="16" value="1">
-          <div class="ob-hint">بالاتر = اتصال سریع‌تر، اما تعویض آی‌پی خروجی مکررتر.</div>
+          <div class="ob-hint">Higher values start faster but may rotate the exit IP more often.</div>
         </div>
         <div class="ob-field">
-          <label>میزبان‌های اجباری (GO2SOCKS5)</label>
+          <label>Forced hosts (GO2SOCKS5)</label>
           <input id="ob-force" placeholder="*.ip111.cn,*google.com یا *">
-          <div class="ob-hint">فقط برای مدهای پروکسی زنجیره‌ای. <code>*</code> = همه‌ی مقصدها.</div>
+          <div class="ob-hint">Only for chained proxy modes. <code>*</code> = all destinations.</div>
         </div>
       </div>
 
-      <label class="ob-check"><input type="checkbox" id="ob-fallback"> اگر همه‌ی کاندیدها خطا دادند، مستقیم وصل شو (fallback)</label>
-      <label class="ob-check"><input type="checkbox" id="ob-global"> پروکسی زنجیره‌ای برای همه‌ی مقصدها (global)</label>
+      <label class="ob-check"><input type="checkbox" id="ob-fallback"> Connect directly if every candidate fails (fallback)</label>
+      <label class="ob-check"><input type="checkbox" id="ob-global"> Use chained proxy for every destination (global)</label>
 
       <div class="ob-actions">
-        <button class="pw-submit" onclick="obSave()"><i class="ti ti-device-floppy"></i> ذخیره‌ی تنطیمات</button>
-        <button class="pw-submit" onclick="obTest()"><i class="ti ti-plug-connected"></i> تست اتصال</button>
+        <button class="pw-submit" onclick="obSave()"><i class="ti ti-device-floppy"></i> Save settings</button>
+        <button class="pw-submit" onclick="obTest()"><i class="ti ti-plug-connected"></i> Test connection</button>
       </div>
       <pre id="ob-out" class="ob-out"></pre>
     </div>
@@ -1708,24 +1782,293 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
   </div>
 </section>
 </main>
+<script type="application/json" id="dashboard-i18n">{
+  "Manage configs of": "مدیریت کانفیگ‌های",
+  "Choose the configs that belong to this group": "کانفیگ‌های متعلق به این گروه را انتخاب کنید",
+  "Select all": "انتخاب همه",
+  "Clear all": "پاک کردن انتخاب‌ها",
+  "0 selected": "۰ انتخاب",
+  "Loading configs…": "در حال بارگذاری کانفیگ‌ها…",
+  "Changes are applied instantly": "تغییرات بلافاصله اعمال می‌شوند",
+  "Close": "بستن",
+  "Save": "ذخیره",
+  "New sub group": "گروه اشتراک جدید",
+  "Create a dedicated public page for a set of configs": "برای مجموعه‌ای از کانفیگ‌ها یک صفحه عمومی اختصاصی بسازید",
+  "Group name": "نام گروه",
+  "Description (optional)": "توضیحات (اختیاری)",
+  "Public page password (optional)": "رمز صفحه عمومی (اختیاری)",
+  "This group gets its own public page with a unique link.": "این گروه یک صفحه عمومی با لینک یکتا دریافت می‌کند.",
+  "Cancel": "انصراف",
+  "Create group": "ساخت گروه",
+  "Edit config": "ویرایش کانفیگ",
+  "Label": "برچسب داخلی",
+  "Client remark": "نام نمایشی کلاینت",
+  "Exact name shown in client apps": "نام دقیق نمایش‌داده‌شده در کلاینت‌ها",
+  "Quota (0 = unlimited)": "حجم (۰ = نامحدود)",
+  "Unit": "واحد",
+  "Expiry (days from now, 0 = keep / unlimited)": "انقضا از امروز (۰ = حفظ مقدار/نامحدود)",
+  "Note": "یادداشت",
+  "Address (IPv4 / IPv6 / domain)": "آدرس (IPv4 / IPv6 / دامنه)",
+  "TLS SNI (domain only)": "TLS SNI (فقط دامنه)",
+  "Fingerprint (uTLS)": "اثر انگشت (uTLS)",
+  "ALPN (empty = default)": "ALPN (خالی = پیش‌فرض)",
+  "Connection port": "پورت اتصال",
+  "IP limit (0 = unlimited)": "محدودیت IP (۰ = نامحدود)",
+  "Speed limit (0 = unlimited)": "محدودیت سرعت (۰ = نامحدود)",
+  "Leave the expiry field at 0 to keep the current date.": "برای حفظ تاریخ فعلی، فیلد انقضا را روی ۰ بگذارید.",
+  "Save changes": "ذخیره تغییرات",
+  "Workspace": "فضای کار",
+  "Observe": "پایش",
+  "Tools": "ابزارها",
+  "Control room": "اتاق کنترل",
+  "Route studio": "استودیوی مسیر",
+  "Subscriptions": "اشتراک‌ها",
+  "Sub Groups": "گروه‌های اشتراک",
+  "Connections": "اتصالات",
+  "Traffic": "ترافیک",
+  "Activity Log": "گزارش فعالیت",
+  "Errors": "خطاها",
+  "Security": "امنیت",
+  "WebSocket Test": "تست WebSocket",
+  "Settings": "تنظیمات",
+  "Support": "پشتیبانی",
+  "Change language": "تغییر زبان",
+  "Change theme": "تغییر پوسته",
+  "Light mode": "حالت روشن",
+  "Dark mode": "حالت تاریک",
+  "Sign out": "خروج",
+  "Relay overview": "نمای کلی رله",
+  "Loading...": "در حال بارگذاری…",
+  "Active": "فعال",
+  "Refresh": "تازه‌سازی",
+  "Active connections": "اتصالات فعال",
+  "WebSocket live": "WebSocket زنده",
+  "Total traffic": "کل ترافیک",
+  "since start-up": "از زمان راه‌اندازی",
+  "Active configs": "کانفیگ‌های فعال",
+  "of total": "از کل",
+  "Default link (no limits)": "لینک پیش‌فرض (بدون محدودیت)",
+  "Limited configs": "کانفیگ‌های محدود",
+  "Hourly traffic (MB)": "ترافیک ساعتی (MB)",
+  "Distribution": "توزیع",
+  "Service status": "وضعیت سرویس",
+  "UUID Auth": "احراز هویت UUID",
+  "VLESS / WS Tunnel": "تونل VLESS / WS",
+  "Subscription API": "API اشتراک",
+  "Uptime": "زمان فعالیت",
+  "Relative load": "بار نسبی",
+  "Config summary": "خلاصه کانفیگ‌ها",
+  "Compose, inspect, and deliver every connection from one workspace": "ساخت، بررسی و تحویل همه اتصال‌ها در یک فضای کاری",
+  "Compose a new route": "ساخت مسیر جدید",
+  "Identity first, network second, delivery controls last": "ابتدا هویت، سپس شبکه و در پایان کنترل‌های تحویل",
+  "Config identity": "هویت کانفیگ",
+  "Internal label · e.g. Alex Doe": "برچسب داخلی · مثلاً کاربر یک",
+  "Client remark · e.g. Lumen Premium Amsterdam": "نام نمایشی کلاینت · مثلاً Lumen Premium Amsterdam",
+  "Private note (optional)": "یادداشت خصوصی (اختیاری)",
+  "Label is for the panel. Remark is the exact name shown inside the client app.": "برچسب برای پنل است؛ نام نمایشی دقیقاً داخل برنامه کلاینت دیده می‌شود.",
+  "Sub group & expiry": "گروه اشتراک و انقضا",
+  "— No group —": "— بدون گروه —",
+  "Unlimited": "نامحدود",
+  "7 days": "۷ روز",
+  "30 days": "۳۰ روز",
+  "90 days": "۹۰ روز",
+  "Traffic quota": "حجم ترافیک",
+  "Transport protocol": "پروتکل انتقال",
+  "Turbo · zero-copy · maximum throughput": "توربو · کم‌کپی · بیشترین توان عبوری",
+  "Connection identity": "هویت اتصال",
+  "Choose the public dial target and the independent TLS identity.": "مقصد اتصال عمومی و هویت مستقل TLS را انتخاب کنید.",
+  "Verified preset": "گزینه تأییدشده",
+  "Custom route": "مسیر سفارشی",
+  "Address": "آدرس",
+  "Auto — current service": "خودکار — سرویس فعلی",
+  "Custom address…": "آدرس سفارشی…",
+  "The address after": "آدرس بعد از",
+  ". Ports, paths and URL schemes are intentionally separate.": ". پورت، مسیر و scheme عمداً جدا هستند.",
+  "TLS SNI": "TLS SNI",
+  "Auto — safest TLS routing": "خودکار — امن‌ترین مسیریابی TLS",
+  "Custom SNI…": "SNI سفارشی…",
+  "SNI must be a domain. With a raw IP address, Auto keeps the service domain for TLS.": "SNI باید دامنه باشد. با Address از نوع IP، حالت خودکار دامنه سرویس را برای TLS نگه می‌دارد.",
+  "Dial": "اتصال",
+  "current service": "سرویس فعلی",
+  "TLS identity": "هویت TLS",
+  "WS default (http/1.1)": "پیش‌فرض WS (http/1.1)",
+  "Custom...": "سفارشی…",
+  "IP limit / concurrent users": "محدودیت IP / کاربران هم‌زمان",
+  "1 user": "۱ کاربر",
+  "2 user": "۲ کاربر",
+  "5 user": "۵ کاربر",
+  "Speed limit": "محدودیت سرعت",
+  "Every UUID is fully random · only registered UUIDs may connect · the protocol cannot be changed later.": "هر UUID کاملاً تصادفی است؛ فقط UUIDهای ثبت‌شده متصل می‌شوند و پروتکل بعداً تغییر نمی‌کند.",
+  "Build route": "ساخت مسیر",
+  "No configs yet": "هنوز کانفیگی وجود ندارد",
+  "Every group has its own public page with its own configs": "هر گروه صفحه عمومی مستقل و کانفیگ‌های خودش را دارد",
+  "New group": "گروه جدید",
+  "No groups yet": "هنوز گروهی وجود ندارد",
+  "Create a group to organise your configs": "برای مرتب‌سازی کانفیگ‌ها یک گروه بسازید",
+  "Subscription links for apps like v2ray": "لینک‌های اشتراک برای برنامه‌هایی مانند v2ray",
+  "Per-config subscription": "اشتراک هر کانفیگ",
+  "Each config URL has its own subscription link. On the config card, click the": "هر کانفیگ لینک اشتراک خودش را دارد. در کارت کانفیگ روی",
+  "icon.": "بزنید.",
+  "Full subscription (admin)": "اشتراک کامل (مدیر)",
+  "Includes every active config.": "شامل همه کانفیگ‌های فعال است.",
+  "This address only works in the browser that is signed in to the panel (session cookie required).": "این آدرس فقط در مرورگری کار می‌کند که وارد پنل شده باشد.",
+  "Group subscription links": "لینک‌های اشتراک گروه‌ها",
+  "Loading groups…": "در حال بارگذاری گروه‌ها…",
+  "Bandwidth usage analytics and monitoring": "تحلیل و پایش مصرف پهنای باند",
+  "Total traffic used": "کل ترافیک مصرف‌شده",
+  "Hourly average": "میانگین ساعتی",
+  "MB per hour": "MB در ساعت",
+  "Peak usage": "بیشترین مصرف",
+  "peak hour": "ساعت اوج",
+  "Lowest usage": "کمترین مصرف",
+  "Traffic usage trend": "روند مصرف ترافیک",
+  "Megabytes per hour": "مگابایت در ساعت",
+  "Usage": "مصرف",
+  "Average": "میانگین",
+  "Live monitoring of IP and traffic per connection": "پایش زنده IP و ترافیک هر اتصال",
+  "Live connections": "اتصالات زنده",
+  "Live traffic total": "کل ترافیک زنده",
+  "Average session length": "میانگین زمان نشست",
+  "Unique IPs": "IPهای یکتا",
+  "Connection list": "فهرست اتصالات",
+  "Auto-refresh every 5 seconds": "تازه‌سازی خودکار هر ۵ ثانیه",
+  "No active connections": "اتصال فعالی وجود ندارد",
+  "Clients will appear here as soon as they connect": "کلاینت‌ها پس از اتصال در اینجا نمایش داده می‌شوند",
+  "Encryption": "رمزنگاری",
+  "TLS/HTTPS": "TLS/HTTPS",
+  "Fingerprint": "اثر انگشت",
+  "Chrome Spoof": "شبیه‌سازی Chrome",
+  "Protocols": "پروتکل‌ها",
+  "Password hash": "هش رمز",
+  "Session": "نشست",
+  "Access control": "کنترل دسترسی",
+  "UUID Auth strict": "احراز هویت سخت‌گیرانه UUID",
+  "Enable / disable config": "فعال/غیرفعال‌کردن کانفیگ",
+  "Expiry date": "تاریخ انقضا",
+  "Public sub page password": "رمز صفحه عمومی اشتراک",
+  "Complete history of panel events": "تاریخچه کامل رویدادهای پنل",
+  "No log entries yet": "هنوز گزارشی ثبت نشده",
+  "Error log": "گزارش خطا",
+  "Only registered and active UUIDs can connect. This build supports VLESS over WebSocket only.": "فقط UUIDهای ثبت‌شده و فعال متصل می‌شوند. این نسخه فقط VLESS روی WebSocket را پشتیبانی می‌کند.",
+  "UUID (must already exist in Configs)": "UUID (باید از قبل در کانفیگ‌ها وجود داشته باشد)",
+  "Disconnect": "قطع اتصال",
+  "Send": "ارسال",
+  "Waiting for connection...": "در انتظار اتصال…",
+  "Online · Railway": "آنلاین · Railway",
+  "Default port": "پورت پیش‌فرض",
+  "443 (TLS) · can be overridden per config": "443 (TLS) · برای هر کانفیگ قابل تغییر",
+  "Version": "نسخه",
+  "Framework": "فریم‌ورک",
+  "Platform": "پلتفرم",
+  "Storage": "ذخیره‌سازی",
+  "Change password": "تغییر رمز",
+  "Pick a strong password and keep it somewhere safe": "یک رمز قوی انتخاب و در جای امن نگهداری کنید",
+  "Current password": "رمز فعلی",
+  "New password": "رمز جدید",
+  "Password strength": "قدرت رمز",
+  "At least 4 characters": "حداقل ۴ نویسه",
+  "Has a number": "دارای عدد",
+  "Upper & lower case": "حروف بزرگ و کوچک",
+  "Repeat new password": "تکرار رمز جدید",
+  "Save new password": "ذخیره رمز جدید",
+  "Exit IP · ProxyIP": "IP خروجی · ProxyIP",
+  "The IP address seen by destination websites": "IP دیده‌شده توسط سایت‌های مقصد",
+  "Outbound mode": "حالت خروجی",
+  "Direct — server connection (default)": "مستقیم — اتصال سرور (پیش‌فرض)",
+  "ProxyIP — reverse relay (edgetunnel method)": "ProxyIP — رله معکوس (روش edgetunnel)",
+  "SOCKS5 — chained proxy": "SOCKS5 — پروکسی زنجیره‌ای",
+  "ProxyIP list": "فهرست ProxyIP",
+  "Default port 443 · supports": "پورت پیش‌فرض ۴۴۳ · پشتیبانی از",
+  "and TXT records. Separate with commas or new lines (up to 8 candidates are selected).": "و رکورد TXT. با کاما یا خط جدید جدا کنید (تا ۸ گزینه انتخاب می‌شود).",
+  "Chained proxy address": "آدرس پروکسی زنجیره‌ای",
+  "The saved password is masked; enter the full value again to change it.": "رمز ذخیره‌شده پنهان است؛ برای تغییر مقدار کامل را دوباره وارد کنید.",
+  "Parallel dial (PROXY_CONCURRENT_DIAL)": "اتصال موازی (PROXY_CONCURRENT_DIAL)",
+  "Higher values start faster but may rotate the exit IP more often.": "مقادیر بالاتر سریع‌تر شروع می‌شوند اما ممکن است IP خروجی بیشتر تغییر کند.",
+  "Forced hosts (GO2SOCKS5)": "میزبان‌های اجباری (GO2SOCKS5)",
+  "Only for chained proxy modes.": "فقط برای حالت‌های پروکسی زنجیره‌ای.",
+  "= all destinations.": "= همه مقصدها.",
+  "Connect directly if every candidate fails (fallback)": "اگر همه گزینه‌ها شکست خوردند مستقیم متصل شو (fallback)",
+  "Use chained proxy for every destination (global)": "استفاده از پروکسی زنجیره‌ای برای همه مقصدها (global)",
+  "Save settings": "ذخیره تنظیمات",
+  "Test connection": "تست اتصال",
+  "Support center": "مرکز پشتیبانی",
+  "Ways to reach the support team": "راه‌های ارتباط با تیم پشتیبانی",
+  "Video guides and setup walkthroughs": "ویدیوهای راهنما و آموزش راه‌اندازی",
+  "Telegram group": "گروه تلگرام",
+  "Q&A and community support": "پرسش‌وپاسخ و پشتیبانی جامعه",
+  "Telegram channel": "کانال تلگرام",
+  "Project repository and technical docs": "مخزن پروژه و مستندات فنی",
+  "Port": "پورت",
+  "Traffic used": "ترافیک مصرف‌شده",
+  "Expiry": "انقضا",
+  "Users": "کاربران",
+  "Speed": "سرعت",
+  "Copy UUID": "کپی UUID",
+  "Copy config": "کپی کانفیگ",
+  "Copy subscription": "کپی اشتراک",
+  "Show QR": "نمایش QR",
+  "Reset usage": "ریست مصرف",
+  "Delete config": "حذف کانفیگ",
+  "Live": "زنده",
+  "Paused": "متوقف",
+  "Enable or disable config": "فعال یا غیرفعال‌کردن کانفیگ",
+  "Config copied": "کانفیگ کپی شد",
+  "Subscription copied": "اشتراک کپی شد",
+  "UUID copied": "UUID کپی شد",
+  "Refreshed": "تازه‌سازی شد",
+  "No configs": "بدون کانفیگ",
+  "config": "کانفیگ",
+  "Group": "گروه",
+  "Inactive": "غیرفعال",
+  "Copy": "کپی",
+  "Open": "بازکردن",
+  ",": "،",
+  ", suffix": "، پسوند"
+}</script>
 <script>
+const I18N_FA=JSON.parse(document.getElementById('dashboard-i18n').textContent);
+let uiLang=localStorage.getItem('lumen-ui-lang')||'en';
+const _textOrigins=new WeakMap(),_attrOrigins=new WeakMap();
+function tr(value){const v=String(value??'');return uiLang==='fa'?(I18N_FA[v]||v):v}
+function translateTree(root=document.body){
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  let n;while(n=walker.nextNode()){
+    if(['SCRIPT','STYLE','CODE'].includes(n.parentElement?.tagName))continue;
+    const raw=n.nodeValue,core=raw.trim();if(!core)continue;
+    if(!_textOrigins.has(n))_textOrigins.set(n,core);
+    const origin=_textOrigins.get(n),target=uiLang==='fa'?(I18N_FA[origin]||origin):origin;
+    n.nodeValue=raw.slice(0,raw.indexOf(core))+target+raw.slice(raw.indexOf(core)+core.length);
+  }
+  root.querySelectorAll?.('[placeholder],[title],[aria-label]').forEach(el=>{
+    let origins=_attrOrigins.get(el);if(!origins){origins={};['placeholder','title','aria-label'].forEach(a=>{if(el.hasAttribute(a))origins[a]=el.getAttribute(a)});_attrOrigins.set(el,origins)}
+    Object.entries(origins).forEach(([a,v])=>el.setAttribute(a,uiLang==='fa'?(I18N_FA[v]||v):v));
+  });
+}
+function applyLanguage(){
+  document.documentElement.lang=uiLang;document.documentElement.dir=uiLang==='fa'?'rtl':'ltr';
+  translateTree(document.body);
+  const l=document.getElementById('lang-label');if(l)l.textContent=uiLang==='fa'?'English':'فارسی';
+  const mob=document.getElementById('lang-mob-btn');if(mob)mob.title=uiLang==='fa'?'English':'فارسی';
+}
+function toggleLanguage(){uiLang=uiLang==='en'?'fa':'en';localStorage.setItem('lumen-ui-lang',uiLang);applyLanguage();applyTheme(isDark)}
+const _i18nObserver=new MutationObserver(entries=>entries.forEach(e=>e.addedNodes.forEach(n=>{if(n.nodeType===1)translateTree(n);else if(n.nodeType===3&&n.parentElement)translateTree(n.parentElement)})));
 let isDark=localStorage.getItem('x4g-theme')!=='light';
 function applyTheme(dark){
   document.documentElement.setAttribute('data-theme',dark?'dark':'light');
-  const icon=dark?'ti-sun':'ti-moon',label=dark?'Light mode':'Dark mode';
+  const icon=dark?'ti-sun':'ti-moon',label=tr(dark?'Light mode':'Dark mode');
   document.getElementById('theme-icon').className='ti '+icon;
   document.getElementById('theme-label').textContent=label;
   const mobI=document.getElementById('theme-mob-icon');if(mobI)mobI.className='ti '+icon;
 }
 function toggleTheme(){isDark=!isDark;localStorage.setItem('x4g-theme',isDark?'dark':'light');applyTheme(isDark)}
-applyTheme(isDark);
+applyTheme(isDark);applyLanguage();_i18nObserver.observe(document.body,{childList:true,subtree:true});
 function toast(msg,type=''){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast show'+(type?' '+type:'');
+  t.textContent=tr(msg);t.className='toast show'+(type?' '+type:'');
   setTimeout(()=>t.classList.remove('show'),2400);
 }
 function fmtB(b){if(!b||b===0)return '0 B';if(b<1024)return b+' B';if(b<1024**2)return (b/1024).toFixed(1)+' KB';if(b<1024**3)return (b/1024**2).toFixed(2)+' MB';return (b/1024**3).toFixed(2)+' GB'}
-function toFa(n){return String(n)}
+function toFa(n){const v=String(n);return uiLang==='fa'?v.replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]):v}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function daysLeft(exp){if(!exp)return null;return Math.ceil((new Date(exp)-Date.now())/(864e5))}
 function expChip(exp,expired){
@@ -2010,59 +2353,54 @@ async function loadLinks(){
     nlSub.innerHTML='<option value="">— No group —</option>'+subs.map(s=>`<option value="${esc(s.sub_id)}">${esc(s.name)}</option>`).join('');
     if(selectedSub&&subs.some(s=>s.sub_id===selectedSub))nlSub.value=selectedSub;
     document.getElementById('links-nb').textContent=links.length;
-    document.getElementById('links-pg-cnt').textContent=toFa(links.length)+' config';
+    document.getElementById('links-pg-cnt').textContent=toFa(links.length)+' '+tr('config');
     document.getElementById('lsummary-badge').textContent=toFa(links.length);
     const grid=document.getElementById('links-grid'),empty=document.getElementById('links-empty');
     if(!links.length){grid.innerHTML='';empty.style.display='block';document.getElementById('lsummary').innerHTML='<div class="empty"><i class="ti ti-link-off"></i><p>No configs</p></div>';return}
     empty.style.display='none';
     const subMap=Object.fromEntries(subs.map(s=>[s.sub_id,s.name]));
     grid.innerHTML=links.map(l=>{
-  const lim=l.limit_bytes===0?'∞':fmtB(l.limit_bytes);
-  const pct=l.limit_bytes===0?0:Math.min(100,l.used_bytes/l.limit_bytes*100);
-  const bc=pct>90?'var(--red)':pct>70?'var(--amber)':'var(--accent)';
-  const allowed=l.active&&!l.expired;
-  const cardCls=!l.active?'is-off':(l.expired?'is-exp':'');
-  return `<div class="cfg-card ${cardCls}">
-    <div class="cfg-row">
-      <span class="cfg-status-dot ${allowed?'pulse':''}"></span>
-      <div class="cfg-identity">
-        <div class="cfg-label">${esc(l.label)}</div>
-        <div class="cfg-sub-meta">
-          <span class="cfg-uuid-mini" onclick="navigator.clipboard.writeText('${l.uuid}').then(()=>toast('UUID Copied','ok'))" title="${l.uuid}"><i class="ti ti-fingerprint"></i> ${l.uuid.slice(0,10)}…</span>
-          <span>${new Date(l.created_at).toLocaleDateString('en-US')}</span>
+      const lim=l.limit_bytes===0?'∞':fmtB(l.limit_bytes);
+      const pct=l.limit_bytes===0?0:Math.min(100,l.used_bytes/l.limit_bytes*100);
+      const allowed=l.active&&!l.expired;
+      const cardCls=!l.active?'is-off':(l.expired?'is-exp':'');
+      const routeAddress=l.address||location.hostname;
+      const routeSni=l.sni||((l.address&&!isIpAddressPreview(l.address))?l.address:location.hostname);
+      const speed=l.speed_limit_bytes?((l.speed_limit_bytes*8/1024/1024).toFixed(1)+' Mbps'):'Unlimited';
+      return `<article class="route-card ${cardCls}">
+        <header class="route-head">
+          <div class="route-title-wrap">
+            <span class="route-status-light ${allowed?'on':''}"></span>
+            <div><div class="route-label">${esc(l.label)}</div><div class="route-remark"><i class="ti ti-message-2"></i>${esc(l.remark||l.label)}</div></div>
+          </div>
+          <button class="route-state ${allowed?'on':''}" onclick="toggleActive('${l.uuid}',${!l.active})" aria-label="Enable or disable config"><i class="ti ${allowed?'ti-player-pause':'ti-player-play'}"></i><span>${allowed?'Live':'Paused'}</span></button>
+        </header>
+        <div class="route-network">
+          <div><span>Address</span><strong>${esc(routeAddress)}</strong></div>
+          <i class="ti ti-arrow-right route-arrow"></i>
+          <div><span>TLS SNI</span><strong>${esc(routeSni)}</strong></div>
+          <div class="route-port"><span>Port</span><strong>${l.port||443}</strong></div>
         </div>
-      </div>
-      <div class="cfg-divider-v"></div>
-      <div class="cfg-usage-col">
-        <div class="ubar"><div class="ubar-f" style="width:${pct}%;background:${bc}"></div></div>
-        <div class="utxt"><span>${fmtB(l.used_bytes)}</span><span>of ${lim}</span></div>
-      </div>
-      <div class="cfg-divider-v"></div>
-      <div class="cfg-exp-col">${expChip(l.expires_at,l.expired)}</div>
-      <div class="cfg-divider-v"></div>
-      <div class="cfg-badges-col">
-        ${protoBadge(l.protocol)}
-        <span class="cfg-sub-tag endpoint-tag" title="Dial address"><i class="ti ti-world-www"></i> ${esc(l.address||location.hostname)}</span>
-        <span class="cfg-sub-tag endpoint-tag" title="TLS SNI"><i class="ti ti-certificate"></i> ${esc(l.sni||((l.address&&!isIpAddressPreview(l.address))?l.address:location.hostname))}</span>
-        <span class="cfg-sub-tag" title="Connection port"><i class="ti ti-route"></i> :${l.port||443}</span>
-        <span class="cfg-sub-tag" title="Fingerprint"><i class="ti ti-fingerprint"></i> ${esc(l.fingerprint||'chrome')}</span>
-        <span class="cfg-sub-tag" title="Connected IPs / limit"><i class="ti ti-users"></i> ${l.connected_ips||0}${l.ip_limit?('/'+l.ip_limit):' (∞)'}</span>
-        <span class="cfg-sub-tag" title="Speed limit"><i class="ti ti-gauge"></i> ${l.speed_limit_bytes?((l.speed_limit_bytes*8/1024/1024).toFixed(1)+' Mbps'):'Unlimited'}</span>
-        ${l.sub_id&&allSubsList.find(s=>s.sub_id===l.sub_id)?`<span class="cfg-sub-tag"><i class="ti ti-folder"></i> ${esc(allSubsList.find(s=>s.sub_id===l.sub_id).name)}</span>`:''}
-      </div>
-      <div class="cfg-divider-v"></div>
-      <div class="cfg-actions">
-        <button class="tog${allowed?' on':''}" onclick="toggleActive('${l.uuid}',${!l.active})" title="Enable / disable"></button>
-        <button class="btn btn-sm btn-g btn-icon" onclick="navigator.clipboard.writeText('${esc(l.vless_link)}').then(()=>toast('Link copied','ok'))" title="Copy link"><i class="ti ti-copy"></i></button>
-        <button class="btn btn-sm btn-g btn-icon" onclick="navigator.clipboard.writeText('${esc(l.sub_url)}').then(()=>toast('Sub Copied','ok'))" title="Sub URL"><i class="ti ti-rss"></i></button>
-        <button class="btn btn-sm btn-g btn-icon" onclick="showQR('${esc(l.vless_link)}')" title="QR"><i class="ti ti-qrcode"></i></button>
-        <button class="btn btn-sm btn-amber btn-icon" onclick="openEditLink('${l.uuid}')" title="Edit"><i class="ti ti-edit"></i></button>
-        <button class="btn btn-sm btn-g btn-icon" onclick="resetUsage('${l.uuid}')" title="Reset usage"><i class="ti ti-rotate"></i></button>
-        <button class="btn btn-sm btn-d btn-icon" onclick="deleteLink('${l.uuid}')" title="Delete"><i class="ti ti-trash"></i></button>
-      </div>
-    </div>
-  </div>`;
-}).join('');
+        <div class="route-data">
+          <div class="route-usage">
+            <div class="route-data-head"><span>Traffic used</span><b>${fmtB(l.used_bytes)} / ${lim}</b></div>
+            <div class="route-meter"><i style="width:${pct}%"></i></div>
+          </div>
+          <div class="route-fact"><span>Expiry</span>${expChip(l.expires_at,l.expired)}</div>
+          <div class="route-fact"><span>Users</span><strong>${l.connected_ips||0}${l.ip_limit?('/'+l.ip_limit):' / ∞'}</strong></div>
+          <div class="route-fact"><span>Speed</span><strong>${speed}</strong></div>
+        </div>
+        <button class="route-uuid" onclick="navigator.clipboard.writeText('${l.uuid}').then(()=>toast('UUID copied','ok'))"><i class="ti ti-fingerprint"></i><code>${l.uuid}</code><span>Copy UUID</span></button>
+        <footer class="route-actions">
+          <button class="route-action primary" onclick="navigator.clipboard.writeText('${esc(l.vless_link)}').then(()=>toast('Config copied','ok'))"><i class="ti ti-copy"></i><span>Copy config</span></button>
+          <button class="route-action secondary" onclick="navigator.clipboard.writeText('${esc(l.sub_url)}').then(()=>toast('Subscription copied','ok'))"><i class="ti ti-rss"></i><span>Copy subscription</span></button>
+          <button class="route-action compact" onclick="showQR('${esc(l.vless_link)}')" title="Show QR" aria-label="Show QR"><i class="ti ti-qrcode"></i></button>
+          <button class="route-action compact" onclick="openEditLink('${l.uuid}')" title="Edit config" aria-label="Edit config"><i class="ti ti-pencil"></i></button>
+          <button class="route-action compact" onclick="resetUsage('${l.uuid}')" title="Reset usage" aria-label="Reset usage"><i class="ti ti-rotate"></i></button>
+          <button class="route-action compact danger" onclick="deleteLink('${l.uuid}')" title="Delete config" aria-label="Delete config"><i class="ti ti-trash"></i></button>
+        </footer>
+      </article>`;
+    }).join('');
     document.getElementById('lsummary').innerHTML=links.slice(0,6).map(l=>`<div class="sr"><span class="sr-k" style="gap:5px"><i class="ti ${l.expired?'ti-calendar-x':l.active?'ti-circle-check':'ti-circle-x'}" style="color:${l.expired?'var(--amber)':l.active?'var(--green)':'var(--red)'}"></i>${esc(l.label)}</span><span class="sr-v" style="font-size:10px">${fmtB(l.used_bytes)} / ${l.limit_bytes===0?'∞':fmtB(l.limit_bytes)}</span></div>`).join('');
   }catch(e){console.error(e)}
 }
@@ -2072,6 +2410,7 @@ async function createLink(){
   const unit=document.getElementById('nl-unit').value;
   const exp=document.getElementById('nl-exp').value;
   const note=document.getElementById('nl-note').value.trim();
+  const remark=document.getElementById('nl-remark').value.trim()||label;
   const sub_id=document.getElementById('nl-sub').value||null;
   const protocol=document.getElementById('nl-proto').value||'vless-ws';
   const fingerprint=document.getElementById('nl-fp').value||'chrome';
@@ -2082,10 +2421,10 @@ async function createLink(){
   const speed_limit_unit=document.getElementById('nl-speed-unit').value;
   const {address,sni}=selectedCreateEndpoints();
   try{
-    const r=await authF('/api/links',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label,limit_value:val||0,limit_unit:unit,expires_days:exp||0,note,sub_id,protocol,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni})});
+    const r=await authF('/api/links',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label,remark,limit_value:val||0,limit_unit:unit,expires_days:exp||0,note,sub_id,protocol,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni})});
     const d=await r.json().catch(()=>({}));
     if(!r.ok)throw new Error(d.detail||'Could not create config');
-    ['nl-label','nl-val','nl-exp','nl-note','nl-alpn'].forEach(id=>document.getElementById(id).value='');
+    ['nl-label','nl-remark','nl-val','nl-exp','nl-note','nl-alpn'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('nl-port').value='443';
     document.getElementById('nl-iplimit').value='0';
     document.getElementById('nl-speed').value='0';
@@ -2099,6 +2438,7 @@ function openEditLink(uuid){
   if(!l)return;
   document.getElementById('el-uuid').value=uuid;
   document.getElementById('el-label').value=l.label;
+  document.getElementById('el-remark').value=l.remark||l.label||'';
   document.getElementById('el-note').value=l.note||'';
   if(l.limit_bytes===0){document.getElementById('el-val').value='';document.getElementById('el-unit').value='GB';}
   else{document.getElementById('el-val').value=(l.limit_bytes/1024/1024).toFixed(0);document.getElementById('el-unit').value='MB';}
@@ -2116,6 +2456,7 @@ function openEditLink(uuid){
 async function saveEditLink(){
   const uuid=document.getElementById('el-uuid').value;
   const label=document.getElementById('el-label').value.trim();
+  const remark=document.getElementById('el-remark').value.trim()||label;
   const note=document.getElementById('el-note').value.trim();
   const val=document.getElementById('el-val').value;
   const unit=document.getElementById('el-unit').value;
@@ -2128,7 +2469,7 @@ async function saveEditLink(){
   const speed_limit_unit=document.getElementById('el-speed-unit').value;
   const address=document.getElementById('el-address').value.trim();
   const sni=document.getElementById('el-sni').value.trim();
-  const body={label,note,limit_value:val||0,limit_unit:unit,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni};
+  const body={label,remark,note,limit_value:val||0,limit_unit:unit,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni};
   if(exp&&Number(exp)>0)body.expires_days=Number(exp);
   try{
     const r=await authF('/api/links/'+uuid,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
@@ -2156,7 +2497,7 @@ async function loadSubs(){
     const subs=d.subs||[];
     allSubsRaw=subs;
     document.getElementById('subs-nb').textContent=subs.length;
-    document.getElementById('subs-pg-cnt').textContent=toFa(subs.length)+' Group';
+    document.getElementById('subs-pg-cnt').textContent=toFa(subs.length)+' '+tr('Group');
     renderSubsGrid(subs);
   }catch(e){console.error(e)}
 }

@@ -44,7 +44,7 @@ logger = logging.getLogger("X4G")
 
 IRAN_TZ = ZoneInfo("Asia/Tehran")
 
-app = FastAPI(title="X4G", docs_url=None, redoc_url=None)
+app = FastAPI(title="Lumen Relay", docs_url=None, redoc_url=None)
 
 # ── Persistence ───────────────────────────────────────────────────────────────
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
@@ -103,6 +103,7 @@ async def load_state():
                 _link["protocol"] = DEFAULT_PROTOCOL
                 _link.setdefault("address", "")
                 _link.setdefault("sni", "")
+                _link.setdefault("remark", _link.get("label") or "Lumen Relay")
                 if not _link.get("alpn") or "h2" in str(_link.get("alpn")):
                     _link["alpn"] = "http/1.1"
             SUBS.update(data.get("subs", {}))
@@ -233,7 +234,7 @@ async def startup():
     await load_state()
     await _tg_start_bot()
     log_activity("system", "سرور راه‌اندازی شد", "ok")
-    logger.info(f"X4G WS-only v11 started on port {CONFIG['port']}")
+    logger.info(f"Lumen Relay WS-only v12 started on port {CONFIG['port']}")
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -330,7 +331,7 @@ def vless_link_for_link(link: dict, uid: str, host: str) -> str:
     proto = link.get("protocol", DEFAULT_PROTOCOL)
     return generate_vless_link(
         uid, host,
-        remark=f"🇳🇱 NL Server {link.get('label','')}",
+        remark=(link.get("remark") or link.get("label") or "Lumen Relay"),
         protocol=proto,
         fingerprint=link.get("fingerprint"),
         alpn=link.get("alpn"),
@@ -442,6 +443,7 @@ async def ensure_default_link():
                     "active": True,
                     "expires_at": None,
                     "note": "",
+                    "remark": "Lumen Relay · Default",
                     "is_default": True,
                     "sub_id": None,
                     "protocol": DEFAULT_PROTOCOL,
@@ -459,11 +461,20 @@ async def ensure_default_link():
 # ── Basic endpoints ───────────────────────────────────────────────────────────
 @app.get("/")
 async def root():
-    return {"service": "Lumen Relay", "version": "11.0", "status": "active", "channel": "Stable"}
+    return HTMLResponse(content=LANDING_HTML)
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "connections": len(connections), "uptime": uptime()}
+    active_links = sum(1 for link in LINKS.values() if is_link_allowed(link))
+    return {
+        "status": "ok",
+        "service": "Lumen Relay",
+        "version": "12.0",
+        "transport": "VLESS / WebSocket",
+        "connections": len(connections),
+        "active_configs": active_links,
+        "uptime": uptime(),
+    }
 
 # ── Subscription (single link) ────────────────────────────────────────────────
 @app.get("/sub/{uuid}")
@@ -880,6 +891,7 @@ async def make_link(
     limit_bytes: int = 0,
     expires_at: str | None = None,
     note: str = "",
+    remark: str = "",
     sub_id: str | None = None,
     protocol: str = DEFAULT_PROTOCOL,
     fingerprint: str = DEFAULT_FINGERPRINT,
@@ -909,6 +921,7 @@ async def make_link(
             "active": True,
             "expires_at": expires_at,
             "note": (note or "").strip()[:200],
+            "remark": (remark or label or "Lumen Relay").strip()[:120],
             "is_default": False,
             "sub_id": sub_id,
             "protocol": protocol,
@@ -1073,6 +1086,7 @@ async def create_link(request: Request, _=Depends(require_auth)):
         limit_bytes=limit_bytes,
         expires_at=expires_at,
         note=body.get("note") or "",
+        remark=body.get("remark") or body.get("label") or "Lumen Relay",
         sub_id=body.get("sub_id") or None,
         protocol=body.get("protocol") or DEFAULT_PROTOCOL,
         fingerprint=body.get("fingerprint") or DEFAULT_FINGERPRINT,
@@ -1128,6 +1142,8 @@ async def update_link(uid: str, request: Request, _=Depends(require_auth)):
             link["label"] = str(body["label"])[:60]
         if "note" in body:
             link["note"] = str(body["note"])[:200]
+        if "remark" in body:
+            link["remark"] = (str(body.get("remark") or link.get("label") or "Lumen Relay").strip()[:120])
         if "reset_usage" in body and body["reset_usage"]:
             link["used_bytes"] = 0
             log_activity("link", f"مصرف کانفیگ «{label}» ریست شد", "info")
@@ -1187,7 +1203,7 @@ async def update_link(uid: str, request: Request, _=Depends(require_auth)):
                 link["proxyip"] = pip
             else:
                 link.pop("proxyip", None)
-        if any(k in body for k in ("label", "note", "limit_value", "expires_days", "fingerprint", "alpn", "port", "ip_limit", "speed_limit_value", "address", "sni")):
+        if any(k in body for k in ("label", "note", "remark", "limit_value", "expires_days", "fingerprint", "alpn", "port", "ip_limit", "speed_limit_value", "address", "sni")):
             log_activity("link", f"کانفیگ «{link['label']}» ویرایش شد", "info")
         new_sub = body.get("sub_id", "UNCHANGED")
         if new_sub != "UNCHANGED":
@@ -1292,6 +1308,7 @@ async def public_sub_data(uuid_key: str, request: Request):
         links_out.append({
             "uuid": lid,
             "label": link["label"],
+            "remark": link.get("remark") or link["label"],
             "active": allowed,
             "protocol": proto,
             "used_bytes": link.get("used_bytes", 0),
@@ -1318,7 +1335,7 @@ async def public_sub_data(uuid_key: str, request: Request):
     }
 
 # ── HTML Pages (login + dashboard) ───────────────────────────────────────────
-from pages import LOGIN_HTML, DASHBOARD_HTML
+from pages import LOGIN_HTML, DASHBOARD_HTML, LANDING_HTML
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):

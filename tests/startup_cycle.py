@@ -36,7 +36,7 @@ uvicorn.Config=Config; uvicorn.Server=Server; sys.modules['uvicorn']=uvicorn
 t=types.ModuleType('telegram_bot')
 async def noop(*a,**k): pass
 t.start_bot=noop; t.stop_bot=noop; sys.modules['telegram_bot']=t
-p=types.ModuleType('pages'); p.LOGIN_HTML=''; p.DASHBOARD_HTML=''; sys.modules['pages']=p
+p=types.ModuleType('pages'); p.LOGIN_HTML=''; p.DASHBOARD_HTML=''; p.LANDING_HTML=''; sys.modules['pages']=p
 
 # Execute exactly as `python main.py`: module name is __main__, while relay imports `main`.
 old_main=sys.modules.get('__main__'); module=types.ModuleType('__main__')
@@ -53,7 +53,7 @@ try:
     assert module.PROTOCOLS == ('vless-ws',)
 
     # Address is the network dial target; Host/SNI remain the TLS routing name.
-    from urllib.parse import urlsplit, parse_qs
+    from urllib.parse import urlsplit, parse_qs, unquote
     uid = "11111111-2222-3333-4444-555555555555"
     ip_link = module.generate_vless_link(uid, "app.example.com", address="104.16.1.1")
     ip_url = urlsplit(ip_link)
@@ -73,6 +73,9 @@ try:
     domain_link = module.generate_vless_link(uid, "app.example.com", address="edge.example.net")
     domain_qs = parse_qs(urlsplit(domain_link).query)
     assert domain_qs["host"] == ["edge.example.net"] and domain_qs["sni"] == ["edge.example.net"]
-    print(f"python-main startup: alias=True RELAY_BUF={module.RELAY_BUF} protocols=ws-only endpoints=domain+ipv4+ipv6 server.run=True OK")
+
+    remark_link = module.vless_link_for_link({"label":"Internal label","remark":"Visible client remark","protocol":"vless-ws"}, uid, "app.example.com")
+    assert unquote(urlsplit(remark_link).fragment) == "Visible client remark"
+    print(f"python-main startup: alias=True RELAY_BUF={module.RELAY_BUF} protocols=ws-only endpoints=domain+ipv4+ipv6 remark=exact server.run=True OK")
 finally:
     if old_main is not None: sys.modules['__main__']=old_main
