@@ -89,6 +89,11 @@ async def load_state():
                 raw = await f.read()
             data = json.loads(raw)
             LINKS.update(data.get("links", {}))
+            # v10 is WS-only: transparently migrate links created by older multi-transport builds.
+            for _link in LINKS.values():
+                _link["protocol"] = DEFAULT_PROTOCOL
+                if not _link.get("alpn") or "h2" in str(_link.get("alpn")):
+                    _link["alpn"] = "http/1.1"
             SUBS.update(data.get("subs", {}))
             if "password_hash" in data:
                 AUTH["password_hash"] = data["password_hash"]
@@ -137,7 +142,7 @@ SUBS: dict = {}
 SUBS_LOCK = asyncio.Lock()
 
 # پروتکل‌های پشتیبانی‌شده برای هر ��انفیگ
-PROTOCOLS = ("vless-ws", "xhttp-packet-up", "xhttp-stream-up", "xhttp-stream-one", "xhttp-auto")
+PROTOCOLS = ("vless-ws",)
 DEFAULT_PROTOCOL = "vless-ws"
 
 # Fingerprint (uTLS) های قابل انتخاب برای هر کانفیگ
@@ -147,42 +152,7 @@ DEFAULT_FINGERPRINT = "chrome"
 # پیش‌فرض ALPN بر اساس نوع ترابرد (اگر کاربر مقدار دستی نده)
 DEFAULT_ALPN_BY_PROTOCOL = {
     "vless-ws": "http/1.1",
-    "xhttp-packet-up": "h2,http/1.1",
-    "xhttp-stream-up": "h2,http/1.1",
-    # stream-one ذاتاً دوطرفه است و فقط روی HTTP/2 کار می‌کند؛ http/1.1 را تبلیغ نمی‌کنیم
-    "xhttp-stream-one": "h2",
-    # auto را خود Xray بر اساس امنیت/مسیر انتخاب می‌کند؛ سرور هر سه مد را می‌پذیرد
-    "xhttp-auto": "h2,http/1.1",
 }
-# XHTTP/XMUX profile shared in generated links. Packet-up's stock client waits
-# 30 ms between ~1 MB POSTs; 4 MB posts with a 1 ms floor remove that upload cap.
-# XMUX is kept aggressive but bounded: enough H2 carriers for high throughput
-# without the 1024-stream/RAM explosion of the previous 32-64 × 8-16 profile.
-def _xhttp_extra_json(mode: str) -> str:
-    extra = {
-        "xPaddingBytes": "100-500",
-        "noGRPCHeader": False,
-        "noSSEHeader": False,
-        "xmux": {
-            "maxConcurrency": "8-16",
-            "maxConnections": "4-8",
-            "cMaxReuseTimes": "256-512",
-            "hMaxRequestTimes": "800-1200",
-            "hMaxReusableSecs": "1800-3600",
-            "hKeepAlivePeriod": 0,
-        },
-    }
-    if mode in ("packet-up", "auto"):
-        extra.update(
-            {
-                "scMaxEachPostBytes": 4_000_000,
-                "scMinPostsIntervalMs": 1,
-                "scMaxBufferedPosts": 64,
-            }
-        )
-    if mode in ("stream-up", "auto"):
-        extra["scStreamUpServerSecs"] = "20-40"
-    return json.dumps(extra, separators=(",", ":"))
 
 DEFAULT_PORT = 443
 MIN_PORT, MAX_PORT = 1, 65535
@@ -252,7 +222,7 @@ async def startup():
     await load_state()
     await _tg_start_bot()
     log_activity("system", "سرور راه‌اندازی شد", "ok")
-    logger.info(f"X4G v9.5 started on port {CONFIG['port']}")
+    logger.info(f"X4G WS-only v10 started on port {CONFIG['port']}")
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -295,8 +265,8 @@ def generate_vless_link(
     alpn: str | None = None,
     port: int | None = None,
 ) -> str:
-    """می‌سازد VLESS share-link متناسب با پروتکل انتخاب‌شده (WS کلاسیک یا یکی از مدهای XHTTP).
-    fingerprint / alpn / port در صورت ندادن، از پیش‌فرض‌های خود پروتکل استفاده می‌شوند."""
+    """لینک VLESS-over-WebSocket سریع و سازگار با Xray را می‌سازد.
+    fingerprint / alpn / port در صورت ندادن از پیش‌فرض WS استفاده می‌شوند."""
     fp = (fingerprint or DEFAULT_FINGERPRINT).strip() or DEFAULT_FINGERPRINT
     if fp not in FINGERPRINTS:
         fp = DEFAULT_FINGERPRINT
@@ -305,37 +275,19 @@ def generate_vless_link(
     if not (MIN_PORT <= port_val <= MAX_PORT):
         port_val = DEFAULT_PORT
 
-    if protocol == "vless-ws":
-        # ed=4096 → تا ۴KB از اولین داده داخل خود دست‌دادن WebSocket می‌رود.
-        # مقدار بزرگ‌تر از این، بعد از Base64 ممکن است از سقف هدر بعضی CDNها رد شود.
-        path = f"/ws/{uuid}?ed=4096"
-        params = {
-            "encryption": "none",
-            "security": "tls",
-            "type": "ws",
-            "host": host,
-            "path": path,
-            "sni": host,
-            "fp": fp,
-            "alpn": alpn_val,
-        }
-    else:
-        # xhttp-packet-up / xhttp-stream-up / xhttp-stream-one / xhttp-auto
-        mode = protocol.replace("xhttp-", "")
-        path = f"/xhttp-siz10/{mode}/{uuid}"
-        params = {
-            "encryption": "none",
-            "security": "tls",
-            "type": "xhttp",
-            "mode": mode,
-            "host": host,
-            "path": path,
-            "sni": host,
-            "fp": fp,
-            "alpn": alpn_val,
-            # packet sizing + bounded XMUX profile tuned for this mode
-            "extra": _xhttp_extra_json(mode),
-        }
+    # WS-only build. ed=4096 carries up to 4 KiB in the WebSocket handshake
+    # and removes one startup round trip without exceeding common CDN headers.
+    path = f"/ws/{uuid}?ed=4096"
+    params = {
+        "encryption": "none",
+        "security": "tls",
+        "type": "ws",
+        "host": host,
+        "path": path,
+        "sni": host,
+        "fp": fp,
+        "alpn": alpn_val,
+    }
     query = "&".join(f"{k}={quote(str(v))}" for k, v in params.items())
     authority_host = host
     if ":" in host and not host.startswith("["):
@@ -1192,22 +1144,10 @@ async def delete_link(uid: str, _=Depends(require_auth)):
 # VLESS Relay — جدا شده به relay_vless.py (دست نخورده)
 # ══════════════════════════════════════════════════════════════════════════════
 
-from relay_vless import (
-    RELAY_BUF,
-    parse_vless_header,
-    check_and_use,
-    relay_ws_to_tcp,
-    relay_tcp_to_ws,
-    websocket_tunnel,
-)
+from relay_vless import RELAY_BUF, websocket_tunnel
 
 app.add_api_websocket_route("/ws/{uuid}", websocket_tunnel)
 
-# ══════════════════════════════════════════════════════════════════════════════
-# XHTTP — Siz10a XHTTP Ultra (ترابرد جدید، جدا از VLESS/WS، هر ۳ مد)
-# ══════════════════════════════════════════════════════════════════════════════
-from xhttp_siz10 import router as xhttp_router
-app.include_router(xhttp_router)
 
 # ═══════════════════════════���══════════════════════════════════════════════════
 # ربات مدیریت تلگرام (اختیاری — فقط اگه TELEGRAM_BOT_TOKEN ست شده باشه فعال می‌شه)

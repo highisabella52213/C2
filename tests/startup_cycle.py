@@ -33,7 +33,6 @@ class Server:
     def __init__(self,c): self.config=c
     def run(self,*a,**k): Server.ran=True
 uvicorn.Config=Config; uvicorn.Server=Server; sys.modules['uvicorn']=uvicorn
-x=types.ModuleType('xhttp_siz10'); x.router=object(); sys.modules['xhttp_siz10']=x
 t=types.ModuleType('telegram_bot')
 async def noop(*a,**k): pass
 t.start_bot=noop; t.stop_bot=noop; sys.modules['telegram_bot']=t
@@ -50,11 +49,8 @@ try:
     exec(code,module.__dict__)
     assert sys.modules.get('main') is module
     assert module.RELAY_BUF > 0
-    extra=json.loads(module._xhttp_extra_json('auto'))
-    assert extra['scMaxEachPostBytes']==4_000_000
-    assert extra['scMinPostsIntervalMs']==1
-    assert extra['xmux']['maxConnections']=='4-8'
     assert Server.ran
-    print(f"python-main startup: alias=True RELAY_BUF={module.RELAY_BUF} xhttp-post={extra['scMaxEachPostBytes']} server.run=True OK")
+    assert module.PROTOCOLS == ('vless-ws',)
+    print(f"python-main startup: alias=True RELAY_BUF={module.RELAY_BUF} protocols=ws-only server.run=True OK")
 finally:
     if old_main is not None: sys.modules['__main__']=old_main

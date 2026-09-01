@@ -656,7 +656,6 @@ a{color:inherit;text-decoration:none}
 .cfg-actions{display:flex;gap:5px;flex-shrink:0}
 .proto-chip{font-size:9px;padding:3px 8px;border-radius:6px;font-weight:700;white-space:nowrap}
 .pc-ws{background:var(--accent-d);color:var(--accent2)}
-.pc-xhttp{background:var(--purple-bg);color:#D8705A}
 .pc-ultra{background:var(--green-bg);color:var(--green-t)}
 .pc-auto{background:var(--accent-d);color:var(--accent)}
 .cfg-sub-tag{font-size:9.5px;color:var(--t3);display:flex;align-items:center;gap:4px;white-space:nowrap}
@@ -980,7 +979,7 @@ body{font-size:14.5px}
     </div>
   </div>
   <div class="metrics">
-    <div class="metric"><div class="m-icon"><i class="ti ti-plug-connected"></i></div><div class="m-label">Active connections</div><div class="m-val" id="m-conns">—</div><div class="m-sub"><span class="dot dg pulse"></span> WebSocket / XHTTP live</div></div>
+    <div class="metric"><div class="m-icon"><i class="ti ti-plug-connected"></i></div><div class="m-label">Active connections</div><div class="m-val" id="m-conns">—</div><div class="m-sub"><span class="dot dg pulse"></span> WebSocket live</div></div>
     <div class="metric"><div class="m-icon"><i class="ti ti-transfer"></i></div><div class="m-label">Total traffic</div><div class="m-val" id="m-traffic">—<span class="m-unit">MB</span></div><div class="m-sub">since start-up</div></div>
     <div class="metric suc"><div class="m-icon suc"><i class="ti ti-link"></i></div><div class="m-label">Active configs</div><div class="m-val" id="m-alinks">—</div><div class="m-sub" id="m-lsub">of total</div></div>
     <div class="metric pur"><div class="m-icon pur"><i class="ti ti-folders"></i></div><div class="m-label">Sub Groups</div><div class="m-val" id="m-subs">—</div><div class="m-sub">Active</div></div>
@@ -1007,7 +1006,6 @@ body{font-size:14.5px}
       <div class="card-title"><i class="ti ti-activity"></i> Service status</div>
       <div class="sr"><span class="sr-k"><i class="ti ti-shield-check"></i> UUID Auth</span><span class="sr-v" style="color:var(--green-t)">● Active · strict</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-circle-check"></i> VLESS / WS Tunnel</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-bolt"></i> Siz10a XHTTP Ultra</span><span class="sr-v" style="color:var(--green-t)">● Active · 3 mode</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v9</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-rss"></i> Subscription API</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-clock"></i> Uptime</span><span class="sr-v" id="uptime-inline">—</span></div>
@@ -1081,42 +1079,14 @@ body{font-size:14.5px}
       <div class="cp-block mb16">
         <div class="cp-block-label"><i class="ti ti-plug-connected"></i> Transport protocol</div>
         <select id="nl-proto" style="display:none">
-          <option value="vless-ws">VLESS / WebSocket</option>
-          <option value="xhttp-packet-up">XHTTP Ultra · packet-up</option>
-          <option value="xhttp-stream-up">XHTTP Ultra · stream-up</option>
-          <option value="xhttp-stream-one">XHTTP Ultra · stream-one</option>
-          <option value="xhttp-auto">XHTTP Ultra · auto</option>
+          <option value="vless-ws">VLESS / WebSocket Turbo</option>
         </select>
         <div class="proto-cards">
           <div class="proto-card active" data-val="vless-ws" onclick="selectProto('vless-ws',this)">
             <div class="proto-card-check"><i class="ti ti-check"></i></div>
             <div class="proto-card-icon"><i class="ti ti-link"></i></div>
             <div class="proto-card-title">VLESS / WS</div>
-            <div class="proto-card-desc">Stable, works everywhere</div>
-          </div>
-          <div class="proto-card" data-val="xhttp-packet-up" onclick="selectProto('xhttp-packet-up',this)">
-            <div class="proto-card-check"><i class="ti ti-check"></i></div>
-            <div class="proto-card-icon"><i class="ti ti-bolt"></i></div>
-            <div class="proto-card-title">XHTTP · packet-up</div>
-            <div class="proto-card-desc">CDN friendly</div>
-          </div>
-          <div class="proto-card" data-val="xhttp-stream-up" onclick="selectProto('xhttp-stream-up',this)">
-            <div class="proto-card-check"><i class="ti ti-check"></i></div>
-            <div class="proto-card-icon"><i class="ti ti-rocket"></i></div>
-            <div class="proto-card-title">XHTTP · stream-up</div>
-            <div class="proto-card-desc">Best TLS/H2 speed</div>
-          </div>
-          <div class="proto-card" data-val="xhttp-stream-one" onclick="selectProto('xhttp-stream-one',this)">
-            <div class="proto-card-check"><i class="ti ti-check"></i></div>
-            <div class="proto-card-icon"><i class="ti ti-arrows-exchange"></i></div>
-            <div class="proto-card-title">XHTTP · stream-one</div>
-            <div class="proto-card-desc">Full-duplex · proxy dependent</div>
-          </div>
-          <div class="proto-card" data-val="xhttp-auto" onclick="selectProto('xhttp-auto',this)">
-            <div class="proto-card-check"><i class="ti ti-check"></i></div>
-            <div class="proto-card-icon"><i class="ti ti-wand"></i></div>
-            <div class="proto-card-title">XHTTP · auto</div>
-            <div class="proto-card-desc">Xray selects the compatible mode</div>
+            <div class="proto-card-desc">Turbo · zero-copy · maximum throughput</div>
           </div>
         </div>
       </div>
@@ -1139,10 +1109,8 @@ body{font-size:14.5px}
         <div class="cp-block">
           <div class="cp-block-label"><i class="ti ti-antenna-bars-5"></i> ALPN</div>
           <select class="cp-input-full fs" id="nl-alpn-preset" onchange="onAlpnPresetChange()">
-            <option value="">Protocol default</option>
-            <option value="h2,http/1.1">h2,http/1.1</option>
+            <option value="">WS default (http/1.1)</option>
             <option value="http/1.1">http/1.1</option>
-            <option value="h2">h2</option>
             <option value="__custom__">Custom...</option>
           </select>
           <div class="cp-mini-row">
@@ -1320,7 +1288,7 @@ body{font-size:14.5px}
       <div class="card-title"><i class="ti ti-lock"></i> Encryption</div>
       <div class="sr"><span class="sr-k"><i class="ti ti-certificate"></i> TLS/HTTPS</span><span class="sr-v" style="color:var(--green-t)">● Enabled (443)</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-fingerprint"></i> Fingerprint</span><span class="sr-v">Chrome Spoof</span></div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-network"></i> Protocols</span><span class="sr-v">VLESS/WS + XHTTP Ultra</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-network"></i> Protocols</span><span class="sr-v">VLESS / WebSocket Turbo</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-key"></i> Password hash</span><span class="sr-v">SHA-256+Salt</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-cookie"></i> Session</span><span class="sr-v">HttpOnly · 7 days</span></div>
     </div>
@@ -1345,7 +1313,7 @@ body{font-size:14.5px}
 <section class="pg" id="pg-testws">
   <div class="topbar"><div><div class="tb-title"><i class="ti ti-wifi"></i> WebSocket Test</div></div></div>
   <div class="card" style="max-width:660px">
-    <div class="cl amber" style="margin-top:0;margin-bottom:12px"><i class="ti ti-alert-triangle"></i><span>Only registered, active UUIDs can connect (this tests VLESS/WS only — test XHTTP from your client).</span></div>
+    <div class="cl amber" style="margin-top:0;margin-bottom:12px"><i class="ti ti-alert-triangle"></i><span>Only registered and active UUIDs can connect. This build supports VLESS over WebSocket only.</span></div>
     <div class="form-row" style="margin-bottom:12px">
       <div class="fg" style="flex:1"><label>UUID (must already exist in Configs)</label><input class="fi" id="ws-uuid" placeholder="UUID of an active config" style="width:100%"></div>
       <button class="btn btn-p" onclick="wsConn()"><i class="ti ti-plug-connected"></i> connection</button>
@@ -1538,7 +1506,7 @@ function expChip(exp,expired){
   return `<span class="exp-chip ec-ok"><i class="ti ti-calendar-check"></i> ${toFa(d)} days left</span>`;
 }
 function protoBadge(p){
-  const m={'vless-ws':['VLESS · WS','pc-ws'],'xhttp-packet-up':['XHTTP · packet-up','pc-xhttp'],'xhttp-stream-up':['XHTTP · stream-up','pc-xhttp'],'xhttp-stream-one':['XHTTP · stream-one','pc-ultra'],'xhttp-auto':['XHTTP · auto','pc-auto']};
+  const m={'vless-ws':['VLESS · WS Turbo','pc-ws']};
   const v=m[p]||m['vless-ws'];
   return `<span class="proto-chip ${v[1]}">${v[0]}</span>`;
 }
@@ -2091,7 +2059,7 @@ async function loadConns(){
       const secs=c.connected_at?Math.max(0,Math.floor((Date.now()-new Date(c.connected_at).getTime())/1000)):0;
       const dur=secs<60?secs+' sec':secs<3600?Math.floor(secs/60)+' min':Math.floor(secs/3600)+' h';
       const durPct=Math.min(100,Math.round((secs/maxDur)*100));
-      const protoVal=c.transport==='vless-ws'?'vless-ws':(c.transport||'').replace('xhttp-','xhttp-');
+      const protoVal='vless-ws';
       return `<div class="conn-card-v2">
         <div class="conn-card-v2-glow"></div>
         <div class="conn-card-v2-top">
@@ -2233,9 +2201,9 @@ function initCharts(){
 
   ch2=new Chart(document.getElementById('ch2'),{
     type:'doughnut',
-    data:{labels:['VLESS/WS','XHTTP Ultra','HTTP Proxy'],datasets:[{
-      data:[55,35,10],
-      backgroundColor:['#189BAD','#12A08B','#A8351C'],
+    data:{labels:['VLESS/WS Turbo','HTTP Proxy'],datasets:[{
+      data:[90,10],
+      backgroundColor:['#189BAD','#A8351C'],
       borderColor:getComputedStyle(document.documentElement).getPropertyValue('--card')||'#171C1D',
       borderWidth:4,hoverOffset:10,borderRadius:6,spacing:3
     }]},
@@ -2579,10 +2547,7 @@ function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function fmtB(b){if(!b||b===0)return '0 B';if(b<1024)return b+' B';if(b<1024**2)return (b/1024).toFixed(1)+' KB';if(b<1024**3)return (b/1024**2).toFixed(2)+' MB';return (b/1024**3).toFixed(2)+' GB'}
 function nowTime(){return new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}
 function protoChip(p){
-  if(p==='xhttp-stream-one')return '<span class="chip chip-proto"><i class="ti ti-arrows-exchange"></i> XHTTP · stream-one</span>';
-  if(p==='xhttp-auto')return '<span class="chip chip-proto"><i class="ti ti-wand"></i> XHTTP · auto</span>';
-  if(p&&p.startsWith('xhttp'))return '<span class="chip chip-proto"><i class="ti ti-bolt"></i> '+esc(p.replace('xhttp-','XHTTP · '))+'</span>';
-  return '<span class="chip chip-proto">VLESS · WS</span>';
+  return '<span class="chip chip-proto">VLESS · WS Turbo</span>';
 }
 function copyText(text,msg){
   navigator.clipboard.writeText(text).then(()=>toast(msg,'ok')).catch(()=>toast('Copy failed','err'));

@@ -529,17 +529,6 @@ async def _open_upstream(address: str, port: int):
     return reader, writer
 
 
-# Public shared data-plane helpers used by XHTTP. Keeping both transports on the
-# same connector means IPv6/IPv4 racing, route memory and socket tuning stay
-# identical instead of slowly diverging into two implementations.
-async def open_upstream(address: str, port: int):
-    return await _open_upstream(address, port)
-
-
-def tune_upstream_socket(writer: asyncio.StreamWriter, high_water: int = WRITE_HW_START) -> None:
-    _tune_socket(writer, high_water)
-
-
 # لایه‌ی «آی‌پی خروجی» (ProxyIP / پروکسی زنجیره‌ای) از همین کانکتور استفاده می‌کند،
 # پس اتصال به ProxyIP هم Happy-Eyeballs، حافظه‌ی مسیر و تیونینگ سوکت را می‌گیرد.
 outbound.set_dialer(_open_upstream)
@@ -597,11 +586,6 @@ def _parse_vless_header(chunk: bytes | bytearray | memoryview):
     return command, address, port, bytes(view[pos:])
 
 
-async def parse_vless_header(chunk: bytes | bytearray | memoryview):
-    """Async compatibility wrapper used by the XHTTP module."""
-    return _parse_vless_header(chunk)
-
-
 async def check_and_use(uid: str, nbytes: int) -> bool:
     if nbytes <= 0:
         return True
@@ -620,11 +604,6 @@ def _speed_limited(uid: str) -> bool:
     return bool(link and int(link.get("speed_limit_bytes", 0) or 0) > 0)
 
 
-def _account_stage(gate: QuotaGate, nbytes: int) -> int:
-    """Non-async per-frame hot path: -1 denied, 0 continue, >0 commit batch."""
-    return gate.stage(nbytes)
-
-
 # ── Relay: WebSocket -> target TCP ──────────────────────────────────────────
 async def relay_ws_to_tcp(
     ws: WebSocket,
@@ -640,6 +619,14 @@ async def relay_ws_to_tcp(
     limited = _speed_limited(uid)
     transport = writer.transport
     ticks = 0
+    # Cache bound methods used for every WS frame; this removes repeated
+    # attribute lookups from the upload hot loop without changing semantics.
+    write = writer.write
+    buffer_size = transport.get_write_buffer_size
+    receive_nowait = io.receive_nowait
+    stage = gate.stage
+    commit = gate.commit
+    throttle_local = throttle
 
     stop = False
     try:
@@ -658,9 +645,9 @@ async def relay_ws_to_tcp(
                     data = text.encode() if text else None
                 if data:
                     nbytes = len(data)
-                    account_batch = _account_stage(gate, nbytes)
+                    account_batch = stage(nbytes)
                     if account_batch < 0 or (
-                        account_batch and not await gate.commit(account_batch)
+                        account_batch and not await commit(account_batch)
                     ):
                         await ws.close(code=1008, reason="quota/disabled/unknown")
                         stop = True
@@ -670,13 +657,13 @@ async def relay_ws_to_tcp(
                     if not (ticks & 127):
                         limited = _speed_limited(uid)
                     if limited:
-                        await throttle(uid, nbytes)
+                        await throttle_local(uid, nbytes)
                     if conn is not None:
                         conn["bytes"] += nbytes
-                    writer.write(data)
+                    write(data)
                     burst_bytes += nbytes
 
-                if transport.get_write_buffer_size() >= flow.high_water:
+                if buffer_size() >= flow.high_water:
                     started = time.monotonic()
                     await writer.drain()
                     flow.observe((time.monotonic() - started) * 1000.0, transport)
@@ -687,7 +674,7 @@ async def relay_ws_to_tcp(
                     or burst_bytes >= WS_UPLOAD_BURST_BYTES
                 ):
                     break
-                message = io.receive_nowait()
+                message = receive_nowait()
     except (WebSocketDisconnect, ConnectionError, OSError):
         pass
     finally:
@@ -763,9 +750,14 @@ async def relay_tcp_to_ws(
     limited = _speed_limited(uid)
     ticks = 0
     bulk_streak = 0
+    # Same hot-path caching for target -> WS frames.
+    send_bytes = io.send_bytes
+    stage = gate.stage
+    commit = gate.commit
+    throttle_local = throttle
 
     try:
-        await io.send_bytes(b"\x00\x00")
+        await send_bytes(b"\x00\x00")
         while True:
             data = await _read_stream_chunk(
                 reader, READ_MAX, bulk_streak >= BULK_STREAK_TRIGGER
@@ -779,9 +771,9 @@ async def relay_tcp_to_ws(
             elif nbytes < READ_MIN // 4:
                 bulk_streak = max(bulk_streak - 1, 0)
 
-            account_batch = _account_stage(gate, nbytes)
+            account_batch = stage(nbytes)
             if account_batch < 0 or (
-                account_batch and not await gate.commit(account_batch)
+                account_batch and not await commit(account_batch)
             ):
                 await ws.close(code=1008, reason="quota/disabled/unknown")
                 break
@@ -790,11 +782,11 @@ async def relay_tcp_to_ws(
             if not (ticks & 127):
                 limited = _speed_limited(uid)
             if limited:
-                await throttle(uid, nbytes)
+                await throttle_local(uid, nbytes)
 
             if conn is not None:
                 conn["bytes"] += nbytes
-            await io.send_bytes(data)
+            await send_bytes(data)
     except (WebSocketDisconnect, ConnectionError, OSError):
         pass
     finally:

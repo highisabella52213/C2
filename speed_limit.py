@@ -101,8 +101,7 @@ class QuotaGate:
     """Batch usage checks while keeping a synchronous per-frame hot path.
 
     ``stage`` is intentionally non-async. WS calls it for every data frame and
-    awaits ``commit`` only when a batch is actually ready. ``add`` preserves the
-    original async API used by XHTTP and older callers.
+    awaits ``commit`` only when a batch is actually ready. ``add`` preserves a convenient asynchronous compatibility API.
     """
 
     __slots__ = (
