@@ -51,6 +51,28 @@ try:
     assert module.RELAY_BUF > 0
     assert Server.ran
     assert module.PROTOCOLS == ('vless-ws',)
-    print(f"python-main startup: alias=True RELAY_BUF={module.RELAY_BUF} protocols=ws-only server.run=True OK")
+
+    # Address is the network dial target; Host/SNI remain the TLS routing name.
+    from urllib.parse import urlsplit, parse_qs
+    uid = "11111111-2222-3333-4444-555555555555"
+    ip_link = module.generate_vless_link(uid, "app.example.com", address="104.16.1.1")
+    ip_url = urlsplit(ip_link)
+    ip_qs = parse_qs(ip_url.query)
+    assert ip_url.hostname == "104.16.1.1"
+    assert ip_qs["host"] == ["app.example.com"] and ip_qs["sni"] == ["app.example.com"]
+
+    custom_link = module.generate_vless_link(uid, "app.example.com", address="104.16.1.1", sni="front.example.org")
+    custom_qs = parse_qs(urlsplit(custom_link).query)
+    assert custom_qs["host"] == ["front.example.org"] and custom_qs["sni"] == ["front.example.org"]
+
+    ipv6_link = module.generate_vless_link(uid, "app.example.com", address="2606:4700::1")
+    assert "@[2606:4700::1]:443?" in ipv6_link
+    ipv6_qs = parse_qs(urlsplit(ipv6_link).query)
+    assert ipv6_qs["sni"] == ["app.example.com"]
+
+    domain_link = module.generate_vless_link(uid, "app.example.com", address="edge.example.net")
+    domain_qs = parse_qs(urlsplit(domain_link).query)
+    assert domain_qs["host"] == ["edge.example.net"] and domain_qs["sni"] == ["edge.example.net"]
+    print(f"python-main startup: alias=True RELAY_BUF={module.RELAY_BUF} protocols=ws-only endpoints=domain+ipv4+ipv6 server.run=True OK")
 finally:
     if old_main is not None: sys.modules['__main__']=old_main

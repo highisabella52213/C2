@@ -1,4 +1,4 @@
-# pages.py  -  Panel UI v9.5
+# pages.py  -  Lumen Relay UI v11
 # contains: LOGIN_HTML, DASHBOARD_HTML, get_public_page_html()
 
 
@@ -6,7 +6,7 @@ LOGIN_HTML = r"""<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login</title>
+<title>Lumen Relay · Sign in</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
@@ -99,6 +99,15 @@ input[type=password]{padding:15px 46px 15px 16px;font-size:15px;border-radius:12
 .aspin-lg b{width:3px;height:8px;margin-left:-1.5px;transform-origin:1.5px 15px}
 .aspin-box{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:40px 20px;color:var(--t3);font-size:12.5px}
 @media(prefers-reduced-motion:reduce){.aspin b{animation:none;opacity:.45}}
+
+/* Lumen sign-in · Material 3 Expressive */
+:root{color-scheme:dark;--md-sys-color-primary:#BDC7FF;--md-sys-color-on-primary:#22305F;--md-sys-color-primary-container:#394777;--md-sys-color-on-primary-container:#DEE1FF;--md-sys-color-secondary-container:#47465C;--md-sys-color-on-secondary-container:#E4E1FA;--md-sys-color-tertiary:#F2B99A;--md-sys-color-tertiary-container:#6D3B22;--md-sys-color-on-tertiary-container:#FFDCC8;--md-sys-color-error-container:#93000A;--md-sys-color-on-error-container:#FFDAD6;--md-sys-color-surface:#111318;--md-sys-color-surface-container-low:#191B21;--md-sys-color-surface-container:#1D1F25;--md-sys-color-surface-container-high:#27292F;--md-sys-color-on-surface:#E3E2E9;--md-sys-color-on-surface-variant:#C6C5D0;--md-sys-color-outline:#90909B;--md-sys-color-outline-variant:#46464F;--md-sys-shape-corner-small:8px;--md-sys-shape-corner-large:16px;--md-sys-shape-corner-extra-large:28px;--md-sys-shape-corner-extra-large-increased:36px;--md-sys-shape-corner-full:999px;--md-sys-motion-easing-emphasized:cubic-bezier(.2,0,0,1);--md-sys-motion-easing-emphasized-decelerate:cubic-bezier(.05,.7,.1,1);--bg:var(--md-sys-color-surface);--card:var(--md-sys-color-surface-container-low);--accent:var(--md-sys-color-primary);--text:var(--md-sys-color-on-surface);--dim:var(--md-sys-color-outline);--mid:var(--md-sys-color-on-surface-variant);--border:var(--md-sys-color-outline-variant)}
+body{font-family:'Inter','Vazirmatn','Segoe UI',sans-serif;background:var(--md-sys-color-surface);padding:28px;isolation:isolate}.bg{background:radial-gradient(circle at 15% 80%,color-mix(in srgb,var(--md-sys-color-tertiary) 19%,transparent),transparent 34rem),radial-gradient(circle at 82% 9%,color-mix(in srgb,var(--md-sys-color-primary) 22%,transparent),transparent 38rem),var(--md-sys-color-surface)}.grid{background-image:linear-gradient(color-mix(in srgb,var(--md-sys-color-outline-variant) 30%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--md-sys-color-outline-variant) 30%,transparent) 1px,transparent 1px);background-size:64px 64px;mask-image:linear-gradient(135deg,#000,transparent 74%)}.orb{filter:blur(80px);animation:md-orbit 14s var(--md-sys-motion-easing-emphasized) infinite alternate}.o1{width:42vw;height:42vw;background:color-mix(in srgb,var(--md-sys-color-primary) 12%,transparent);top:-18vw;right:-8vw}.o2{width:36vw;height:36vw;background:color-mix(in srgb,var(--md-sys-color-tertiary) 9%,transparent);bottom:-18vw;left:-8vw}@keyframes md-orbit{to{transform:translate3d(24px,-16px,0) scale(1.08)}}
+.wrap{max-width:1040px;display:flex;justify-content:flex-end;position:relative}.wrap::before{content:'FAST · PRIVATE · CONTROLLED';position:absolute;left:0;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:center;font-size:.69rem;font-weight:700;letter-spacing:.26em;color:var(--md-sys-color-outline)}.card{width:460px;min-height:570px;display:flex;flex-direction:column;justify-content:center;padding:54px 48px 44px;border:1px solid var(--md-sys-color-outline-variant);border-radius:var(--md-sys-shape-corner-extra-large-increased) var(--md-sys-shape-corner-extra-large-increased) var(--md-sys-shape-corner-extra-large-increased) 72px;background:color-mix(in srgb,var(--md-sys-color-surface-container-low) 94%,transparent);box-shadow:0 30px 90px rgba(4,6,14,.46),inset 0 1px 0 color-mix(in srgb,var(--md-sys-color-primary) 15%,transparent);backdrop-filter:blur(28px) saturate(1.15);animation:md-card-in 650ms var(--md-sys-motion-easing-emphasized-decelerate)}@keyframes md-card-in{from{opacity:0;transform:translateY(32px) scale(.96)}to{opacity:1;transform:none}}.card::before{content:'11';position:absolute;right:38px;top:34px;width:52px;height:52px;display:grid;place-items:center;border-radius:18px;background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container);font-weight:800;box-shadow:0 12px 26px rgba(4,6,14,.22)}
+.brand{border:0;margin:0 0 38px;padding:0}.brand::before{content:'';width:54px;height:54px;display:block;border-radius:18px;background:var(--md-sys-color-primary);box-shadow:inset 0 0 0 10px var(--md-sys-color-primary-container);margin-right:15px}.brand-name{font-size:1.1rem;color:var(--md-sys-color-on-surface)}.brand-sub{font-size:.75rem;color:var(--md-sys-color-on-surface-variant)}h1{font-size:2.25rem;line-height:1.12;letter-spacing:-.045em;margin-bottom:12px}.sub{font-size:.88rem;line-height:1.75;color:var(--md-sys-color-on-surface-variant);margin-bottom:30px}.field label{font-size:.76rem;color:var(--md-sys-color-on-surface-variant);margin:0 0 9px 4px}.inp-wrap{position:relative}input[type=password]{min-height:56px;padding:15px 16px 15px 50px;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-small);background:var(--md-sys-color-surface-container);color:var(--md-sys-color-on-surface);font-size:.95rem}input[type=password]:focus{border-color:var(--md-sys-color-primary);background:var(--md-sys-color-surface-container-high);box-shadow:0 0 0 3px color-mix(in srgb,var(--md-sys-color-primary) 22%,transparent)}.ic{left:17px;color:var(--md-sys-color-on-surface-variant)}.btn{min-height:56px;border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);box-shadow:none;font-size:.9rem;transition:transform 180ms var(--md-sys-motion-easing-emphasized),border-radius 180ms}.btn:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(4,6,14,.28)}.btn:active{transform:scale(.97);border-radius:var(--md-sys-shape-corner-large)}.err{border:0;background:var(--md-sys-color-error-container);color:var(--md-sys-color-on-error-container);border-radius:var(--md-sys-shape-corner-large)}.footer{border-color:var(--md-sys-color-outline-variant);color:var(--md-sys-color-outline);margin-top:32px}.footer i{color:var(--md-sys-color-primary)}
+@media(max-width:700px){body{padding:16px}.wrap{justify-content:center}.wrap::before{display:none}.card{width:min(100%,460px);min-height:0;padding:42px 28px 32px;border-radius:var(--md-sys-shape-corner-extra-large);}.card::before{right:24px;top:24px}h1{font-size:1.9rem}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
 </style>
 </head>
 <body>
@@ -107,10 +116,10 @@ input[type=password]{padding:15px 46px 15px 16px;font-size:15px;border-radius:12
 <div class="wrap">
   <div class="card">
     <div class="brand">
-      <div><div class="brand-name">Admin Panel</div><div class="brand-sub">Secure administrator access</div></div>
+      <div><div class="brand-name">Lumen Relay</div><div class="brand-sub">Private operator console</div></div>
     </div>
-    <h1>Welcome back</h1>
-    <p class="sub">Enter your administrator password to open the dashboard.</p>
+    <h1>Enter the relay room</h1>
+    <p class="sub">A focused control surface for routes, subscribers, and live traffic.</p>
     <div class="err" id="err"><i class="ti ti-alert-circle"></i><span id="err-text"></span></div>
     <form id="form">
       <div class="field">
@@ -148,7 +157,7 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>panel</title>
+<title>Lumen Relay · Console</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
@@ -821,6 +830,186 @@ body{font-size:14.5px}
 .aspin-lg b{width:3px;height:8px;margin-left:-1.5px;transform-origin:1.5px 15px}
 .aspin-box{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:40px 20px;color:var(--t3);font-size:12.5px}
 @media(prefers-reduced-motion:reduce){.aspin b{animation:none;opacity:.45}}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Lumen Console · Material 3 Expressive web implementation
+   Seed family: indigo / plum / copper. Components consume semantic tokens.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root{
+  color-scheme:dark;
+  --md-sys-color-primary:#BDC7FF;
+  --md-sys-color-on-primary:#22305F;
+  --md-sys-color-primary-container:#394777;
+  --md-sys-color-on-primary-container:#DEE1FF;
+  --md-sys-color-secondary:#C7C5DD;
+  --md-sys-color-on-secondary:#303044;
+  --md-sys-color-secondary-container:#47465C;
+  --md-sys-color-on-secondary-container:#E4E1FA;
+  --md-sys-color-tertiary:#F2B99A;
+  --md-sys-color-on-tertiary:#51250E;
+  --md-sys-color-tertiary-container:#6D3B22;
+  --md-sys-color-on-tertiary-container:#FFDCC8;
+  --md-sys-color-error:#FFB4AB;
+  --md-sys-color-on-error:#690005;
+  --md-sys-color-error-container:#93000A;
+  --md-sys-color-on-error-container:#FFDAD6;
+  --md-sys-color-surface:#111318;
+  --md-sys-color-on-surface:#E3E2E9;
+  --md-sys-color-on-surface-variant:#C6C5D0;
+  --md-sys-color-surface-container-lowest:#0B0E13;
+  --md-sys-color-surface-container-low:#191B21;
+  --md-sys-color-surface-container:#1D1F25;
+  --md-sys-color-surface-container-high:#27292F;
+  --md-sys-color-surface-container-highest:#32343A;
+  --md-sys-color-surface-dim:#111318;
+  --md-sys-color-surface-bright:#37393F;
+  --md-sys-color-outline:#90909B;
+  --md-sys-color-outline-variant:#46464F;
+  --md-sys-color-inverse-surface:#E3E2E9;
+  --md-sys-color-inverse-on-surface:#2E3036;
+  --md-sys-color-inverse-primary:#52639A;
+  --md-ref-typeface-brand:'Roboto Flex','Vazirmatn','Segoe UI',sans-serif;
+  --md-ref-typeface-plain:'Roboto Flex','Vazirmatn','Segoe UI',sans-serif;
+  --md-sys-shape-corner-extra-small:4px;
+  --md-sys-shape-corner-small:8px;
+  --md-sys-shape-corner-medium:12px;
+  --md-sys-shape-corner-large:16px;
+  --md-sys-shape-corner-large-increased:20px;
+  --md-sys-shape-corner-extra-large:28px;
+  --md-sys-shape-corner-extra-large-increased:32px;
+  --md-sys-shape-corner-extra-extra-large:48px;
+  --md-sys-shape-corner-full:9999px;
+  --md-sys-motion-easing-emphasized:cubic-bezier(.2,0,0,1);
+  --md-sys-motion-easing-emphasized-decelerate:cubic-bezier(.05,.7,.1,1);
+  --md-sys-motion-easing-emphasized-accelerate:cubic-bezier(.3,0,.8,.15);
+  --md-sys-motion-duration-short:180ms;
+  --md-sys-motion-duration-medium:320ms;
+  --md-sys-motion-duration-long:500ms;
+  --bg:var(--md-sys-color-surface);
+  --bg2:var(--md-sys-color-surface-container);
+  --bg3:var(--md-sys-color-surface-container-highest);
+  --card:var(--md-sys-color-surface-container-low);
+  --card-b:var(--md-sys-color-outline-variant);
+  --card-bh:var(--md-sys-color-outline);
+  --accent:var(--md-sys-color-primary);
+  --accent2:var(--md-sys-color-primary);
+  --accent-d:var(--md-sys-color-primary-container);
+  --green:#8FD6B8;--green-bg:#173D32;--green-t:#A9EECF;
+  --red:var(--md-sys-color-error);--red-bg:var(--md-sys-color-error-container);--red-t:var(--md-sys-color-on-error-container);
+  --amber:var(--md-sys-color-tertiary);--amber-bg:var(--md-sys-color-tertiary-container);--amber-t:var(--md-sys-color-on-tertiary-container);
+  --purple:var(--md-sys-color-secondary);--purple-bg:var(--md-sys-color-secondary-container);
+  --t1:var(--md-sys-color-on-surface);--t2:var(--md-sys-color-on-surface-variant);--t3:var(--md-sys-color-outline);
+  --sidebar-w:288px;
+  --radius:var(--md-sys-shape-corner-large-increased);
+  --shadow:0 18px 44px rgba(4,6,14,.26),0 3px 10px rgba(4,6,14,.18);
+}
+[data-theme="light"]{
+  color-scheme:light;
+  --md-sys-color-primary:#52639A;
+  --md-sys-color-on-primary:#FFFFFF;
+  --md-sys-color-primary-container:#DEE1FF;
+  --md-sys-color-on-primary-container:#0C1B4B;
+  --md-sys-color-secondary:#5E5D72;
+  --md-sys-color-on-secondary:#FFFFFF;
+  --md-sys-color-secondary-container:#E4E1FA;
+  --md-sys-color-on-secondary-container:#1B1B2C;
+  --md-sys-color-tertiary:#865228;
+  --md-sys-color-on-tertiary:#FFFFFF;
+  --md-sys-color-tertiary-container:#FFDCC8;
+  --md-sys-color-on-tertiary-container:#311300;
+  --md-sys-color-error:#BA1A1A;
+  --md-sys-color-on-error:#FFFFFF;
+  --md-sys-color-error-container:#FFDAD6;
+  --md-sys-color-on-error-container:#410002;
+  --md-sys-color-surface:#FAF8FF;
+  --md-sys-color-on-surface:#1A1B20;
+  --md-sys-color-on-surface-variant:#45464F;
+  --md-sys-color-surface-container-lowest:#FFFFFF;
+  --md-sys-color-surface-container-low:#F4F2FA;
+  --md-sys-color-surface-container:#EEECF4;
+  --md-sys-color-surface-container-high:#E8E7EE;
+  --md-sys-color-surface-container-highest:#E2E1E9;
+  --md-sys-color-surface-dim:#DAD9E1;
+  --md-sys-color-surface-bright:#FAF8FF;
+  --md-sys-color-outline:#767680;
+  --md-sys-color-outline-variant:#C7C6D0;
+  --md-sys-color-inverse-surface:#2F3036;
+  --md-sys-color-inverse-on-surface:#F1F0F7;
+  --md-sys-color-inverse-primary:#BDC7FF;
+  --green:#1C6B50;--green-bg:#B9F2D5;--green-t:#123E30;
+  --shadow:0 20px 46px rgba(40,43,65,.12),0 3px 12px rgba(40,43,65,.08);
+}
+html{background:var(--md-sys-color-surface);scroll-behavior:smooth}
+body{
+  font-family:var(--md-ref-typeface-plain);
+  background:
+    radial-gradient(circle at 78% -8%,color-mix(in srgb,var(--md-sys-color-primary) 15%,transparent) 0,transparent 34rem),
+    radial-gradient(circle at 12% 88%,color-mix(in srgb,var(--md-sys-color-tertiary) 9%,transparent) 0,transparent 30rem),
+    var(--md-sys-color-surface);
+  color:var(--md-sys-color-on-surface);
+  letter-spacing:.01em;
+}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:linear-gradient(color-mix(in srgb,var(--md-sys-color-outline-variant) 22%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--md-sys-color-outline-variant) 18%,transparent) 1px,transparent 1px);background-size:64px 64px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.32),transparent 68%)}
+::selection{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}
+.sidebar{
+  width:var(--sidebar-w);min-height:0;left:16px;top:16px;bottom:16px;
+  border:1px solid var(--md-sys-color-outline-variant);border-right:1px solid var(--md-sys-color-outline-variant);
+  border-radius:var(--md-sys-shape-corner-extra-large-increased);
+  background:color-mix(in srgb,var(--md-sys-color-surface-container) 94%,transparent);
+  backdrop-filter:blur(24px) saturate(1.15);box-shadow:var(--shadow);overflow:hidden;
+}
+.logo{padding:24px 20px 18px;border-bottom:0;gap:14px}
+.logo-img,.mob-logo{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);border-radius:var(--md-sys-shape-corner-large)!important;box-shadow:none;border:1px solid color-mix(in srgb,var(--md-sys-color-primary) 32%,transparent)}
+.logo-img{width:48px;height:48px;font-size:24px}
+.logo-name{font:700 1.05rem/1.35 var(--md-ref-typeface-brand);color:var(--md-sys-color-on-surface)}
+.logo-sub{font-size:.72rem;color:var(--md-sys-color-on-surface-variant);margin-top:3px}
+.nav-wrap{padding:8px 12px 16px}
+.nav-sec{padding:18px 14px 8px;font-size:.67rem;letter-spacing:.12em;color:var(--md-sys-color-outline);font-weight:700}
+.nav-it{min-height:48px;margin:2px 0;padding:10px 14px;border:0;border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);font-size:.86rem;font-weight:560;gap:12px;transition:background var(--md-sys-motion-duration-short),color var(--md-sys-motion-duration-short),transform var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-emphasized)}
+.nav-it i{width:24px;font-size:20px}.nav-it:hover{background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface);transform:translateX(3px)}
+.nav-it.on{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);font-weight:720;border:0}
+.nav-it.on i{color:var(--md-sys-color-primary)}
+.nav-badge{margin-left:auto;background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container);min-width:24px;text-align:center;padding:2px 8px}
+.sb-foot{padding:12px 16px 18px;border-top:1px solid var(--md-sys-color-outline-variant);background:var(--md-sys-color-surface-container-low)}
+.theme-btn,.logout-btn{min-height:44px;border-radius:var(--md-sys-shape-corner-full);border:0;font-weight:650}
+.theme-btn{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+.logout-btn{background:var(--md-sys-color-error-container);color:var(--md-sys-color-on-error-container)}
+.main{margin-left:calc(var(--sidebar-w) + 32px);padding:24px 28px 72px;min-height:100vh}
+.pg{max-width:1240px;margin:0 auto}.pg.on{animation:md-page-in var(--md-sys-motion-duration-long) var(--md-sys-motion-easing-emphasized-decelerate)}
+@keyframes md-page-in{from{opacity:0;transform:translateY(20px) scale(.992)}to{opacity:1;transform:none}}
+.topbar{position:sticky;top:16px;z-index:80;min-height:72px;align-items:center;padding:12px 16px 12px 20px;margin-bottom:24px;border:1px solid var(--md-sys-color-outline-variant);border-radius:var(--md-sys-shape-corner-extra-large);background:color-mix(in srgb,var(--md-sys-color-surface-container-low) 86%,transparent);backdrop-filter:blur(24px) saturate(1.2);box-shadow:0 6px 20px rgba(4,6,14,.08)}
+.tb-title{font:720 1.45rem/1.45 var(--md-ref-typeface-brand);letter-spacing:-.02em;color:var(--md-sys-color-on-surface)}
+.tb-title i{width:40px;height:40px;display:grid;place-items:center;border-radius:var(--md-sys-shape-corner-large);background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);font-size:21px}.tb-sub{font-size:.78rem;color:var(--md-sys-color-on-surface-variant);margin-left:52px;margin-top:-5px}
+.metrics{gap:16px;margin-bottom:24px}.metric{min-height:168px;padding:22px;border:0;border-radius:var(--md-sys-shape-corner-extra-large);background:var(--md-sys-color-surface-container-low);box-shadow:none;display:flex;flex-direction:column;justify-content:space-between}
+.metric:nth-child(1){border-radius:var(--md-sys-shape-corner-extra-extra-large) var(--md-sys-shape-corner-extra-large) var(--md-sys-shape-corner-extra-large) var(--md-sys-shape-corner-extra-large)}
+.metric:nth-child(2){background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}
+.metric:nth-child(3){background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+.metric:nth-child(4){background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container);border-radius:var(--md-sys-shape-corner-extra-large) var(--md-sys-shape-corner-extra-extra-large) var(--md-sys-shape-corner-extra-large) var(--md-sys-shape-corner-extra-large)}
+.metric::after{display:none}.metric:hover{border:0;transform:translateY(-5px) rotateX(1deg);box-shadow:var(--shadow)}
+.m-icon{width:44px;height:44px;border-radius:var(--md-sys-shape-corner-large);background:color-mix(in srgb,currentColor 12%,transparent);color:currentColor}.m-label{font-size:.75rem;color:currentColor;opacity:.78}.m-val{font:760 2.25rem/1.1 var(--md-ref-typeface-brand);color:currentColor}.m-sub{color:currentColor;opacity:.68}
+.card,.vless-box,.create-panel,.conn-card,.sub-card,.traf-chart-card,.srv-panel{border:1px solid var(--md-sys-color-outline-variant);background:var(--md-sys-color-surface-container-low);border-radius:var(--md-sys-shape-corner-extra-large);box-shadow:none}
+.card:hover,.conn-card:hover,.sub-card:hover{border-color:var(--md-sys-color-outline);transform:translateY(-3px);box-shadow:0 14px 36px rgba(4,6,14,.12)}
+.card-title{font:700 1rem/1.5 var(--md-ref-typeface-brand);color:var(--md-sys-color-on-surface)}
+.vless-box{padding:24px;background:var(--md-sys-color-surface-container-lowest);position:relative;overflow:hidden}.vless-box::after{content:'';position:absolute;right:-80px;top:-100px;width:260px;height:260px;border-radius:50%;background:var(--md-sys-color-primary-container);filter:blur(4px);opacity:.22;pointer-events:none}.vl-code{position:relative;border:1px solid var(--md-sys-color-outline-variant);background:var(--md-sys-color-surface-container);border-radius:var(--md-sys-shape-corner-large);padding:18px}
+.btn,.pw-submit,.cp-submit-btn{min-height:48px;border-radius:var(--md-sys-shape-corner-full)!important;border:0;font:700 .86rem/1 var(--md-ref-typeface-plain);padding:0 22px;transition:transform var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-emphasized),filter var(--md-sys-motion-duration-short),background var(--md-sys-motion-duration-short)}
+.btn-p,.pw-submit,.cp-submit-btn{background:var(--md-sys-color-primary)!important;color:var(--md-sys-color-on-primary)!important}.btn-g,.btn-o{background:var(--md-sys-color-secondary-container)!important;color:var(--md-sys-color-on-secondary-container)!important;border:0!important}.btn-pur{background:var(--md-sys-color-tertiary-container)!important;color:var(--md-sys-color-on-tertiary-container)!important}.btn-d{background:var(--md-sys-color-error-container)!important;color:var(--md-sys-color-on-error-container)!important}.btn:hover,.pw-submit:hover,.cp-submit-btn:hover{transform:translateY(-3px);filter:brightness(1.04)}.btn:active,.pw-submit:active,.cp-submit-btn:active{transform:scale(.97);border-radius:var(--md-sys-shape-corner-large)!important}
+.btn-icon{width:48px!important;min-width:48px;padding:0!important}.badge,.proto-chip,.chip,.cfg-sub-tag,.endpoint-status{border-radius:var(--md-sys-shape-corner-full);font-weight:680}.badge{padding:7px 12px}.bg-blue,.pc-ws{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}.bg-purple{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+.create-panel{overflow:hidden;border:0;background:var(--md-sys-color-surface-container-lowest);box-shadow:0 20px 55px rgba(4,6,14,.12)}
+.cp-head{padding:26px 28px;background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);border:0}.cp-head-icon{width:56px;height:56px;border-radius:var(--md-sys-shape-corner-large-increased);background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);font-size:27px}.cp-head-title{font:760 1.35rem/1.4 var(--md-ref-typeface-brand)}.cp-head-sub{color:var(--md-sys-color-on-primary-container);opacity:.74}.cp-body{padding:28px;display:grid;gap:20px}.cp-block{background:var(--md-sys-color-surface-container-low);border:0;border-radius:var(--md-sys-shape-corner-large-increased);padding:20px}.cp-row{gap:16px}.cp-block-label{font:700 .8rem/1.4 var(--md-ref-typeface-plain);color:var(--md-sys-color-on-surface);margin-bottom:12px}.cp-block-label i{color:var(--md-sys-color-primary)}
+.fi,.fs,.cp-input-full,.modal-v2-input,.subs-search input,.ob-field input,.ob-field select,.ob-field textarea{min-height:52px;border:1px solid var(--md-sys-color-outline)!important;border-radius:var(--md-sys-shape-corner-small)!important;background:var(--md-sys-color-surface-container-lowest)!important;color:var(--md-sys-color-on-surface)!important;padding:13px 15px;outline:0;transition:border-color var(--md-sys-motion-duration-short),box-shadow var(--md-sys-motion-duration-short),background var(--md-sys-motion-duration-short)}
+.fi:focus,.fs:focus,.cp-input-full:focus,.modal-v2-input:focus,.subs-search input:focus,.ob-field input:focus,.ob-field select:focus,.ob-field textarea:focus{border-color:var(--md-sys-color-primary)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--md-sys-color-primary) 22%,transparent);background:var(--md-sys-color-surface-container-low)!important}.chip{min-height:36px;display:inline-flex;align-items:center;padding:0 14px;background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface-variant);border:0}.chip.active{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+.endpoint-studio{padding:0;overflow:hidden;background:var(--md-sys-color-surface-container)}.endpoint-studio-head{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 22px;border-bottom:1px solid var(--md-sys-color-outline-variant)}.endpoint-studio-sub{font-size:.77rem;color:var(--md-sys-color-on-surface-variant);margin-top:3px}.endpoint-status{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);font-size:.72rem;white-space:nowrap}.endpoint-status.custom{background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container)}.endpoint-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px 22px}.endpoint-field{padding:18px;background:var(--md-sys-color-surface-container-low);border-radius:var(--md-sys-shape-corner-large-increased)}.endpoint-field>label{display:flex;align-items:center;gap:8px;font-weight:720;margin-bottom:10px}.step-dot{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);font-size:.72rem}.endpoint-custom{animation:md-field-in 260ms var(--md-sys-motion-easing-emphasized-decelerate)}@keyframes md-field-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}.endpoint-help{font-size:.72rem;line-height:1.55;color:var(--md-sys-color-on-surface-variant);margin-top:8px}.endpoint-help code{color:var(--md-sys-color-primary)}.endpoint-ltr{direction:ltr;text-align:left;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.endpoint-preview{display:flex;align-items:center;justify-content:center;gap:18px;padding:16px 22px;background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface)}.endpoint-preview>div{display:flex;align-items:center;gap:10px;min-width:0}.endpoint-preview span{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--md-sys-color-on-surface-variant)}.endpoint-preview code{font-size:.78rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--md-sys-color-primary)}.endpoint-preview>i{color:var(--md-sys-color-tertiary)}
+.proto-card{min-height:112px;border:0!important;border-radius:var(--md-sys-shape-corner-extra-large)!important;background:var(--md-sys-color-secondary-container)!important;color:var(--md-sys-color-on-secondary-container)!important}.proto-card.active{box-shadow:inset 0 0 0 2px var(--md-sys-color-secondary)}.proto-card-icon{background:var(--md-sys-color-primary-container)!important;color:var(--md-sys-color-on-primary-container)!important}
+.cfg-grid{gap:16px}.cfg-card{border:1px solid var(--md-sys-color-outline-variant);border-radius:var(--md-sys-shape-corner-extra-large);background:var(--md-sys-color-surface-container-low);overflow:hidden;transition:transform var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized),border-color var(--md-sys-motion-duration-short),box-shadow var(--md-sys-motion-duration-medium)}.cfg-card:hover{transform:translateY(-4px);border-color:var(--md-sys-color-outline);box-shadow:var(--shadow)}.cfg-row{padding:20px}.cfg-status-dot{width:10px;height:10px;background:var(--green);box-shadow:0 0 0 5px color-mix(in srgb,var(--green) 16%,transparent)}.cfg-uuid-mini{background:var(--md-sys-color-surface-container-high);border-radius:var(--md-sys-shape-corner-full);padding:4px 9px}.cfg-badges-col{align-items:flex-start;max-width:250px}.cfg-sub-tag{padding:4px 9px;background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface-variant);max-width:240px;overflow:hidden;text-overflow:ellipsis}.cfg-sub-tag i{color:var(--md-sys-color-tertiary)}.endpoint-tag{font-family:ui-monospace,SFMono-Regular,monospace}.tog{width:32px;height:52px;background:var(--md-sys-color-surface-container-highest)}.tog::after{width:22px;height:22px;left:5px;top:5px;background:var(--md-sys-color-outline)}.tog.on{background:var(--md-sys-color-primary)}.tog.on::after{top:25px;background:var(--md-sys-color-on-primary)}
+.modal-bg{background:color-mix(in srgb,var(--md-sys-color-surface) 56%,transparent);backdrop-filter:blur(12px)}.modal,.modal-v2,.lmodal{border:1px solid var(--md-sys-color-outline-variant);border-radius:var(--md-sys-shape-corner-extra-large-increased);background:var(--md-sys-color-surface-container-high);box-shadow:0 28px 80px rgba(4,6,14,.38);animation:md-dialog-in 380ms var(--md-sys-motion-easing-emphasized-decelerate)}@keyframes md-dialog-in{from{opacity:0;transform:translateY(24px) scale(.94)}to{opacity:1;transform:none}}.modal-close,.modal-v2-close,.sb-close{width:48px;height:48px;border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);border:0}
+.toast{min-height:52px;padding:14px 18px;border-radius:var(--md-sys-shape-corner-small);background:var(--md-sys-color-inverse-surface);color:var(--md-sys-color-inverse-on-surface);box-shadow:var(--shadow)}
+.mob-top{height:72px;padding:0 16px;background:color-mix(in srgb,var(--md-sys-color-surface-container) 88%,transparent);border-bottom:1px solid var(--md-sys-color-outline-variant);backdrop-filter:blur(20px)}.menu-btn,.theme-mob{width:48px;height:48px;border-radius:var(--md-sys-shape-corner-full);border:0;background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+@media(max-width:1050px){.sidebar{left:12px;top:12px;bottom:12px;transform:translateX(calc(-100% - 28px))}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:92px 24px 72px}.topbar{top:84px}.mob-top{display:flex}.metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:839px){.endpoint-grid{grid-template-columns:1fr}.endpoint-preview{align-items:stretch;flex-direction:column;gap:10px}.endpoint-preview>i{transform:rotate(90deg);align-self:center}.cp-row{grid-template-columns:1fr!important}.cfg-row{padding:18px}.cfg-badges-col{max-width:none}.topbar{position:relative;top:auto}.main{padding:88px 16px 48px}}
+@media(max-width:599px){.metrics{grid-template-columns:1fr}.metric{min-height:150px}.cp-body{padding:16px}.cp-head{padding:22px 18px}.endpoint-studio-head{align-items:flex-start;flex-direction:column}.endpoint-grid{padding:14px}.endpoint-preview{padding:14px}.main{padding-left:12px;padding-right:12px}.topbar{border-radius:var(--md-sys-shape-corner-large-increased);padding:12px}.tb-sub{margin-left:0}.tb-right{width:100%}.tb-right .btn{flex:1}.cfg-actions{display:grid;grid-template-columns:repeat(4,48px);justify-content:start}.modal,.modal-v2{width:calc(100vw - 24px);max-height:calc(100vh - 24px);overflow:auto;border-radius:var(--md-sys-shape-corner-extra-large)}}
+@media(hover:hover){.btn:hover,.nav-it:hover,.chip:hover{filter:brightness(1.04)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
 </style>
 </head>
 <body>
@@ -898,6 +1087,10 @@ body{font-size:14.5px}
     <div class="fg" style="margin-bottom:13px"><label>Expiry (days from now, 0 = keep / unlimited)</label><input class="fi" id="el-exp" type="number" min="0" step="1" style="width:100%"></div>
     <div class="fg" style="margin-bottom:13px"><label>Note</label><input class="fi" id="el-note" style="width:100%"></div>
     <div class="form-row" style="margin-bottom:13px">
+      <div class="fg" style="flex:1"><label>Address (IPv4 / IPv6 / domain)</label><input class="fi endpoint-ltr" id="el-address" placeholder="Empty = current service" style="width:100%"></div>
+      <div class="fg" style="flex:1"><label>TLS SNI (domain only)</label><input class="fi endpoint-ltr" id="el-sni" placeholder="Empty = automatic" style="width:100%"></div>
+    </div>
+    <div class="form-row" style="margin-bottom:13px">
       <div class="fg" style="flex:1"><label>Fingerprint (uTLS)</label>
         <select class="fs" id="el-fp" style="width:100%">
           <option value="chrome">chrome</option>
@@ -932,7 +1125,7 @@ body{font-size:14.5px}
 <div class="mob-top">
   <div class="ml">
     <div class="mob-logo"><i class="ti ti-shield-bolt"></i></div>
-    <span class="mob-title">Admin Panel</span>
+    <span class="mob-title">Lumen Relay</span>
   </div>
   <div class="mob-right">
     <button class="theme-mob" id="theme-mob-btn" onclick="toggleTheme()"><i class="ti ti-sun" id="theme-mob-icon"></i></button>
@@ -944,11 +1137,11 @@ body{font-size:14.5px}
   <button class="sb-close" id="close-sb"><i class="ti ti-x"></i></button>
   <div class="logo">
     <div class="logo-img"><i class="ti ti-shield-bolt"></i></div>
-    <div><div class="logo-name">Admin Panel</div><div class="logo-sub">Version 9.5</div></div>
+    <div><div class="logo-name">Lumen Relay</div><div class="logo-sub">Expressive Console · v11</div></div>
   </div>
   <div class="nav-wrap">
     <div class="nav-sec">Panel</div>
-    <div class="nav-it on" data-pg="overview"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+    <div class="nav-it on" data-pg="overview"><i class="ti ti-layout-dashboard"></i> Control room</div>
     <div class="nav-it" data-pg="links"><i class="ti ti-link-plus"></i> Configs <span class="nav-badge" id="links-nb">0</span></div>
     <div class="nav-it" data-pg="subgroups"><i class="ti ti-folders"></i> Sub Groups <span class="nav-badge" id="subs-nb">0</span></div>
     <div class="nav-it" data-pg="subscriptions"><i class="ti ti-rss"></i> Subscriptions</div>
@@ -971,7 +1164,7 @@ body{font-size:14.5px}
 <main class="main">
 <section class="pg on" id="pg-overview">
   <div class="topbar">
-    <div><div class="tb-title"><i class="ti ti-layout-dashboard"></i> Dashboard</div><div class="tb-sub" id="last-upd">Loading...</div></div>
+    <div><div class="tb-title"><i class="ti ti-layout-dashboard"></i> Relay overview</div><div class="tb-sub" id="last-upd">Loading...</div></div>
     <div class="tb-right">
       <span class="badge bg-green"><span class="dot dg pulse"></span> Active</span>
       <span class="badge bg-blue" id="uptime-badge">—</span>
@@ -1006,7 +1199,7 @@ body{font-size:14.5px}
       <div class="card-title"><i class="ti ti-activity"></i> Service status</div>
       <div class="sr"><span class="sr-k"><i class="ti ti-shield-check"></i> UUID Auth</span><span class="sr-v" style="color:var(--green-t)">● Active · strict</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-circle-check"></i> VLESS / WS Tunnel</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v9</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v11</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-rss"></i> Subscription API</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-clock"></i> Uptime</span><span class="sr-v" id="uptime-inline">—</span></div>
       <div class="sr" style="flex-direction:column;align-items:flex-start;gap:4px">
@@ -1020,7 +1213,7 @@ body{font-size:14.5px}
     </div>
   </div>
   <div class="dash-footer">
-    <span class="df-text">Admin Panel · Version 9.5</span>
+    <span class="df-text">Lumen Relay · Version 11.0</span>
     <a class="df-link" href="https://t.me/Farajian2004f" target="_blank"><i class="ti ti-brand-telegram"></i> t.me/Farajian2004f</a>
     
   </div>
@@ -1035,7 +1228,7 @@ body{font-size:14.5px}
       <div class="cp-head-icon"><i class="ti ti-square-rounded-plus"></i></div>
       <div class="cp-head-text">
         <div class="cp-head-title">Create a new config</div>
-        <div class="cp-head-sub">Random UUID · pick quota, expiry and protocol</div>
+        <div class="cp-head-sub">Build a complete WS route with quota, TLS identity, and delivery controls</div>
       </div>
     </div>
     <div class="cp-body">
@@ -1088,6 +1281,44 @@ body{font-size:14.5px}
             <div class="proto-card-title">VLESS / WS</div>
             <div class="proto-card-desc">Turbo · zero-copy · maximum throughput</div>
           </div>
+        </div>
+      </div>
+      <div class="cp-block endpoint-studio mb16" id="endpoint-studio">
+        <div class="endpoint-studio-head">
+          <div>
+            <div class="cp-block-label" style="margin-bottom:0"><i class="ti ti-route-2"></i> Connection identity</div>
+            <div class="endpoint-studio-sub">Choose the public dial target and the independent TLS identity.</div>
+          </div>
+          <span class="endpoint-status" id="endpoint-status"><i class="ti ti-rosette-discount-check"></i> Verified preset</span>
+        </div>
+        <div class="endpoint-grid">
+          <div class="endpoint-field">
+            <label for="nl-address"><span class="step-dot">1</span> Address</label>
+            <select class="cp-input-full fs endpoint-ltr" id="nl-address" onchange="endpointChoiceChanged('address')">
+              <option value="__auto__">Auto — current service</option>
+              <option value="__custom__">Custom address…</option>
+            </select>
+            <div class="endpoint-custom" id="nl-address-custom-row" style="display:none">
+              <input class="cp-input-full endpoint-ltr" id="nl-address-custom" autocomplete="off" spellcheck="false" placeholder="IPv4, IPv6 or domain" oninput="updateEndpointPreview()">
+            </div>
+            <div class="endpoint-help">The address after <code>@</code>. Ports, paths and URL schemes are intentionally separate.</div>
+          </div>
+          <div class="endpoint-field">
+            <label for="nl-sni"><span class="step-dot">2</span> TLS SNI</label>
+            <select class="cp-input-full fs endpoint-ltr" id="nl-sni" onchange="endpointChoiceChanged('sni')">
+              <option value="__auto__">Auto — safest TLS routing</option>
+              <option value="__custom__">Custom SNI…</option>
+            </select>
+            <div class="endpoint-custom" id="nl-sni-custom-row" style="display:none">
+              <input class="cp-input-full endpoint-ltr" id="nl-sni-custom" autocomplete="off" spellcheck="false" placeholder="front.example.com" oninput="updateEndpointPreview()">
+            </div>
+            <div class="endpoint-help">SNI must be a domain. With a raw IP address, Auto keeps the service domain for TLS.</div>
+          </div>
+        </div>
+        <div class="endpoint-preview" id="endpoint-preview">
+          <div><span>Dial</span><code id="endpoint-preview-address">current service</code></div>
+          <i class="ti ti-arrow-right"></i>
+          <div><span>TLS identity</span><code id="endpoint-preview-sni">current service</code></div>
         </div>
       </div>
       <div class="cp-row">
@@ -1294,7 +1525,7 @@ body{font-size:14.5px}
     </div>
     <div class="card">
       <div class="card-title"><i class="ti ti-shield-check"></i> Access control</div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-id-badge"></i> UUID Auth strict</span><span class="sr-v" style="color:var(--green-t)">● Active v9</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-id-badge"></i> UUID Auth strict</span><span class="sr-v" style="color:var(--green-t)">● Active v11</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-toggle-right"></i> Enable / disable config</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-gauge"></i> Traffic quota</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-calendar-x"></i> Expiry date</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
@@ -1341,7 +1572,7 @@ body{font-size:14.5px}
       </div>
       <div class="srv-tiles">
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-route"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Default port</div><div class="srv-tile-val">443 (TLS) · can be overridden per config</div></div></div>
-        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version</div><div class="srv-tile-val">v9.5</div></div></div>
+        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version</div><div class="srv-tile-val">v11.0</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-brand-fastapi"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Framework</div><div class="srv-tile-val">FastAPI + Uvicorn</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-cloud"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Platform</div><div class="srv-tile-val">Railway</div></div></div>
         <div class="srv-tile" style="grid-column:1/-1"><div class="srv-tile-icon"><i class="ti ti-device-floppy"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Storage</div><div class="srv-tile-val">JSON File (/data)</div></div></div>
@@ -1721,6 +1952,52 @@ async function loadActivity(){
     `).join('');
   }catch(e){console.error(e)}
 }
+let endpointCatalog={default_address:location.hostname,default_sni:location.hostname,addresses:[],snis:[]};
+function endpointOption(value,label){return `<option value="${esc(value)}">${esc(label||value)}</option>`}
+function endpointValue(kind){
+  const sel=document.getElementById('nl-'+kind);
+  if(!sel)return '';
+  if(sel.value==='__custom__')return document.getElementById('nl-'+kind+'-custom').value.trim();
+  if(sel.value==='__auto__')return kind==='address'?(endpointCatalog.default_address||location.hostname):'';
+  return sel.value;
+}
+function endpointChoiceChanged(kind){
+  const custom=document.getElementById('nl-'+kind).value==='__custom__';
+  document.getElementById('nl-'+kind+'-custom-row').style.display=custom?'':'none';
+  if(custom)setTimeout(()=>document.getElementById('nl-'+kind+'-custom').focus(),0);
+  updateEndpointPreview();
+}
+function isIpAddressPreview(value){
+  const v=String(value||'').trim();
+  return v.includes(':')||/^(?:\d{1,3}\.){3}\d{1,3}$/.test(v);
+}
+function updateEndpointPreview(){
+  const address=endpointValue('address')||endpointCatalog.default_address||location.hostname;
+  const explicitSni=endpointValue('sni');
+  const sni=explicitSni||(isIpAddressPreview(address)?(endpointCatalog.default_sni||location.hostname):address);
+  document.getElementById('endpoint-preview-address').textContent=address||'—';
+  document.getElementById('endpoint-preview-sni').textContent=sni||'—';
+  const custom=['address','sni'].some(k=>document.getElementById('nl-'+k).value==='__custom__');
+  const badge=document.getElementById('endpoint-status');
+  badge.className='endpoint-status'+(custom?' custom':'');
+  badge.innerHTML=custom?'<i class="ti ti-adjustments-horizontal"></i> Custom route':'<i class="ti ti-rosette-discount-check"></i> Verified preset';
+}
+async function loadEndpointChoices(){
+  try{
+    const r=await authF('/api/config-endpoints');
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.detail||'Could not load endpoint choices');
+    endpointCatalog=d;
+    const a=document.getElementById('nl-address'),sn=document.getElementById('nl-sni');
+    const aOld=a.value,sOld=sn.value;
+    a.innerHTML=endpointOption('__auto__',`Auto — service · ${d.default_address}`)+(d.addresses||[]).map(x=>endpointOption(x.value,`${x.current?'Service':'Relay'} · ${x.value} · ${x.kind}`)).join('')+endpointOption('__custom__','Custom address…');
+    sn.innerHTML=endpointOption('__auto__','Auto — safest TLS routing')+(d.snis||[]).map(x=>endpointOption(x,x===d.default_sni?`Service TLS · ${x}`:x)).join('')+endpointOption('__custom__','Custom SNI…');
+    if([...a.options].some(o=>o.value===aOld))a.value=aOld;
+    if([...sn.options].some(o=>o.value===sOld))sn.value=sOld;
+    endpointChoiceChanged('address');endpointChoiceChanged('sni');
+  }catch(e){console.error(e);toast(e.message||'Endpoint list unavailable','err')}
+}
+function selectedCreateEndpoints(){return {address:endpointValue('address'),sni:endpointValue('sni')}}
 let allSubsList=[],allLinksList=[];
 async function loadLinks(){
   try{
@@ -1729,7 +2006,9 @@ async function loadLinks(){
     const {subs=[]}=await sr.json();
     allSubsList=subs;allLinksList=links;
     const nlSub=document.getElementById('nl-sub');
+    const selectedSub=nlSub.value;
     nlSub.innerHTML='<option value="">— No group —</option>'+subs.map(s=>`<option value="${esc(s.sub_id)}">${esc(s.name)}</option>`).join('');
+    if(selectedSub&&subs.some(s=>s.sub_id===selectedSub))nlSub.value=selectedSub;
     document.getElementById('links-nb').textContent=links.length;
     document.getElementById('links-pg-cnt').textContent=toFa(links.length)+' config';
     document.getElementById('lsummary-badge').textContent=toFa(links.length);
@@ -1763,6 +2042,8 @@ async function loadLinks(){
       <div class="cfg-divider-v"></div>
       <div class="cfg-badges-col">
         ${protoBadge(l.protocol)}
+        <span class="cfg-sub-tag endpoint-tag" title="Dial address"><i class="ti ti-world-www"></i> ${esc(l.address||location.hostname)}</span>
+        <span class="cfg-sub-tag endpoint-tag" title="TLS SNI"><i class="ti ti-certificate"></i> ${esc(l.sni||((l.address&&!isIpAddressPreview(l.address))?l.address:location.hostname))}</span>
         <span class="cfg-sub-tag" title="Connection port"><i class="ti ti-route"></i> :${l.port||443}</span>
         <span class="cfg-sub-tag" title="Fingerprint"><i class="ti ti-fingerprint"></i> ${esc(l.fingerprint||'chrome')}</span>
         <span class="cfg-sub-tag" title="Connected IPs / limit"><i class="ti ti-users"></i> ${l.connected_ips||0}${l.ip_limit?('/'+l.ip_limit):' (∞)'}</span>
@@ -1799,9 +2080,11 @@ async function createLink(){
   const ip_limit=Number(document.getElementById('nl-iplimit').value)||0;
   const speed_limit_value=Number(document.getElementById('nl-speed').value)||0;
   const speed_limit_unit=document.getElementById('nl-speed-unit').value;
+  const {address,sni}=selectedCreateEndpoints();
   try{
-    const r=await authF('/api/links',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label,limit_value:val||0,limit_unit:unit,expires_days:exp||0,note,sub_id,protocol,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit})});
-    if(!r.ok)throw new Error('failed');
+    const r=await authF('/api/links',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label,limit_value:val||0,limit_unit:unit,expires_days:exp||0,note,sub_id,protocol,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.detail||'Could not create config');
     ['nl-label','nl-val','nl-exp','nl-note','nl-alpn'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('nl-port').value='443';
     document.getElementById('nl-iplimit').value='0';
@@ -1809,7 +2092,7 @@ async function createLink(){
     document.getElementById('nl-alpn-preset').value='';
     document.getElementById('nl-alpn').style.display='none';
     toast('Config created ✓','ok');loadLinks();
-  }catch(e){toast('Could not create','err')}
+  }catch(e){toast(e.message||'Could not create','err')}
 }
 function openEditLink(uuid){
   const l=allLinksList.find(x=>x.uuid===uuid);
@@ -1823,6 +2106,8 @@ function openEditLink(uuid){
   document.getElementById('el-fp').value=l.fingerprint||'chrome';
   document.getElementById('el-alpn').value=l.alpn||'';
   document.getElementById('el-port').value=l.port||443;
+  document.getElementById('el-address').value=l.address||'';
+  document.getElementById('el-sni').value=l.sni||'';
   document.getElementById('el-iplimit').value=l.ip_limit||0;
   if(!l.speed_limit_bytes){document.getElementById('el-speed').value='0';document.getElementById('el-speed-unit').value='MBIT';}
   else{document.getElementById('el-speed').value=(l.speed_limit_bytes*8/1024/1024).toFixed(2);document.getElementById('el-speed-unit').value='MBIT';}
@@ -1841,14 +2126,17 @@ async function saveEditLink(){
   const ip_limit=Number(document.getElementById('el-iplimit').value)||0;
   const speed_limit_value=Number(document.getElementById('el-speed').value)||0;
   const speed_limit_unit=document.getElementById('el-speed-unit').value;
-  const body={label,note,limit_value:val||0,limit_unit:unit,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit};
+  const address=document.getElementById('el-address').value.trim();
+  const sni=document.getElementById('el-sni').value.trim();
+  const body={label,note,limit_value:val||0,limit_unit:unit,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni};
   if(exp&&Number(exp)>0)body.expires_days=Number(exp);
   try{
     const r=await authF('/api/links/'+uuid,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(!r.ok)throw new Error();
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.detail||'Could not update');
     closeModal('modal-edit-link');
     toast('Config updated ✓','ok');loadLinks();
-  }catch(e){toast('Could not update','err')}
+  }catch(e){toast(e.message||'Could not update','err')}
 }
 async function toggleActive(uuid,newState){
   try{const r=await authF('/api/links/'+uuid,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:newState})});if(!r.ok)throw new Error();toast(newState?'Enabled ✓':'Disabled','ok');loadLinks();}catch(e){toast('Error','err')}
@@ -2226,7 +2514,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   initCharts();
   document.getElementById('set-host').textContent=location.host;
   document.getElementById('sub-all-url')&&(document.getElementById('sub-all-url').textContent=location.protocol+'//'+location.host+'/sub-all');
-  fetchStats();fetchDefaultVless();loadLinks();loadSubs();
+  fetchStats();fetchDefaultVless();loadEndpointChoices();loadLinks();loadSubs();
   setInterval(fetchStats,4000);
   setInterval(()=>{
     if(document.getElementById('pg-links').classList.contains('on'))loadLinks();

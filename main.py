@@ -29,6 +29,15 @@ import logging
 # لایه‌ی آی‌پی خروجی (ProxyIP / relay IP). این ماژول عمداً هیچ چیزی از main import
 # نمی‌کند، پس اینجا import کردنش حلقه‌ی circular درست نمی‌کند.
 import outbound
+from config_address import (
+    address_kind,
+    authority_host,
+    link_hosts,
+    normalize_address,
+    normalize_sni,
+    parse_address_list,
+    unique_valid,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("X4G")
@@ -92,6 +101,8 @@ async def load_state():
             # v10 is WS-only: transparently migrate links created by older multi-transport builds.
             for _link in LINKS.values():
                 _link["protocol"] = DEFAULT_PROTOCOL
+                _link.setdefault("address", "")
+                _link.setdefault("sni", "")
                 if not _link.get("alpn") or "h2" in str(_link.get("alpn")):
                     _link["alpn"] = "http/1.1"
             SUBS.update(data.get("subs", {}))
@@ -222,7 +233,7 @@ async def startup():
     await load_state()
     await _tg_start_bot()
     log_activity("system", "سرور راه‌اندازی شد", "ok")
-    logger.info(f"X4G WS-only v10 started on port {CONFIG['port']}")
+    logger.info(f"X4G WS-only v11 started on port {CONFIG['port']}")
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -249,6 +260,26 @@ def get_host(request: Request | None = None) -> str:
             return h
     return os.environ.get("RAILWAY_PUBLIC_DOMAIN", CONFIG["host"])
 
+
+def configured_endpoint_catalog(request: Request | None = None) -> dict:
+    """Address/SNI choices exposed to the authenticated create-config form.
+
+    Railway does not expose every attached custom domain through one runtime API,
+    so the current request domain is automatic and extra candidates come from
+    VLESS_ADDRESSES / VLESS_SNI_NAMES (comma, whitespace or newline separated).
+    """
+    try:
+        service_host = normalize_address(get_host(request))
+    except ValueError:
+        service_host = normalize_address(CONFIG.get("host") or "localhost")
+    extra_addresses = parse_address_list(os.environ.get("VLESS_ADDRESSES", ""))
+    addresses = unique_valid([service_host, *extra_addresses])
+    extra_sni = parse_address_list(os.environ.get("VLESS_SNI_NAMES", ""))
+    domain_addresses = [value for value in addresses if address_kind(value) == "domain"]
+    snis = unique_valid([service_host, *domain_addresses, *extra_sni], sni=True)
+    return {"service_host": service_host, "addresses": addresses, "snis": snis}
+
+
 def generate_uuid() -> str:
     h = secrets.token_hex(16)
     return f"{h[:8]}-{h[8:12]}-{h[12:16]}-{h[16:20]}-{h[20:32]}"
@@ -264,6 +295,8 @@ def generate_vless_link(
     fingerprint: str | None = None,
     alpn: str | None = None,
     port: int | None = None,
+    address: str | None = None,
+    sni: str | None = None,
 ) -> str:
     """لینک VLESS-over-WebSocket سریع و سازگار با Xray را می‌سازد.
     fingerprint / alpn / port در صورت ندادن از پیش‌فرض WS استفاده می‌شوند."""
@@ -275,35 +308,35 @@ def generate_vless_link(
     if not (MIN_PORT <= port_val <= MAX_PORT):
         port_val = DEFAULT_PORT
 
-    # WS-only build. ed=4096 carries up to 4 KiB in the WebSocket handshake
-    # and removes one startup round trip without exceeding common CDN headers.
+    # Address is the dial target. SNI/Host are independent so a Railway/edge IP
+    # can still present the certificate and route for an attached domain.
+    dial_address, tls_name = link_hosts(address, sni, host)
     path = f"/ws/{uuid}?ed=4096"
     params = {
         "encryption": "none",
         "security": "tls",
         "type": "ws",
-        "host": host,
+        "host": tls_name,
         "path": path,
-        "sni": host,
+        "sni": tls_name,
         "fp": fp,
         "alpn": alpn_val,
     }
     query = "&".join(f"{k}={quote(str(v))}" for k, v in params.items())
-    authority_host = host
-    if ":" in host and not host.startswith("["):
-        authority_host = f"[{host}]"
-    return f"vless://{uuid}@{authority_host}:{port_val}?{query}#{quote(remark)}"
+    return f"vless://{uuid}@{authority_host(dial_address)}:{port_val}?{query}#{quote(remark)}"
 
 def vless_link_for_link(link: dict, uid: str, host: str) -> str:
     """generate_vless_link رو با تنظیمات دستی همون کانفیگ (fingerprint/alpn/port) صدا می‌زنه."""
     proto = link.get("protocol", DEFAULT_PROTOCOL)
     return generate_vless_link(
         uid, host,
-        remark=f"🇺🇸 USA Server {link.get('label','')}",
+        remark=f"🇳🇱 NL Server {link.get('label','')}",
         protocol=proto,
         fingerprint=link.get("fingerprint"),
         alpn=link.get("alpn"),
         port=link.get("port"),
+        address=link.get("address"),
+        sni=link.get("sni"),
     )
 
 def uptime() -> str:
@@ -417,6 +450,8 @@ async def ensure_default_link():
                     "port": DEFAULT_PORT,
                     "ip_limit": 0,
                     "speed_limit_bytes": DEFAULT_SPEED_LIMIT,
+                    "address": "",
+                    "sni": "",
                 }
                 asyncio.create_task(save_state())
         _default_link_created = True
@@ -424,7 +459,7 @@ async def ensure_default_link():
 # ── Basic endpoints ───────────────────────────────────────────────────────────
 @app.get("/")
 async def root():
-    return {"service": "LinCanary T", "version": "9.5", "status": "active", "channel": "Beta Canary"}
+    return {"service": "Lumen Relay", "version": "11.0", "status": "active", "channel": "Stable"}
 
 @app.get("/health")
 async def health():
@@ -852,6 +887,8 @@ async def make_link(
     port: int = DEFAULT_PORT,
     ip_limit: int = 0,
     speed_limit_bytes: int = 0,
+    address: str = "",
+    sni: str = "",
 ) -> tuple[str, dict]:
     if protocol not in PROTOCOLS:
         protocol = DEFAULT_PROTOCOL
@@ -860,6 +897,8 @@ async def make_link(
         fingerprint = DEFAULT_FINGERPRINT
     if not (MIN_PORT <= port <= MAX_PORT):
         port = DEFAULT_PORT
+    address = normalize_address(address) if str(address or "").strip() else ""
+    sni = normalize_sni(sni) if str(sni or "").strip() else ""
     uid = generate_uuid()
     async with LINKS_LOCK:
         LINKS[uid] = {
@@ -878,6 +917,8 @@ async def make_link(
             "port": port,
             "ip_limit": max(0, ip_limit),
             "speed_limit_bytes": max(0, speed_limit_bytes),
+            "address": address,
+            "sni": sni,
         }
     if sub_id:
         async with SUBS_LOCK:
@@ -983,10 +1024,32 @@ async def remove_sub_group(sub_id: str) -> str | None:
     log_activity("sub", f"گروه «{name}» حذف شد", "warn")
     return name
 
+# ── Config endpoint choices ───────────────────────────────────────────────────
+@app.get("/api/config-endpoints")
+async def api_config_endpoints(request: Request, _=Depends(require_auth)):
+    catalog = configured_endpoint_catalog(request)
+    return {
+        "ok": True,
+        "default_address": catalog["service_host"],
+        "default_sni": catalog["service_host"],
+        "addresses": [
+            {"value": value, "kind": address_kind(value), "current": value == catalog["service_host"]}
+            for value in catalog["addresses"]
+        ],
+        "snis": catalog["snis"],
+    }
+
+
 # ── Link Management ───────────────────────────────────────────────────────────
 @app.post("/api/links")
 async def create_link(request: Request, _=Depends(require_auth)):
     body = await request.json()
+    host = get_host(request)
+    try:
+        selected_address = normalize_address(body.get("address") or host)
+        selected_sni = normalize_sni(body["sni"]) if str(body.get("sni") or "").strip() else ""
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
     lv = float(body.get("limit_value") or 0)
     lu = body.get("limit_unit") or "GB"
     limit_bytes = 0 if lv <= 0 else parse_size_to_bytes(lv, lu)
@@ -1017,9 +1080,10 @@ async def create_link(request: Request, _=Depends(require_auth)):
         port=port,
         ip_limit=ip_limit,
         speed_limit_bytes=speed_limit_bytes,
+        address=selected_address,
+        sni=selected_sni,
     )
 
-    host = get_host(request)
     return {
         "uuid": uid,
         **link,
@@ -1097,6 +1161,16 @@ async def update_link(uid: str, request: Request, _=Depends(require_auth)):
             link["speed_limit_bytes"] = 0 if sv <= 0 else parse_speed_to_bytes(sv, su)
             from speed_limit import reset_bucket
             reset_bucket(uid)
+        if "address" in body:
+            try:
+                link["address"] = normalize_address(body.get("address") or get_host(request))
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail=str(exc))
+        if "sni" in body:
+            try:
+                link["sni"] = normalize_sni(body["sni"]) if str(body.get("sni") or "").strip() else ""
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail=str(exc))
         if "outbound" in body:
             ob = body["outbound"]
             if not ob:
@@ -1113,7 +1187,7 @@ async def update_link(uid: str, request: Request, _=Depends(require_auth)):
                 link["proxyip"] = pip
             else:
                 link.pop("proxyip", None)
-        if any(k in body for k in ("label", "note", "limit_value", "expires_days", "fingerprint", "alpn", "port", "ip_limit", "speed_limit_value")):
+        if any(k in body for k in ("label", "note", "limit_value", "expires_days", "fingerprint", "alpn", "port", "ip_limit", "speed_limit_value", "address", "sni")):
             log_activity("link", f"کانفیگ «{link['label']}» ویرایش شد", "info")
         new_sub = body.get("sub_id", "UNCHANGED")
         if new_sub != "UNCHANGED":
