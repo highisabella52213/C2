@@ -14,7 +14,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-CURRENT_VERSION = "18.0.0"
+CURRENT_VERSION = "19.0.0"
 UPSTREAM_REPOSITORY = "highisabella52213/Lumen-Project-Final"
 GITHUB_API = "https://api.github.com"
 RAILWAY_GRAPHQL = "https://backboard.railway.com/graphql/v2"
@@ -67,7 +67,7 @@ def _railway_token() -> str:
 def setup_status() -> dict:
     fork = str(os.environ.get("LUMEN_FORK_REPO", "")).strip()
     branch = str(os.environ.get("RAILWAY_GIT_BRANCH") or os.environ.get("LUMEN_GIT_BRANCH") or "main").strip()
-    configured = all((_github_token(), _railway_token(), fork, os.environ.get("RAILWAY_SERVICE_ID"), os.environ.get("RAILWAY_ENVIRONMENT_ID")))
+    configured = all((_github_token(), _railway_token(), fork, os.environ.get("RAILWAY_PROJECT_ID"), os.environ.get("RAILWAY_SERVICE_ID"), os.environ.get("RAILWAY_ENVIRONMENT_ID")))
     return {
         "configured": bool(configured),
         "current_version": CURRENT_VERSION,
@@ -78,7 +78,7 @@ def setup_status() -> dict:
 
 
 def _request_json(url: str, *, method: str = "GET", headers: dict | None = None, payload: dict | None = None, timeout: float = 12.0) -> dict:
-    merged = {"Accept": "application/json", "User-Agent": "Lumen-Relay-Updater/18"}
+    merged = {"Accept": "application/json", "User-Agent": "Lumen-Relay-Updater/19"}
     if headers:
         merged.update(headers)
     data = None
@@ -150,7 +150,7 @@ async def check_latest(force: bool = False) -> dict:
     return dict(value)
 
 
-async def apply_latest() -> dict:
+async def apply_latest(state_snapshot: str = "") -> dict:
     setup = setup_status()
     if not setup["configured"]:
         raise UpdateError("Updater credentials were not provisioned by the Cloudflare installer")
@@ -175,6 +175,12 @@ async def apply_latest() -> dict:
         sha = str(commit.get("sha") or "")
         if not re.fullmatch(r"[0-9a-fA-F]{40}", sha):
             raise UpdateError("GitHub did not return a valid branch commit", 502)
+        if state_snapshot:
+            project_id = os.environ.get("RAILWAY_PROJECT_ID", "")
+            if not project_id:
+                raise UpdateError("Railway project ID is unavailable; state snapshot was not stored", 502)
+            snapshot_mutation = "mutation PersistLumenState($input: VariableCollectionUpsertInput!) { variableCollectionUpsert(input: $input) }"
+            await _railway(snapshot_mutation, {"input": {"projectId": project_id, "environmentId": environment_id, "serviceId": service_id, "variables": {"LUMEN_STATE_SNAPSHOT_B64": state_snapshot}, "skipDeploys": True, "replace": False}}, railway_token)
         mutation = "mutation serviceInstanceDeployV2($serviceId: String!, $environmentId: String!, $commitSha: String!) { serviceInstanceDeployV2(serviceId: $serviceId, environmentId: $environmentId, commitSha: $commitSha) }"
         variables = {"serviceId": service_id, "environmentId": environment_id, "commitSha": sha}
         last_error = None

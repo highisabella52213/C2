@@ -2,6 +2,10 @@ import asyncio
 import json
 import os
 import hashlib
+import base64
+import hmac
+import shutil
+import zlib
 import secrets
 import time
 import sys
@@ -52,6 +56,8 @@ DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
 DATA_FILE = DATA_DIR / "x4g_state.json"
 SECRET_FILE = DATA_DIR / "x4g_secret.key"
 SAVE_LOCK = asyncio.Lock()
+STATE_BACKUPS = (DATA_DIR / "x4g_state.backup-1.json", DATA_DIR / "x4g_state.backup-2.json")
+STATE_SNAPSHOT_ENV = "LUMEN_STATE_SNAPSHOT_B64"
 
 def _load_or_create_secret() -> str:
     """SECRET_KEY را روی دیسک ذخیره و ثابت نگه می‌دارد.
@@ -93,48 +99,159 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def _state_payload() -> dict:
+    return {
+        "schema_version": 2,
+        "links": dict(LINKS),
+        "subs": dict(SUBS),
+        "password_hash": AUTH["password_hash"],
+        "saved_at": datetime.now().isoformat(),
+    }
+
+
+def _validate_state(data: object) -> dict:
+    if not isinstance(data, dict):
+        raise ValueError("state root is not an object")
+    links, subs = data.get("links"), data.get("subs")
+    if not isinstance(links, dict) or not isinstance(subs, dict):
+        raise ValueError("links/subs are missing or invalid")
+    if len(links) > 100_000 or len(subs) > 100_000:
+        raise ValueError("state is unreasonably large")
+    return data
+
+
+def _snapshot_encode(data: dict) -> str:
+    raw = json.dumps(data, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    packed = zlib.compress(raw, level=9)
+    if len(packed) > 48 * 1024:
+        raise ValueError("state snapshot exceeds the safe Railway variable limit")
+    body = base64.urlsafe_b64encode(packed).decode().rstrip("=")
+    signature = hmac.new(CONFIG["secret"].encode(), body.encode(), hashlib.sha256).hexdigest()
+    return body + "." + signature
+
+
+def _snapshot_decode(value: str) -> dict:
+    body, signature = str(value or "").split(".", 1)
+    expected = hmac.new(CONFIG["secret"].encode(), body.encode(), hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(signature, expected):
+        raise ValueError("state snapshot signature mismatch")
+    packed = base64.urlsafe_b64decode(body + "=" * (-len(body) % 4))
+    if len(packed) > 48 * 1024:
+        raise ValueError("state snapshot is too large")
+    decoder = zlib.decompressobj()
+    raw = decoder.decompress(packed, 8 * 1024 * 1024 + 1)
+    if decoder.unconsumed_tail or len(raw) > 8 * 1024 * 1024:
+        raise ValueError("expanded state snapshot is too large")
+    raw += decoder.flush()
+    return _validate_state(json.loads(raw.decode("utf-8")))
+
+
+def make_state_snapshot() -> str:
+    return _snapshot_encode(_state_payload())
+
+
+def _atomic_write_state(data: dict, rotate: bool = True) -> None:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    if rotate and DATA_FILE.exists():
+        if STATE_BACKUPS[0].exists():
+            shutil.copy2(STATE_BACKUPS[0], STATE_BACKUPS[1])
+        shutil.copy2(DATA_FILE, STATE_BACKUPS[0])
+    tmp = DATA_FILE.with_suffix(".tmp")
+    with tmp.open("w", encoding="utf-8") as handle:
+        json.dump(data, handle, ensure_ascii=False, indent=2)
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(tmp, DATA_FILE)
+    try:
+        descriptor = os.open(DATA_DIR, os.O_RDONLY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+    except OSError:
+        pass
+
+
+def _verify_persistent_storage() -> None:
+    required = str(os.environ.get("LUMEN_REQUIRE_PERSISTENT_STORAGE", "")).lower() in {"1", "true", "yes", "on"}
+    mount = str(os.environ.get("RAILWAY_VOLUME_MOUNT_PATH", "")).strip()
+    if required:
+        if not mount:
+            raise RuntimeError("Persistent Railway Volume is required but not mounted")
+        try:
+            data_path, mount_path = DATA_DIR.resolve(), Path(mount).resolve()
+            data_path.relative_to(mount_path)
+        except (ValueError, OSError):
+            raise RuntimeError(f"DATA_DIR {DATA_DIR} is outside Railway volume {mount}") from None
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    probe = DATA_DIR / ".lumen-write-probe"
+    try:
+        with probe.open("w", encoding="utf-8") as handle:
+            handle.write("ok")
+            handle.flush()
+            os.fsync(handle.fileno())
+    finally:
+        probe.unlink(missing_ok=True)
+
+
 async def load_state():
     global LINKS, AUTH, SUBS
-    try:
-        DATA_DIR.mkdir(parents=True, exist_ok=True)
-        if DATA_FILE.exists():
-            async with aiofiles.open(DATA_FILE, "r", encoding="utf-8") as f:
-                raw = await f.read()
-            data = json.loads(raw)
-            LINKS.update(data.get("links", {}))
-            # v10 is WS-only: transparently migrate links created by older multi-transport builds.
-            for _link in LINKS.values():
-                _link["protocol"] = DEFAULT_PROTOCOL
-                _link.setdefault("address", "")
-                _link.setdefault("sni", "")
-                _link.setdefault("remark", _link.get("label") or "Lumen Relay")
-                _link.pop("proxy"+"ip", None); _link.pop("proxy"+"ip_enabled", None); _link.pop("proxy"+"ip_concurrency", None); _link.pop("outbound", None)
-                _link.setdefault("exit_proxy_mode", "direct"); _link.setdefault("proxy_id", ""); _link.setdefault("custom_proxy", "")
-                if not _link.get("alpn") or "h2" in str(_link.get("alpn")):
-                    _link["alpn"] = "http/1.1"
-            SUBS.update(data.get("subs", {}))
-            if "password_hash" in data:
-                AUTH["password_hash"] = data["password_hash"]
-            logger.info(f"State loaded: {len(LINKS)} links, {len(SUBS)} subs")
-    except Exception as e:
-        logger.warning(f"Could not load state: {e}")
+    candidates = (DATA_FILE, *STATE_BACKUPS)
+    existing = [path for path in candidates if path.exists()]
+    loaded = None
+    loaded_from = None
+    errors = []
+    for path in existing:
+        try:
+            loaded = _validate_state(json.loads(await asyncio.to_thread(path.read_text, encoding="utf-8")))
+            loaded_from = path
+            break
+        except Exception as exc:
+            errors.append(f"{path.name}: {exc}")
+    if loaded is None:
+        snapshot = os.environ.get(STATE_SNAPSHOT_ENV, "").strip()
+        if snapshot:
+            try:
+                loaded = _snapshot_decode(snapshot)
+                loaded_from = STATE_SNAPSHOT_ENV
+            except Exception as exc:
+                errors.append(f"environment snapshot: {exc}")
+        elif existing:
+            raise RuntimeError("All persistent state copies are invalid; refusing to start and overwrite them: " + "; ".join(errors))
+    if loaded is None:
+        logger.info("No previous state found; starting with an empty database")
+        return
+    LINKS.clear(); SUBS.clear()
+    LINKS.update(loaded.get("links", {}))
+    for _link in LINKS.values():
+        _link["protocol"] = DEFAULT_PROTOCOL
+        _link.setdefault("address", "")
+        _link.setdefault("sni", "")
+        _link.setdefault("remark", _link.get("label") or "Lumen Relay")
+        _link.pop("proxy"+"ip", None); _link.pop("proxy"+"ip_enabled", None); _link.pop("proxy"+"ip_concurrency", None); _link.pop("outbound", None)
+        _link.setdefault("exit_proxy_mode", "direct"); _link.setdefault("proxy_id", ""); _link.setdefault("custom_proxy", "")
+        if not _link.get("alpn") or "h2" in str(_link.get("alpn")):
+            _link["alpn"] = "http/1.1"
+    SUBS.update(loaded.get("subs", {}))
+    if "password_hash" in loaded:
+        AUTH["password_hash"] = loaded["password_hash"]
+    if loaded_from != DATA_FILE:
+        await asyncio.to_thread(_atomic_write_state, _state_payload(), False)
+        logger.warning("State recovered from %s", getattr(loaded_from, "name", loaded_from))
+    logger.info("State loaded: %s links, %s subs", len(LINKS), len(SUBS))
 
-async def save_state():
+
+async def save_state(*, strict: bool = False, rotate: bool = True) -> bool:
     async with SAVE_LOCK:
         try:
-            DATA_DIR.mkdir(parents=True, exist_ok=True)
-            data = {
-                "links": dict(LINKS),
-                "subs": dict(SUBS),
-                "password_hash": AUTH["password_hash"],
-                "saved_at": datetime.now().isoformat(),
-            }
-            tmp = DATA_FILE.with_suffix(".tmp")
-            async with aiofiles.open(tmp, "w", encoding="utf-8") as f:
-                await f.write(json.dumps(data, ensure_ascii=False, indent=2))
-            tmp.replace(DATA_FILE)
-        except Exception as e:
-            logger.warning(f"Could not save state: {e}")
+            data = _validate_state(_state_payload())
+            await asyncio.to_thread(_atomic_write_state, data, rotate)
+            return True
+        except Exception as exc:
+            logger.error("Could not persist state: %s", exc)
+            if strict:
+                raise RuntimeError("Persistent state could not be saved; operation was stopped") from exc
+            return False
 
 # ── In-memory state ───────────────────────────────────────────────────────────
 connections: dict = {}
@@ -231,13 +348,14 @@ async def startup():
     http_client = httpx.AsyncClient(
         limits=limits, timeout=timeout, follow_redirects=True,
     )
+    _verify_persistent_storage()
     await load_state()
     await updater.load()
     asyncio.create_task(proxy_repository.refresh(force=True))
     proxy_repository.start_periodic_refresh()
     await _tg_start_bot()
     log_activity("system", "سرور راه‌اندازی شد", "ok")
-    logger.info(f"Lumen Relay WS-only v18 started on port {CONFIG['port']}")
+    logger.info(f"Lumen Relay WS-only v19 started on port {CONFIG['port']}")
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -490,7 +608,7 @@ async def ensure_default_link():
                     "sni": "",
                     "exit_proxy_mode": "direct", "proxy_id": "", "custom_proxy": "",
                 }
-                asyncio.create_task(save_state())
+                await save_state(strict=True)
         _default_link_created = True
 
 # ── Basic endpoints ───────────────────────────────────────────────────────────
@@ -504,11 +622,12 @@ async def health():
     return {
         "status": "ok",
         "service": "Lumen Relay",
-        "version": "16.0",
+        "version": "19.0",
         "transport": "VLESS / WebSocket",
         "connections": len(connections),
         "active_configs": active_links,
         "uptime": uptime(),
+        "persistence": {"path": str(DATA_DIR), "volume_mounted": bool(os.environ.get("RAILWAY_VOLUME_MOUNT_PATH")), "required": str(os.environ.get("LUMEN_REQUIRE_PERSISTENT_STORAGE", "")).lower() in {"1", "true", "yes", "on"}},
     }
 
 # ── Subscription (single link) ────────────────────────────────────────────────
@@ -559,7 +678,7 @@ async def create_sub(request: Request, _=Depends(require_auth)):
             "created_at": datetime.now().isoformat(),
             "link_ids": [],
         }
-    asyncio.create_task(save_state())
+    await save_state(strict=True)
     log_activity("sub", f"گروه «{name}» ساخته شد", "ok")
     host = get_host(request)
     return {
@@ -612,7 +731,7 @@ async def update_sub(sub_id: str, request: Request, _=Depends(require_auth)):
             s["password_hash"] = hash_password(pw) if pw else None
         if "link_ids" in body:
             s["link_ids"] = list(body["link_ids"])
-    asyncio.create_task(save_state())
+    await save_state(strict=True)
     return {"ok": True}
 
 @app.delete("/api/subs/{sub_id}")
@@ -626,7 +745,7 @@ async def delete_sub(sub_id: str, _=Depends(require_auth)):
         for link in LINKS.values():
             if link.get("sub_id") == sub_id:
                 link["sub_id"] = None
-    asyncio.create_task(save_state())
+    await save_state(strict=True)
     log_activity("sub", f"گروه «{name}» حذف شد", "warn")
     return {"ok": True, "deleted": sub_id}
 
@@ -649,7 +768,7 @@ async def assign_link_to_sub(sub_id: str, request: Request, _=Depends(require_au
     async with LINKS_LOCK:
         if link_id in LINKS:
             LINKS[link_id]["sub_id"] = sub_id if action == "add" else None
-    asyncio.create_task(save_state())
+    await save_state(strict=True)
     return {"ok": True}
 
 # ── Public sub-group subscription file ───────────────────────────────────────
@@ -886,7 +1005,7 @@ async def make_link(
                 ids = SUBS[sub_id].setdefault("link_ids", [])
                 if uid not in ids:
                     ids.append(uid)
-    asyncio.create_task(save_state())
+    await save_state(strict=True)
     log_activity("link", f"کانفیگ «{LINKS[uid]['label']}» ساخته شد", "ok")
     return uid, LINKS[uid]
 
@@ -909,7 +1028,7 @@ async def remove_link(uid: str) -> str | None:
         reset_bucket(uid)
     except Exception:
         pass
-    asyncio.create_task(save_state())
+    await save_state(strict=True)
     log_activity("link", f"کانفیگ «{label}» حذف شد", "err")
     return label
 
@@ -920,7 +1039,7 @@ async def set_link_active(uid: str, active: bool) -> dict | None:
         LINKS[uid]["active"] = bool(active)
         label = LINKS[uid]["label"]
     log_activity("link", f"کانفیگ «{label}» {'فعال' if active else 'غیرفعال'} شد", "ok" if active else "warn")
-    asyncio.create_task(save_state())
+    await save_state(strict=True)
     return LINKS[uid]
 
 # ── Sub-group helpers (reusable — هم API وب هم ربات تلگرام از همین‌ها استفاده می‌کنن) ──
@@ -939,7 +1058,7 @@ async def create_sub_group(name: str = "گروه جدید", desc: str = "", pass
             "created_at": datetime.now().isoformat(),
             "link_ids": [],
         }
-    asyncio.create_task(save_state())
+    await save_state(strict=True)
     log_activity("sub", f"گروه «{name}» ساخته شد", "ok")
     return sub_id, SUBS[sub_id]
 
@@ -966,7 +1085,7 @@ async def set_link_sub(uid: str, sub_id: str | None) -> bool:
     async with LINKS_LOCK:
         if uid in LINKS:
             LINKS[uid]["sub_id"] = sub_id
-    asyncio.create_task(save_state())
+    await save_state(strict=True)
     log_activity("link", f"کانفیگ «{label}» {'به گروه اضافه شد' if sub_id else 'از گروه خارج شد'}", "info")
     return True
 
@@ -980,7 +1099,7 @@ async def remove_sub_group(sub_id: str) -> str | None:
         for link in LINKS.values():
             if link.get("sub_id") == sub_id:
                 link["sub_id"] = None
-    asyncio.create_task(save_state())
+    await save_state(strict=True)
     log_activity("sub", f"گروه «{name}» حذف شد", "warn")
     return name
 
@@ -1011,7 +1130,8 @@ async def update_status(_=Depends(require_auth)):
 @app.post("/api/update/apply")
 async def update_apply(_=Depends(require_auth)):
     try:
-        result = await updater.apply_latest()
+        await save_state(strict=True)
+        result = await updater.apply_latest(make_state_snapshot())
         if result.get("started"):
             log_activity("system", "به‌روزرسانی نسخه جدید آغاز شد", "ok")
         return result
@@ -1184,7 +1304,7 @@ async def update_link(uid: str, request: Request, _=Depends(require_auth)):
                 if uid not in ids:
                     ids.append(uid)
 
-    asyncio.create_task(save_state())
+    await save_state(strict=True)
     return {"ok": True}
 
 @app.delete("/api/links/{uid}")
