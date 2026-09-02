@@ -68,7 +68,7 @@
 
 
 
-## 🎛 رابط مدیریتی v17
+## 🎛 رابط مدیریتی v18
 
 - در دسکتاپ، منوها داخل **Command Rail سمت راست** قرار دارند؛ در موبایل همان منو به **داک پایین قابل پیمایش** تبدیل می‌شود.
 - فرم ساخت کانفیگ به Route Studio دو ناحیه‌ای تبدیل شده و ترتیب آن «هویت → شبکه → محدودیت‌ها → ساخت» است.
@@ -107,19 +107,15 @@ VLESS_SNI_NAMES=app.example.com, front.example.org
 > نکته: Railway همه دامنه‌های متصل را از یک API عمومی در Runtime در اختیار برنامه نمی‌گذارد؛ دامنه همان درخواست به‌صورت خودکار افزوده می‌شود و گزینه‌های اضافه را باید با دو متغیر بالا تعریف کنید. ورودی‌های دارای scheme، مسیر یا پورت داخلی رد می‌شوند چون پورت فیلد جداگانه دارد.
 
 
-## 🔄 آپدیت نسخه برای Forkهای Railway
+## ☁️ نصب خودکار و آپدیت نسخه
 
-نسخه v17 هنگام ورود به پنل آخرین GitHub Release ریپازیتوری اصلی را بررسی می‌کند. در اولین ورود، پنجره تنظیم یک‌باره باز می‌شود و این موارد را می‌گیرد:
+پنل اصلی دیگر هیچ توکن GitHub یا Railway از کاربر دریافت نمی‌کند. نصب اولیه با برنامه مستقل `cloudflare-installer/worker.js` انجام می‌شود؛ این پوشه فقط همین یک فایل را دارد و به Wrangler، پکیج یا Asset جدا نیاز ندارد.
 
-- ریپازیتوری Fork متصل با قالب `owner/repository`
-- Railway account token
-- GitHub fine-grained token محدود به همان Fork با `Contents: Read and write`
+Worker فقط دو ورودی دارد: GitHub classic token با scope `public_repo` و Railway Account Token. سپس به‌ترتیب توکن‌ها را اعتبارسنجی می‌کند، سورس ثابت `highisabella52213/Lumen-Project-Final` را Star و Fork می‌کند، پروژه و سرویس Railway را می‌سازد، متغیرهای امن و اطلاعات آپدیت را ثبت می‌کند، Volume دائمی `/data` و دامنه عمومی را می‌سازد و Deployment را آغاز می‌کند. در پایان لینک `/dashboard` و رمز ادمین تصادفی فقط یک‌بار نمایش داده می‌شوند.
 
-GitHub token ضروری است، چون Railway token به‌تنهایی اجازه تغییر Fork را ندارد و Redeploy ساده همان Commit قبلی را اجرا می‌کند. Upstream به‌طور خودکار از parent فورک تشخیص داده می‌شود.
+برای نسخه‌های بعدی، پنل Release رسمی را بررسی می‌کند. اگر نسخه جدید موجود باشد دکمه **آپدیت به نسخه جدید** ظاهر می‌شود؛ Fork با `merge-upstream` همگام و Commit جدید با `serviceInstanceDeployV2` دیپلوی می‌شود. اعتبارنامه‌ها فقط از Railway environment خوانده می‌شوند و هیچ API یا Modal برای دریافت/ذخیره توکن در پنل وجود ندارد.
 
-با انتشار Release جدید مانند `v17.1.0`، دکمه **آپدیت به نسخه جدید** در پنل کاربران ظاهر می‌شود. پنل Fork را با `merge-upstream` همگام می‌کند، در Conflict بدون بازنویسی متوقف می‌شود و سپس Commit جدید همان Fork را با Railway `serviceInstanceDeployV2` دیپلوی می‌کند.
-
-Tokenها با Fernet رمزگذاری می‌شوند، به Browser برگردانده یا Log نمی‌شوند و برای ماندگاری به Volume روی `/data` نیاز دارند. راهنمای کامل در [UPDATE-SETUP.md](UPDATE-SETUP.md) است.
+راهنمای دقیق، لینک‌های مستقیم ساخت توکن و مراحل استقرار Worker در [UPDATE-SETUP.md](UPDATE-SETUP.md) است.
 
 ## 🗂 گروه‌های ساب (لینک ساب حرفه‌ای)
 
@@ -158,6 +154,12 @@ Tokenها با Fernet رمزگذاری می‌شوند، به Browser برگرد
 | `VLESS_ADDRESSES` | گزینه‌های Address اضافه برای فرم ساخت کانفیگ؛ IPv4/IPv6/دامنه با کاما، فاصله، سمی‌کالن یا خط جدید | — |
 | `VLESS_SNI_NAMES` | گزینه‌های دامنه SNI اضافه؛ با کاما، فاصله، سمی‌کالن یا خط جدید | — |
 | `GO2SOCKS5` | میزبان‌های اجباری پروکسی، مثل `*.ip111.cn,*google.com` | — |
+| `PROXY_REPOSITORY_MANUAL_REFRESH_KEY` | کلید تصادفی برای فعال‌شدن دکمه بررسی دستی؛ Worker خودکار می‌سازد | — |
+| `LUMEN_GITHUB_TOKEN` | GitHub token نصب‌شده توسط Worker برای همگام‌سازی Fork | — |
+| `LUMEN_RAILWAY_TOKEN` | Railway Account Token نصب‌شده توسط Worker برای دیپلوی آپدیت | — |
+| `LUMEN_UPSTREAM_REPO` | سورس رسمی آپدیت | `highisabella52213/Lumen-Project-Final` |
+| `LUMEN_FORK_REPO` | Fork متعلق به کاربر | — |
+| `RAILWAY_GIT_BRANCH` | شاخه Fork برای دیپلوی | `main` |
 
 ## 🌐 تنظیم آیپی خروجی
 

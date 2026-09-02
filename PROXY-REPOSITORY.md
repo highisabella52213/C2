@@ -34,27 +34,15 @@ https://proxy.example.com:443#US - 91%
 
 ## فعال‌کردن دکمه «بررسی جدید»
 
-در PowerShell این دستور را **بدون `\\`** اجرا کنید:
-
-```powershell
-python .\tools\hash_manual_refresh_key.py "YOUR-LONG-RANDOM-SECRET"
-```
-
-خروجی ۶۴ کاراکتری را در `proxy_repository.py` بگذارید:
-
-```python
-MANUAL_REFRESH_TOKEN_SHA256 = "OUTPUT_SHA256"
-```
-
-سپس در Railway یکی از این Variableها را تعریف کنید:
+نصاب Cloudflare به‌طور خودکار یک مقدار تصادفی قوی و یکتا می‌سازد و به‌عنوان Variable زیر در Railway قرار می‌دهد:
 
 ```text
-PROXY_REPOSITORY_MANUAL_REFRESH_KEY=YOUR-LONG-RANDOM-SECRET
+PROXY_REPOSITORY_MANUAL_REFRESH_KEY=<installer-generated-secret>
 ```
 
-نام قدیمی/نمونه‌ای `ENV_SECRET_KEY_TO_BUTTON_ON_N` نیز برای سازگاری پذیرفته می‌شود. مقدار Railway می‌تواند مقدار خام یا همان SHA-256 باشد؛ فاصله و کوتیشن دور مقدار هم پاک‌سازی می‌شود. پس از تغییر کد یا Variable حتماً Redeploy کنید.
+برای نصب دستی هم می‌توانید هر مقدار تصادفی حداقل ۲۴ کاراکتری را تنظیم و سرویس را Redeploy کنید. نام قدیمی `ENV_SECRET_KEY_TO_BUTTON_ON_N` برای سازگاری پذیرفته می‌شود. این مقدار از درخواست کاربر خوانده نمی‌شود و فقط قابلیت را فعال می‌کند؛ خود endpoint بررسی دستی همچنان به نشست ادمین احراز‌شده نیاز دارد. دیگر نیازی به تغییر Hash داخل سورس یا اجرای اسکریپت جدا نیست.
 
-پنل ابتدا endpoint سبک وضعیت را می‌خواند تا دکمه بدون منتظرماندن برای S3 ظاهر شود. خود endpoint بررسی دستی نیز در صورت نامعتبر بودن کلید پاسخ 403 می‌دهد.
+پنل ابتدا endpoint سبک وضعیت را می‌خواند تا دکمه بدون منتظرماندن برای S3 ظاهر شود.
 
 ## سازگاری و Fail-open پروکسی
 

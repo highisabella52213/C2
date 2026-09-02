@@ -83,7 +83,7 @@ CONFIG = {
 }
 
 import updater
-updater.configure(DATA_DIR, CONFIG["secret"])
+updater.configure()
 
 app.add_middleware(
     CORSMiddleware,
@@ -237,7 +237,7 @@ async def startup():
     proxy_repository.start_periodic_refresh()
     await _tg_start_bot()
     log_activity("system", "سرور راه‌اندازی شد", "ok")
-    logger.info(f"Lumen Relay WS-only v17 started on port {CONFIG['port']}")
+    logger.info(f"Lumen Relay WS-only v18 started on port {CONFIG['port']}")
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -1001,21 +1001,6 @@ async def api_config_endpoints(request: Request, _=Depends(require_auth)):
 
 
 # ── Version updates ───────────────────────────────────────────────────────────
-@app.get("/api/update/setup")
-async def update_setup_status(_=Depends(require_auth)):
-    return updater.setup_status()
-
-@app.post("/api/update/setup")
-async def update_setup_save(request: Request, _=Depends(require_auth)):
-    try:
-        return await updater.save_setup(await request.json())
-    except updater.UpdateError as exc:
-        raise HTTPException(status_code=exc.status, detail=str(exc))
-
-@app.delete("/api/update/setup")
-async def update_setup_clear(_=Depends(require_auth)):
-    return await updater.clear_setup()
-
 @app.get("/api/update/status")
 async def update_status(_=Depends(require_auth)):
     try:

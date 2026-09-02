@@ -1,47 +1,34 @@
-# راه‌اندازی آپدیت خودکار پنل — v17
+# Lumen one-file Cloudflare installer
 
-## چرا دو Token لازم است؟
+The management panel never asks for GitHub or Railway credentials. Installation is performed by the separate `cloudflare-installer/worker.js` application.
 
-Railway account token فقط می‌تواند Deployment را مدیریت کند و اجازه تغییر GitHub Fork را ندارد. برای آپدیت واقعی، پنل ابتدا Fork کاربر را با Upstream همگام می‌کند؛ بنابراین یک GitHub fine-grained token نیز لازم است. Redeploy ساده Railway همان Commit قبلی را دوباره اجرا می‌کند و نسخه را تغییر نمی‌دهد.
+## 1. Create the two tokens
 
-## مراحل اولین ورود
+1. GitHub classic token: <https://github.com/settings/tokens/new?scopes=public_repo&description=Lumen%20Cloudflare%20Installer>
+   - Sign in to GitHub.
+   - Keep the preselected `public_repo` scope.
+   - Generate the token and copy it once.
+2. Railway account token: <https://railway.com/account/tokens>
+   - Choose **New Token** and create an account token.
+   - Copy it once. Project tokens cannot create a new project.
+3. In Railway, make sure GitHub is connected and can access the fork: <https://railway.com/account/integrations>
 
-بعد از اولین ورود به Dashboard، پنجره **Secure version updates** خودکار باز می‌شود:
+## 2. Deploy the Worker
 
-1. **Your connected fork**: ریپازیتوری متصل به Railway با قالب `owner/repository`.
-2. **Publisher repository**: اختیاری؛ اگر خالی باشد از parent همان Fork تشخیص داده می‌شود.
-3. **Fork branch**: معمولاً `main`.
-4. **Railway account token**: از `https://railway.com/account/tokens`.
-5. **GitHub fine-grained token**: فقط برای همان Fork، با دسترسی `Contents: Read and write`.
-6. روی **Save and verify** بزنید.
+1. Open Cloudflare Workers: <https://dash.cloudflare.com/?to=/:account/workers-and-pages/create>
+2. Create a Worker, replace its starter code with the complete contents of `cloudflare-installer/worker.js`, then deploy.
+3. Open the Worker URL. Enter only the GitHub and Railway tokens.
+4. The installer validates both tokens, stars and forks the official source, creates the Railway project/service, provisions variables and `/data` volume, generates a public domain, and starts deployment.
+5. Save the one-time generated admin password and open the returned `/dashboard` URL.
 
-Railway باید متغیرهای داخلی `RAILWAY_SERVICE_ID` و `RAILWAY_ENVIRONMENT_ID` را در Runtime ارائه کند؛ برنامه آن‌ها را خودکار استفاده می‌کند.
+## Security
 
-## انتشار نسخه توسط مالک
+- The Worker has no KV, D1, Durable Object, analytics, or token storage.
+- Tokens exist only during one HTTPS request and are sent only to GitHub and Railway.
+- Responses use `Cache-Control: no-store` and a strict Content Security Policy.
+- Update credentials are stored as Railway service variables so the panel can update without asking the user. The deployed application can read these credentials; use dedicated tokens and rotate/revoke them if exposure is suspected.
+- Deploy the Worker in your own Cloudflare account; do not enter tokens into an installer hosted by someone else.
 
-1. مقدار `CURRENT_VERSION` در `updater.py` را افزایش دهید.
-2. تغییرات را در branch اصلی Publisher منتشر کنید.
-3. در همان ریپازیتوری یک GitHub Release با Tag استاندارد مانند `v17.1.0` بسازید.
-4. کاربران در ورود بعدی به پنل، دکمه **Update to v17.1.0** را خواهند دید. پنل هر ۱۵ دقیقه نیز دوباره بررسی می‌کند.
+## Official source
 
-## روند امن Update
-
-1. دریافت آخرین GitHub Release.
-2. اعتبارسنجی مجدد اینکه Repository کاربر واقعاً Fork همان Publisher است.
-3. اجرای GitHub `merge-upstream` بدون Force push.
-4. توقف با خطای قابل‌نمایش در صورت Merge conflict.
-5. دریافت SHA شاخه Fork بعد از Sync.
-6. اجرای Railway `serviceInstanceDeployV2` با همان SHA در Service و Environment فعلی.
-
-## نگهداری Token
-
-- Tokenها با Fernet و کلیدی مشتق‌شده از `SECRET_KEY` رمزگذاری می‌شوند.
-- هیچ API مقدار Token را به Browser برنمی‌گرداند.
-- Tokenها در Log نوشته نمی‌شوند.
-- فایل رمز‌شده `lumen_update.json` در `DATA_DIR` قرار می‌گیرد؛ برای ماندگاری حتماً Railway Volume را روی `/data` متصل کنید.
-- Account token دسترسی گسترده دارد؛ یک Token اختصاصی بسازید، آن را در جای دیگری استفاده نکنید و در صورت افشا فوراً Rotate کنید.
-- از Settings می‌توانید Setup ذخیره‌شده را حذف کنید.
-
-## نکته مهم
-
-اگر Fork تغییرات محلی متعارض داشته باشد، پنل آن را بازنویسی نمی‌کند. Update متوقف می‌شود تا Conflict به‌صورت دستی حل شود. این رفتار عمداً برای جلوگیری از حذف کد یا تنظیمات کاربر است.
+<https://github.com/highisabella52213/Lumen-Project-Final>

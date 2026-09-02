@@ -1,54 +1,41 @@
-"""Secure, release-driven GitHub fork updater for Railway deployments.
+"""Environment-only GitHub release updater for installer-provisioned Railway apps.
 
-The updater never overwrites a fork. It asks GitHub to merge upstream, stops on
-conflicts, then asks Railway to deploy the resulting commit from the already
-connected fork. Secrets are encrypted at rest and never returned by the API.
+Credentials are never collected by the management panel. The Cloudflare setup
+worker provisions them as Railway service variables during installation.
 """
 from __future__ import annotations
 
 import asyncio
-import base64
-import hashlib
 import json
 import os
 import re
-import stat
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from pathlib import Path
-from typing import Any
 
-from cryptography.fernet import Fernet, InvalidToken
-
-CURRENT_VERSION = "17.0.0"
+CURRENT_VERSION = "18.0.0"
+UPSTREAM_REPOSITORY = "highisabella52213/Lumen-Project-Final"
 GITHUB_API = "https://api.github.com"
 RAILWAY_GRAPHQL = "https://backboard.railway.com/graphql/v2"
 CHECK_SECONDS = 5 * 60
 MAX_RESPONSE_BYTES = 1024 * 1024
-# Set this once in the publisher repository before creating the first release.
-PUBLISHER_REPOSITORY = "OWNER/REPOSITORY"
+_apply_lock = asyncio.Lock()
+_cache = {"at": 0.0, "value": None}
+
 
 class UpdateError(RuntimeError):
     def __init__(self, message: str, status: int = 400):
         super().__init__(message)
         self.status = status
 
-_data_dir = Path(os.environ.get("DATA_DIR", "/data"))
-_state_file = _data_dir / "lumen_update.json"
-_fernet: Fernet | None = None
-_state: dict[str, Any] = {}
-_lock = asyncio.Lock()
-_cache: dict[str, Any] = {"at": 0.0, "value": None}
+
+def configure(*_args, **_kwargs) -> None:
+    """Compatibility no-op; v18 credentials live only in Railway variables."""
 
 
-def configure(data_dir: Path | str, master_secret: str) -> None:
-    global _data_dir, _state_file, _fernet
-    _data_dir = Path(data_dir)
-    _state_file = _data_dir / "lumen_update.json"
-    key = base64.urlsafe_b64encode(hashlib.sha256(str(master_secret).encode()).digest())
-    _fernet = Fernet(key)
+async def load() -> dict:
+    return setup_status()
 
 
 def _repository(value: str, *, field: str) -> str:
@@ -64,80 +51,34 @@ def _repository(value: str, *, field: str) -> str:
 
 def _branch(value: str) -> str:
     value = str(value or "main").strip()
-    if not value or len(value) > 200 or value.startswith(('-', '.')) or ".." in value or re.search(r"[\s~^:?*\\\[]", value):
+    if not value or len(value) > 200 or value.startswith(("-", ".")) or ".." in value or re.search(r"[\s~^:?*\\\[]", value):
         raise UpdateError("Invalid Git branch")
     return value
 
 
-def _encrypt(value: str) -> str:
-    if _fernet is None:
-        raise RuntimeError("updater not configured")
-    return _fernet.encrypt(value.encode()).decode()
+def _github_token() -> str:
+    return str(os.environ.get("LUMEN_GITHUB_TOKEN", "")).strip()
 
 
-def _decrypt(value: str) -> str:
-    if not value or _fernet is None:
-        return ""
-    try:
-        return _fernet.decrypt(value.encode()).decode()
-    except (InvalidToken, ValueError):
-        return ""
-
-
-def _token(name: str, env_name: str) -> str:
-    env = str(os.environ.get(env_name, "")).strip()
-    return env or _decrypt(str(_state.get(name, "")))
-
-
-def _public_setup() -> dict:
-    upstream = str(_state.get("upstream_repo") or os.environ.get("LUMEN_UPSTREAM_REPO") or PUBLISHER_REPOSITORY)
-    if upstream == PUBLISHER_REPOSITORY and upstream.startswith("OWNER/"):
-        upstream = ""
-    return {
-        "configured": bool(_token("railway_token", "LUMEN_RAILWAY_TOKEN") and _token("github_token", "LUMEN_GITHUB_TOKEN") and upstream and (_state.get("fork_repo") or os.environ.get("LUMEN_FORK_REPO"))),
-        "railway_token_set": bool(_token("railway_token", "LUMEN_RAILWAY_TOKEN")),
-        "github_token_set": bool(_token("github_token", "LUMEN_GITHUB_TOKEN")),
-        "upstream_repo": upstream,
-        "fork_repo": str(_state.get("fork_repo") or os.environ.get("LUMEN_FORK_REPO", "")),
-        "branch": str(_state.get("branch") or os.environ.get("RAILWAY_GIT_BRANCH") or "main"),
-        "service_id_detected": bool(os.environ.get("RAILWAY_SERVICE_ID")),
-        "environment_id_detected": bool(os.environ.get("RAILWAY_ENVIRONMENT_ID")),
-        "encrypted_storage": True,
-    }
-
-
-async def load() -> dict:
-    global _state
-    if _fernet is None:
-        raise RuntimeError("updater not configured")
-    try:
-        if _state_file.exists():
-            raw = await asyncio.to_thread(_state_file.read_text, encoding="utf-8")
-            parsed = json.loads(raw)
-            _state = parsed if isinstance(parsed, dict) else {}
-    except Exception:
-        _state = {}
-    return _public_setup()
-
-
-async def _save() -> None:
-    _data_dir.mkdir(parents=True, exist_ok=True)
-    body = json.dumps(_state, ensure_ascii=False, indent=2)
-    tmp = _state_file.with_suffix(".tmp")
-    await asyncio.to_thread(tmp.write_text, body, encoding="utf-8")
-    try:
-        os.chmod(tmp, stat.S_IRUSR | stat.S_IWUSR)
-    except OSError:
-        pass
-    await asyncio.to_thread(tmp.replace, _state_file)
+def _railway_token() -> str:
+    return str(os.environ.get("LUMEN_RAILWAY_TOKEN", "")).strip()
 
 
 def setup_status() -> dict:
-    return _public_setup()
+    fork = str(os.environ.get("LUMEN_FORK_REPO", "")).strip()
+    branch = str(os.environ.get("RAILWAY_GIT_BRANCH") or os.environ.get("LUMEN_GIT_BRANCH") or "main").strip()
+    configured = all((_github_token(), _railway_token(), fork, os.environ.get("RAILWAY_SERVICE_ID"), os.environ.get("RAILWAY_ENVIRONMENT_ID")))
+    return {
+        "configured": bool(configured),
+        "current_version": CURRENT_VERSION,
+        "upstream_repo": UPSTREAM_REPOSITORY,
+        "fork_repo": fork,
+        "branch": branch,
+    }
 
 
 def _request_json(url: str, *, method: str = "GET", headers: dict | None = None, payload: dict | None = None, timeout: float = 12.0) -> dict:
-    merged = {"Accept": "application/json", "User-Agent": "Lumen-Relay-Updater/17"}
+    merged = {"Accept": "application/json", "User-Agent": "Lumen-Relay-Updater/18"}
     if headers:
         merged.update(headers)
     data = None
@@ -166,77 +107,19 @@ async def _call(url: str, **kwargs) -> dict:
 
 
 def _github_headers(token: str = "") -> dict:
-    headers = {"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2026-03-10"}
+    headers = {"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
     if token:
         headers["Authorization"] = "Bearer " + token
     return headers
 
 
-def _railway_headers(token: str) -> dict:
-    return {"Authorization": "Bearer " + token}
-
-
 async def _railway(query: str, variables: dict, token: str) -> dict:
-    result = await _call(RAILWAY_GRAPHQL, method="POST", headers=_railway_headers(token), payload={"query": query, "variables": variables})
+    result = await _call(RAILWAY_GRAPHQL, method="POST", headers={"Authorization": "Bearer " + token}, payload={"query": query, "variables": variables})
     errors = result.get("errors")
     if errors:
         message = str(errors[0].get("message") if isinstance(errors, list) and errors and isinstance(errors[0], dict) else errors)
         raise UpdateError("Railway rejected the request: " + message[:180], 502)
     return result.get("data") or {}
-
-
-async def save_setup(data: dict) -> dict:
-    global _state, _cache
-    upstream_raw = str(data.get("upstream_repo") or _public_setup().get("upstream_repo") or "").strip()
-    upstream = _repository(upstream_raw, field="Upstream repository") if upstream_raw else ""
-    fork = _repository(data.get("fork_repo") or _public_setup().get("fork_repo"), field="Fork repository")
-    branch = _branch(data.get("branch") or _public_setup().get("branch"))
-    github_token = str(data.get("github_token") or "").strip() or _token("github_token", "LUMEN_GITHUB_TOKEN")
-    railway_token = str(data.get("railway_token") or "").strip() or _token("railway_token", "LUMEN_RAILWAY_TOKEN")
-    if len(github_token) < 20:
-        raise UpdateError("A GitHub fine-grained token is required")
-    if len(railway_token) < 20:
-        raise UpdateError("A Railway account token is required")
-    service_id = os.environ.get("RAILWAY_SERVICE_ID", "")
-    environment_id = os.environ.get("RAILWAY_ENVIRONMENT_ID", "")
-    if not service_id or not environment_id:
-        raise UpdateError("Railway service/environment IDs were not detected", 400)
-
-    repo_info = await _call(GITHUB_API + "/repos/" + fork, headers=_github_headers(github_token))
-    full_name = str(repo_info.get("full_name") or "")
-    parent = str((repo_info.get("parent") or {}).get("full_name") or "")
-    if full_name.lower() != fork.lower():
-        raise UpdateError("GitHub token cannot access the selected fork")
-    if not upstream:
-        upstream = _repository(parent if repo_info.get("fork") and parent else full_name, field="Upstream repository")
-    if fork.lower() != upstream.lower() and (not repo_info.get("fork") or parent.lower() != upstream.lower()):
-        raise UpdateError("Selected GitHub repository is not a fork of the upstream repository")
-    await _railway("query { me { id email } }", {}, railway_token)
-
-    async with _lock:
-        _state = {
-            "upstream_repo": upstream,
-            "fork_repo": fork,
-            "branch": branch,
-            "github_token": _encrypt(github_token),
-            "railway_token": _encrypt(railway_token),
-            "configured_at": int(time.time()),
-        }
-        await _save()
-        _cache = {"at": 0.0, "value": None}
-    return _public_setup()
-
-
-async def clear_setup() -> dict:
-    global _state, _cache
-    async with _lock:
-        _state = {}
-        _cache = {"at": 0.0, "value": None}
-        try:
-            await asyncio.to_thread(_state_file.unlink, missing_ok=True)
-        except Exception:
-            pass
-    return _public_setup()
 
 
 def _version_tuple(value: str) -> tuple[int, int, int]:
@@ -248,20 +131,15 @@ def _version_tuple(value: str) -> tuple[int, int, int]:
 
 async def check_latest(force: bool = False) -> dict:
     global _cache
-    setup = _public_setup()
-    upstream = setup.get("upstream_repo")
-    base = {"current_version": CURRENT_VERSION, "configured": setup["configured"], "setup_required": not setup["configured"], "available": False}
-    if not upstream:
-        return {**base, "reason": "upstream_repository_required"}
     now = time.monotonic()
     if not force and _cache.get("value") is not None and now - float(_cache.get("at") or 0) < CHECK_SECONDS:
         return dict(_cache["value"])
-    github_token = _token("github_token", "LUMEN_GITHUB_TOKEN")
-    release = await _call(GITHUB_API + "/repos/" + upstream + "/releases/latest", headers=_github_headers(github_token))
+    release = await _call(GITHUB_API + "/repos/" + UPSTREAM_REPOSITORY + "/releases/latest", headers=_github_headers(_github_token()))
     tag = str(release.get("tag_name") or release.get("name") or "")
     latest = ".".join(str(x) for x in _version_tuple(tag))
+    setup = setup_status()
     value = {
-        **base,
+        **setup,
         "latest_version": latest,
         "tag": tag,
         "available": _version_tuple(latest) > _version_tuple(CURRENT_VERSION),
@@ -273,27 +151,25 @@ async def check_latest(force: bool = False) -> dict:
 
 
 async def apply_latest() -> dict:
-    setup = _public_setup()
+    setup = setup_status()
     if not setup["configured"]:
-        raise UpdateError("Complete update setup first")
-    github_token = _token("github_token", "LUMEN_GITHUB_TOKEN")
-    railway_token = _token("railway_token", "LUMEN_RAILWAY_TOKEN")
-    upstream = _repository(setup["upstream_repo"], field="Upstream repository")
+        raise UpdateError("Updater credentials were not provisioned by the Cloudflare installer")
+    github_token = _github_token()
+    railway_token = _railway_token()
+    upstream = UPSTREAM_REPOSITORY
     fork = _repository(setup["fork_repo"], field="Fork repository")
     branch = _branch(setup["branch"])
     service_id = os.environ.get("RAILWAY_SERVICE_ID", "")
     environment_id = os.environ.get("RAILWAY_ENVIRONMENT_ID", "")
-    if not service_id or not environment_id:
-        raise UpdateError("Railway service/environment IDs are unavailable")
 
-    async with _lock:
+    async with _apply_lock:
         latest = await check_latest(force=True)
         if not latest.get("available"):
             return {"started": False, "already_current": True, **latest}
         repo_info = await _call(GITHUB_API + "/repos/" + fork, headers=_github_headers(github_token))
         parent = str((repo_info.get("parent") or {}).get("full_name") or "")
-        if fork.lower() != upstream.lower() and (not repo_info.get("fork") or parent.lower() != upstream.lower()):
-            raise UpdateError("Fork/upstream relationship changed; update stopped")
+        if not repo_info.get("fork") or parent.lower() != upstream.lower():
+            raise UpdateError("Configured repository is not a fork of the official source")
         await _call(GITHUB_API + "/repos/" + fork + "/merge-upstream", method="POST", headers=_github_headers(github_token), payload={"branch": branch})
         commit = await _call(GITHUB_API + "/repos/" + fork + "/commits/" + urllib.parse.quote(branch, safe=""), headers=_github_headers(github_token))
         sha = str(commit.get("sha") or "")

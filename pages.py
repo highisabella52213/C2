@@ -1051,7 +1051,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Lumen Relay v17 · command rail + route studio
+   Lumen Relay v18 · command rail + route studio
    A second expressive composition, intentionally unlike the v11 sidebar.
    ═══════════════════════════════════════════════════════════════════════════ */
 :root{--command-rail-w:108px;--v12-card-gap:18px}
@@ -1080,39 +1080,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(max-width:639px){.cp-body{grid-template-columns:1fr!important;padding:14px!important}.create-panel .cp-body>.cp-block,.create-panel .cp-block,.create-panel .endpoint-studio,.create-panel .cp-footer{grid-column:1!important}.cp-footer{grid-template-columns:1fr!important}.cp-submit-btn{width:100%!important}.route-network{grid-template-columns:1fr 20px 1fr!important}.route-port{grid-column:1/-1;border-inline-start:0;border-top:1px solid var(--md-sys-color-outline-variant);padding:10px 0 0}.route-data{grid-template-columns:1fr 1fr!important}.route-usage{grid-column:1/-1}.route-fact:nth-child(2){border-inline-start:0;padding-inline-start:0}.route-actions{grid-template-columns:1fr 1fr repeat(2,48px)!important}.route-action.compact:nth-last-child(-n+2){grid-row:2}.route-action span{font-size:.67rem}.route-head{padding:18px}.endpoint-grid{grid-template-columns:1fr!important}.endpoint-preview>i{transform:rotate(90deg)!important}.main{padding-left:10px!important;padding-right:10px!important}.topbar{padding:14px!important}.tb-title{font-size:1.3rem!important}}
 
 .update-available-btn{min-height:44px;border:0;border-radius:999px;padding:0 16px;align-items:center;gap:8px;background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container);font:750 .76rem var(--md-ref-typeface-plain);cursor:pointer;animation:update-pulse 2.4s ease-in-out infinite}.update-available-btn i{font-size:18px}@keyframes update-pulse{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--md-sys-color-tertiary) 10%,transparent)}}
-.update-dialog{width:min(820px,calc(100vw - 28px))!important;max-width:820px!important;max-height:calc(100vh - 28px);overflow:auto}.update-head{display:flex;align-items:center;gap:14px;padding:22px 24px;border-bottom:1px solid var(--md-sys-color-outline-variant);position:sticky;top:0;z-index:2;background:var(--md-sys-color-surface-container-high)}.update-head>div:nth-child(2){min-width:0}.update-head .lmodal-title-v2,.update-head .lmodal-sub-v2{white-space:normal}.update-head .lmodal-sub-v2{overflow:visible;text-overflow:clip}.update-head .modal-v2-close{margin-inline-start:auto;flex:0 0 48px}.update-icon{width:54px;height:54px;display:grid;place-items:center;border-radius:20px 20px 8px 20px;background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);font-size:25px}.update-body{padding:22px;display:grid;gap:16px}.update-state,.update-warning{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;border-radius:16px;line-height:1.55}.update-state{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);font-weight:720}.update-state.available{background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container)}.update-state.current{background:var(--green-bg);color:var(--green-t)}.update-warning{background:var(--md-sys-color-surface-container-low);color:var(--md-sys-color-on-surface-variant);font-size:.74rem}.update-warning i{color:var(--md-sys-color-primary);font-size:20px}.update-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.update-field{display:grid;gap:7px;min-width:0}.update-field .cp-input-full{width:100%;min-width:0}.update-field label{font-size:.74rem;font-weight:720}.update-field small{color:var(--md-sys-color-on-surface-variant);font-size:.68rem;line-height:1.5}.update-wide{grid-column:1/-1}.update-actions{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;padding-top:4px}.updater-settings-tile{width:100%;text-align:initial;cursor:pointer;color:inherit}.updater-settings-tile:hover{border-color:var(--md-sys-color-primary)}
-@media(max-width:639px){.update-grid{grid-template-columns:1fr}.update-wide{grid-column:auto}.update-actions{grid-template-columns:1fr}.update-actions span{display:none}.update-actions .btn{width:100%}.update-head{padding:16px}.update-body{padding:15px}.endpoint-preview{align-items:stretch}}
 
 </style>
 </head>
 <body>
 <div class="toast" id="toast"></div>
-<div class="modal-bg" id="modal-update">
-  <div class="modal-v2 update-dialog">
-    <div class="update-head">
-      <div class="update-icon"><i class="ti ti-refresh-dot"></i></div>
-      <div><div class="lmodal-title-v2">Secure version updates</div><div class="lmodal-sub-v2">One-time setup for fork synchronization and Railway deployment</div></div>
-      <button class="modal-v2-close" onclick="closeModal('modal-update')" aria-label="Close"><i class="ti ti-x"></i></button>
-    </div>
-    <div class="update-body">
-      <div class="update-state" id="update-state"><i class="ti ti-loader-2"></i><span>Checking version…</span></div>
-      <div class="update-warning"><i class="ti ti-shield-lock"></i><span>Tokens are encrypted before storage, never returned to the browser, and never written to logs. A persistent Railway Volume is required to keep them across deployments.</span></div>
-      <div class="update-grid">
-        <div class="update-field"><label>Publisher repository · optional</label><input class="cp-input-full endpoint-ltr" id="update-upstream" placeholder="Auto-detected from fork parent"><small>Leave empty to detect the upstream repository automatically from your fork.</small></div>
-        <div class="update-field"><label>Your connected fork</label><input class="cp-input-full endpoint-ltr" id="update-fork" placeholder="owner/repository"></div>
-        <div class="update-field"><label>Fork branch</label><input class="cp-input-full endpoint-ltr" id="update-branch" value="main" placeholder="main"></div>
-        <div class="update-field"><label>Railway account token</label><input class="cp-input-full endpoint-ltr" type="password" id="update-railway-token" autocomplete="new-password" placeholder="Leave empty to keep saved token"><small>Created at railway.com/account/tokens. This is a broad credential; use a dedicated token and rotate it if exposed.</small></div>
-        <div class="update-field update-wide"><label>GitHub fine-grained token</label><input class="cp-input-full endpoint-ltr" type="password" id="update-github-token" autocomplete="new-password" placeholder="Leave empty to keep saved token"><small>Required because Railway cannot modify a GitHub fork. Grant repository Contents write access only to this fork.</small></div>
-      </div>
-      <div class="update-actions">
-        <button class="btn btn-d" id="update-reset-btn" onclick="resetUpdateSetup()"><i class="ti ti-trash"></i> Reset setup</button>
-        <span></span>
-        <button class="btn btn-o" id="update-save-btn" onclick="saveUpdateSetup()"><i class="ti ti-shield-check"></i> Save and verify</button>
-        <button class="btn btn-p" id="update-apply-btn" style="display:none" onclick="applyLatestUpdate()"><i class="ti ti-download"></i> Update to new version</button>
-      </div>
-    </div>
-  </div>
-</div>
 <div class="modal-bg" id="modal-links">
   <div class="modal-v2" style="max-width:500px">
     <div class="lmodal-head">
@@ -1239,7 +1211,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   <button class="sb-close" id="close-sb"><i class="ti ti-x"></i></button>
   <div class="logo">
     <div class="logo-img"><i class="ti ti-shield-bolt"></i></div>
-    <div><div class="logo-name">Lumen Relay</div><div class="logo-sub">Command Console · v17</div></div>
+    <div><div class="logo-name">Lumen Relay</div><div class="logo-sub">Command Console · v18</div></div>
   </div>
   <nav class="nav-wrap" aria-label="Workspace navigation">
     <div class="nav-sec">Workspace</div>
@@ -1270,7 +1242,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     <div class="tb-right">
       <span class="badge bg-green"><span class="dot dg pulse"></span> Active</span>
       <span class="badge bg-blue" id="uptime-badge">—</span>
-      <button class="update-available-btn" id="update-available-btn" style="display:none" onclick="openUpdateSetup()"><i class="ti ti-download"></i><span>Update to new version</span></button>
+      <button class="update-available-btn" id="update-available-btn" style="display:none" onclick="applyLatestUpdate()"><i class="ti ti-download"></i><span>Update to new version</span></button>
       <button class="btn btn-p btn-sm" onclick="refreshAll()"><i class="ti ti-refresh"></i> Refresh</button>
     </div>
   </div>
@@ -1302,7 +1274,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <div class="card-title"><i class="ti ti-activity"></i> Service status</div>
       <div class="sr"><span class="sr-k"><i class="ti ti-shield-check"></i> UUID Auth</span><span class="sr-v" style="color:var(--green-t)">● Active · strict</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-circle-check"></i> VLESS / WS Tunnel</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v17</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v18</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-rss"></i> Subscription API</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-clock"></i> Uptime</span><span class="sr-v" id="uptime-inline">—</span></div>
       <div class="sr" style="flex-direction:column;align-items:flex-start;gap:4px">
@@ -1316,7 +1288,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
   </div>
   <div class="dash-footer">
-    <span class="df-text">Lumen Relay · Version 17.0</span>
+    <span class="df-text">Lumen Relay · Version 18.0</span>
     
   </div>
 </section>
@@ -1637,7 +1609,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
     <div class="card">
       <div class="card-title"><i class="ti ti-shield-check"></i> Access control</div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-id-badge"></i> UUID Auth strict</span><span class="sr-v" style="color:var(--green-t)">● Active v17</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-id-badge"></i> UUID Auth strict</span><span class="sr-v" style="color:var(--green-t)">● Active v18</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-toggle-right"></i> Enable / disable config</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-gauge"></i> Traffic quota</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-calendar-x"></i> Expiry date</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
@@ -1684,11 +1656,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       </div>
       <div class="srv-tiles">
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-route"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Default port</div><div class="srv-tile-val">443 (TLS) · can be overridden per config</div></div></div>
-        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version</div><div class="srv-tile-val">v17.0</div></div></div>
+        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version</div><div class="srv-tile-val">v18.0</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-brand-fastapi"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Framework</div><div class="srv-tile-val">FastAPI + Uvicorn</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-cloud"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Platform</div><div class="srv-tile-val">Railway</div></div></div>
         <div class="srv-tile" style="grid-column:1/-1"><div class="srv-tile-icon"><i class="ti ti-device-floppy"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Storage</div><div class="srv-tile-val">JSON File (/data)</div></div></div>
-        <button class="srv-tile updater-settings-tile" type="button" onclick="openUpdateSetup()" style="grid-column:1/-1"><div class="srv-tile-icon"><i class="ti ti-refresh-dot"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version updates</div><div class="srv-tile-val" id="update-settings-label">Configure secure updates</div></div></button>
+        
       </div>
     </div>
     <div class="pw-panel">
@@ -2015,7 +1987,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   "Leave empty to keep saved token": "برای نگه‌داشتن توکن ذخیره‌شده خالی بگذارید",
   "Created at railway.com/account/tokens. This is a broad credential; use a dedicated token and rotate it if exposed.": "از railway.com/account/tokens ساخته می‌شود. این دسترسی گسترده است؛ توکن اختصاصی بسازید و در صورت افشا فوراً آن را تغییر دهید.",
   "Required because Railway cannot modify a GitHub fork. Grant repository Contents write access only to this fork.": "ضروری است چون Railway نمی‌تواند فورک گیت‌هاب را تغییر دهد. دسترسی نوشتن Contents را فقط برای همین فورک بدهید.",
-  "Version 17.1.0 is ready. Your fork will be synced before Railway deploys it.": "نسخه 17.1.0 آماده است؛ ابتدا فورک همگام و سپس روی Railway دیپلوی می‌شود.",
+  "Version 18.1.0 is ready. Your fork will be synced before Railway deploys it.": "نسخه 18.1.0 آماده است؛ ابتدا فورک همگام و سپس روی Railway دیپلوی می‌شود.",
   "Synchronizing fork and starting Railway deployment…": "در حال همگام‌سازی فورک و شروع دیپلوی Railway…",
   "Deployment started. This panel may reconnect during the update.": "دیپلوی شروع شد؛ ممکن است پنل هنگام آپدیت دوباره متصل شود."
 }</script>
@@ -2087,28 +2059,21 @@ async function authF(url,opts={}){
   return r;
 }
 
-/* ===== Secure GitHub fork + Railway version updates ===== */
-let updateSetupState={},updateReleaseState={};
-function updateStateText(text,kind=''){const e=document.getElementById('update-state');e.className='update-state'+(kind?' '+kind:'');e.innerHTML='<i class="ti '+(kind==='available'?'ti-download':kind==='current'?'ti-circle-check':'ti-info-circle')+'"></i><span>'+esc(text)+'</span>'}
-async function loadUpdateStatus(initial=false){
+/* ===== Installer-provisioned version updates (no token UI) ===== */
+let updateReleaseState={};
+async function loadUpdateStatus(){
+  const top=document.getElementById('update-available-btn');
   try{
-    const [sr,vr]=await Promise.all([authF('/api/update/setup'),authF('/api/update/status')]);
-    const setup=await sr.json(),version=await vr.json();if(!sr.ok)throw new Error(setup.detail||'Could not load update setup');if(!vr.ok)throw new Error(version.detail||'Could not check version');
-    updateSetupState=setup;updateReleaseState=version;
-    document.getElementById('update-upstream').value=setup.upstream_repo||'';document.getElementById('update-fork').value=setup.fork_repo||'';document.getElementById('update-branch').value=setup.branch||'main';
-    const top=document.getElementById('update-available-btn'),apply=document.getElementById('update-apply-btn'),label=document.getElementById('update-settings-label');
-    top.style.display=version.available?'inline-flex':'none';if(version.available)top.querySelector('span').textContent=(uiLang==='fa'?'آپدیت به نسخه ':'Update to v')+version.latest_version;apply.style.display=version.available&&setup.configured?'inline-flex':'none';
-    label.textContent=setup.configured?(version.available?(uiLang==='fa'?('نسخه '+version.latest_version+' آماده است'):('v'+version.latest_version+' available')):tr('Updater configured')):tr('Configure secure updates');
-    if(version.available)updateStateText(uiLang==='fa'?('نسخه '+version.latest_version+' آماده است؛ ابتدا فورک همگام و سپس روی Railway دیپلوی می‌شود.'):('Version '+version.latest_version+' is ready. Your fork will be synced before Railway deploys it.'),'available');
-    else if(setup.configured)updateStateText(uiLang==='fa'?('نسخه '+version.current_version+' به‌روز است.'):('Version '+version.current_version+' is current.'),'current');
-    else updateStateText(tr('Complete one-time setup to enable future updates.'));
-    if(initial&&!setup.configured)setTimeout(()=>openModal('modal-update'),450);
-  }catch(e){updateStateText(e.message||'Update check unavailable');if(initial)console.warn(e)}
+    const r=await authF('/api/update/status');const d=await r.json();if(!r.ok)throw new Error(d.detail||'Could not check version');
+    updateReleaseState=d;const ready=Boolean(d.available&&d.configured);top.style.display=ready?'inline-flex':'none';
+    if(ready)top.querySelector('span').textContent=(uiLang==='fa'?'آپدیت به نسخه ':'Update to v')+d.latest_version;
+  }catch(e){if(top)top.style.display='none'}
 }
-function openUpdateSetup(){openModal('modal-update');loadUpdateStatus(false)}
-async function saveUpdateSetup(){const b=document.getElementById('update-save-btn');b.disabled=true;try{const body={upstream_repo:document.getElementById('update-upstream').value.trim(),fork_repo:document.getElementById('update-fork').value.trim(),branch:document.getElementById('update-branch').value.trim(),railway_token:document.getElementById('update-railway-token').value.trim(),github_token:document.getElementById('update-github-token').value.trim()};const r=await authF('/api/update/setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json();document.getElementById('update-railway-token').value='';document.getElementById('update-github-token').value='';if(!r.ok)throw new Error(d.detail||'Could not verify update setup');toast('Update setup verified','ok');await loadUpdateStatus(false)}catch(e){toast(e.message||'Update setup failed','err')}finally{b.disabled=false}}
-async function resetUpdateSetup(){if(!confirm(tr('Remove saved update credentials?')))return;const r=await authF('/api/update/setup',{method:'DELETE'});if(r.ok){toast('Update setup removed','ok');await loadUpdateStatus(false)}}
-async function applyLatestUpdate(){if(!confirm(tr('Sync your fork and deploy the latest release now?')))return;const b=document.getElementById('update-apply-btn');b.disabled=true;updateStateText(uiLang==='fa'?'در حال همگام‌سازی فورک و شروع دیپلوی Railway…':'Synchronizing fork and starting Railway deployment…','available');try{const r=await authF('/api/update/apply',{method:'POST'});const d=await r.json();if(!r.ok)throw new Error(d.detail||'Update failed');if(d.started){toast('Update deployment started','ok');updateStateText(uiLang==='fa'?'دیپلوی شروع شد؛ ممکن است پنل هنگام آپدیت دوباره متصل شود.':'Deployment started. This panel may reconnect during the update.','current');setTimeout(()=>location.reload(),12000)}else{toast('Already on latest version','ok');await loadUpdateStatus(false)}}catch(e){toast(e.message||'Update failed','err');await loadUpdateStatus(false)}finally{b.disabled=false}}
+async function applyLatestUpdate(){
+  if(!confirm(uiLang==='fa'?'فورک همگام و نسخه جدید روی Railway دیپلوی شود؟':'Sync your fork and deploy the latest release now?'))return;
+  const b=document.getElementById('update-available-btn');if(b)b.disabled=true;
+  try{const r=await authF('/api/update/apply',{method:'POST'});const d=await r.json();if(!r.ok)throw new Error(d.detail||'Update failed');if(d.started){toast(uiLang==='fa'?'دیپلوی نسخه جدید آغاز شد':'Update deployment started','ok');setTimeout(()=>location.reload(),12000)}else{toast(uiLang==='fa'?'همین حالا آخرین نسخه نصب است':'Already on latest version','ok');await loadUpdateStatus()}}catch(e){toast(e.message||'Update failed','err');await loadUpdateStatus()}finally{if(b)b.disabled=false}
+}
 
 /* ===== Managed proxy repository per config ===== */
 let managedProxyCatalog=[];
