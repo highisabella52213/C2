@@ -1,4 +1,4 @@
-# pages.py  -  Lumen Relay UI v13
+# pages.py  -  Lumen Relay UI v15
 # contains: LOGIN_HTML, DASHBOARD_HTML, get_public_page_html()
 
 
@@ -789,7 +789,7 @@ a,button,input,select,textarea{font-family:inherit}
 button,a,.chip,.nav-it,.proto-card,.tog{transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #189BAD;outline-offset:2px;border-radius:10px}
 
-/* ============ Exit IP / ProxyIP panel ============ */
+/* ============ Exit IP / managed proxy panel ============ */
 .ob-body{padding:18px;display:grid;gap:15px}
 .ob-field label{display:block;margin-bottom:6px;font-size:13px;font-weight:600;opacity:.85}
 .ob-field input,.ob-field select,.ob-field textarea{width:100%;padding:11px 12px;border-radius:11px;border:1px solid rgba(191,191,191,.2);background:rgba(255,255,255,.04);color:inherit;font-size:13.5px;outline:none}
@@ -1051,7 +1051,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Lumen Relay v13 · command rail + route studio
+   Lumen Relay v15 · command rail + route studio
    A second expressive composition, intentionally unlike the v11 sidebar.
    ═══════════════════════════════════════════════════════════════════════════ */
 :root{--command-rail-w:108px;--v12-card-gap:18px}
@@ -1064,7 +1064,8 @@ body{padding-right:0}
 .main{margin-left:0!important;margin-right:calc(var(--command-rail-w) + 34px)!important;padding:24px 24px 72px!important}.pg{max-width:1380px!important}.topbar{top:16px!important}.tb-title{font-size:1.55rem!important}.tb-title i{border-radius:18px 18px 8px 18px!important}.tb-sub{margin-inline-start:52px!important;margin-left:0!important}
 /* Builder composition */
 .create-panel{display:grid!important;grid-template-columns:minmax(220px,290px) minmax(0,1fr)!important;align-items:stretch!important;background:var(--md-sys-color-surface-container-lowest)!important;border-radius:36px!important;margin-bottom:26px!important}.cp-head{grid-column:1!important;grid-row:1!important;align-self:stretch!important;flex-direction:column!important;justify-content:flex-start!important;align-items:flex-start!important;gap:20px!important;padding:36px 28px!important;border-radius:36px 0 0 36px!important;background:linear-gradient(155deg,var(--md-sys-color-primary-container),color-mix(in srgb,var(--md-sys-color-tertiary-container) 56%,var(--md-sys-color-primary-container)))!important;position:relative!important;overflow:hidden!important}.cp-head::after{content:'';position:absolute;left:-70px;bottom:-85px;width:240px;height:240px;border-radius:50%;border:36px solid color-mix(in srgb,var(--md-sys-color-primary) 15%,transparent);opacity:.9}.cp-head-icon{width:68px!important;height:68px!important;border-radius:26px 26px 10px 26px!important;font-size:30px!important;box-shadow:0 18px 36px color-mix(in srgb,var(--md-sys-color-on-primary-container) 14%,transparent)!important}.cp-head-title{font-size:1.75rem!important;line-height:1.12!important;letter-spacing:-.045em!important;max-width:8ch}.cp-head-sub{font-size:.82rem!important;line-height:1.75!important;max-width:22ch!important}.cp-head-text{z-index:1!important}.cp-body{grid-column:2!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important;padding:22px!important}.create-panel .cp-row{display:contents!important}.create-panel .cp-body>.cp-block,.create-panel .endpoint-studio,.create-panel .cp-footer,.create-panel .cp-block:has(#nl-speed){grid-column:1/-1!important}.create-panel .cp-block{margin:0!important;padding:20px!important;border-radius:22px!important;background:var(--md-sys-color-surface-container-low)!important;border:1px solid transparent!important;transition:border-color 180ms,transform 260ms var(--md-sys-motion-easing-emphasized)!important}.create-panel .cp-block:focus-within{border-color:var(--md-sys-color-primary)!important;transform:translateY(-2px)!important}.cp-block-label{font-size:.73rem!important;letter-spacing:.055em!important;text-transform:uppercase!important}.cp-mini-row{margin-top:10px!important}.field-caption{font-size:.7rem;line-height:1.55;color:var(--md-sys-color-on-surface-variant);margin-top:10px}.endpoint-studio{padding:0!important;background:var(--md-sys-color-surface-container)!important;border:0!important}.endpoint-studio-head{padding:22px 24px!important}.endpoint-grid{padding:18px!important}.endpoint-field{background:var(--md-sys-color-surface-container-lowest)!important}.cp-footer{display:grid!important;grid-template-columns:1fr auto!important;align-items:center!important;gap:18px!important;padding:18px 4px 4px!important}.cp-footer-note{font-size:.72rem!important;line-height:1.6!important}.cp-submit-btn{min-width:190px!important;min-height:56px!important;border-radius:20px 20px 8px 20px!important;box-shadow:0 14px 30px color-mix(in srgb,var(--md-sys-color-primary) 18%,transparent)!important}
-.config-proxy-studio{grid-column:1/-1!important;background:var(--md-sys-color-surface-container)!important;padding:0!important;overflow:hidden}.config-proxy-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 22px;border-bottom:1px solid var(--md-sys-color-outline-variant)}.config-scope-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border-radius:999px;background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container);font-size:.68rem;font-weight:750;white-space:nowrap}.config-proxy-grid{padding:18px;display:grid;grid-template-columns:minmax(210px,.7fr) 1.3fr;gap:14px}.proxy-mode-card,.config-proxy-fields{padding:16px;border-radius:18px;background:var(--md-sys-color-surface-container-lowest)}.proxy-mode-card label,.config-proxy-fields label{display:block;font-size:.72rem;font-weight:700;margin-bottom:8px}.config-proxy-fields{grid-template-columns:1fr 130px;gap:12px}.config-proxy-fields:not([style*="display: none"]){display:grid!important}.config-proxy-fields textarea{resize:vertical;min-height:70px}.proxy-safe-note{margin:0 18px 18px;padding:13px 15px;display:flex;gap:9px;align-items:flex-start;border-radius:16px;background:color-mix(in srgb,var(--green) 12%,var(--md-sys-color-surface-container-low));color:var(--md-sys-color-on-surface-variant);font-size:.72rem;line-height:1.6}.proxy-safe-note i{color:var(--green);font-size:18px}.route-proxy{margin:10px 18px 0;min-height:38px;padding:8px 11px;border-radius:13px;display:flex;align-items:center;gap:7px;font-size:.68rem;font-weight:700;background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface-variant)}.route-proxy.enabled{background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container)}.route-proxy code{margin-inline-start:auto;max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr}.config-proxy-edit{padding:13px;border-radius:16px;background:var(--md-sys-color-surface-container-low)}@media(max-width:639px){.config-proxy-head{align-items:flex-start;flex-direction:column}.config-proxy-grid{grid-template-columns:1fr}.config-proxy-fields:not([style*="display: none"]){grid-template-columns:1fr!important}}
+.config-proxy-studio{grid-column:1/-1!important;background:var(--md-sys-color-surface-container)!important;padding:0!important;overflow:hidden}.config-proxy-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 22px;border-bottom:1px solid var(--md-sys-color-outline-variant)}.config-scope-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border-radius:999px;background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container);font-size:.68rem;font-weight:750;white-space:nowrap}.config-proxy-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.repository-refresh-btn{min-height:40px;border:0;border-radius:999px;padding:0 13px;align-items:center;gap:6px;background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);font:700 .7rem inherit;cursor:pointer}.repository-refresh-btn:disabled{opacity:.55;cursor:wait}.config-proxy-grid{padding:18px;display:grid;grid-template-columns:minmax(210px,.7fr) 1.3fr;gap:14px}.proxy-mode-card,.config-proxy-fields{padding:16px;border-radius:18px;background:var(--md-sys-color-surface-container-lowest)}.proxy-mode-card label,.config-proxy-fields label{display:block;font-size:.72rem;font-weight:700;margin-bottom:8px}.config-proxy-fields{grid-template-columns:1fr 130px;gap:12px}.config-proxy-fields:not([style*="display: none"]){display:grid!important}.config-proxy-fields textarea{resize:vertical;min-height:70px}.proxy-safe-note{margin:0 18px 18px;padding:13px 15px;display:flex;gap:9px;align-items:flex-start;border-radius:16px;background:color-mix(in srgb,var(--green) 12%,var(--md-sys-color-surface-container-low));color:var(--md-sys-color-on-surface-variant);font-size:.72rem;line-height:1.6}.proxy-safe-note i{color:var(--green);font-size:18px}.route-proxy{margin:10px 18px 0;min-height:38px;padding:8px 11px;border-radius:13px;display:flex;align-items:center;gap:7px;font-size:.68rem;font-weight:700;background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface-variant)}.route-proxy.enabled{background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container)}.route-proxy code{margin-inline-start:auto;max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr}.config-proxy-edit{padding:13px;border-radius:16px;background:var(--md-sys-color-surface-container-low)}@media(max-width:639px){.config-proxy-head{align-items:flex-start;flex-direction:column}.config-proxy-grid{grid-template-columns:1fr}.config-proxy-fields:not([style*="display: none"]){grid-template-columns:1fr!important}}
+.managed-safe,.custom-danger{min-height:48px;padding:11px 13px;border-radius:14px;display:flex;align-items:center;gap:7px;font-size:.68rem;font-weight:700;line-height:1.45}.managed-safe{background:color-mix(in srgb,var(--green) 14%,var(--md-sys-color-surface-container));color:var(--green-t)}.custom-danger{background:var(--md-sys-color-error-container);color:var(--md-sys-color-on-error-container)}.route-proxy.custom{background:var(--md-sys-color-error-container);color:var(--md-sys-color-on-error-container)}
 /* Configs become a card gallery, not a compressed row/table. */
 .cfg-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:var(--v12-card-gap)!important}.route-card{min-width:0;display:flex;flex-direction:column;background:var(--md-sys-color-surface-container-low);border:1px solid var(--md-sys-color-outline-variant);border-radius:30px;overflow:hidden;transition:transform 320ms var(--md-sys-motion-easing-emphasized),box-shadow 320ms,border-color 180ms}.route-card:hover{transform:translateY(-5px);border-color:var(--md-sys-color-outline);box-shadow:var(--shadow)}.route-card.is-off{opacity:.7}.route-card.is-exp{border-color:color-mix(in srgb,var(--md-sys-color-tertiary) 46%,var(--md-sys-color-outline-variant))}.route-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:22px 22px 16px}.route-title-wrap{display:flex;align-items:flex-start;gap:12px;min-width:0}.route-status-light{width:12px;height:12px;margin-top:6px;border-radius:50%;background:var(--md-sys-color-error);box-shadow:0 0 0 6px color-mix(in srgb,var(--md-sys-color-error) 13%,transparent);flex-shrink:0}.route-status-light.on{background:var(--green);box-shadow:0 0 0 6px color-mix(in srgb,var(--green) 14%,transparent)}.route-label{font:750 1.06rem/1.35 var(--md-ref-typeface-brand);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.route-remark{display:flex;align-items:center;gap:6px;margin-top:5px;color:var(--md-sys-color-on-surface-variant);font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.route-remark i{color:var(--md-sys-color-tertiary)}.route-state{min-height:40px;border:0;border-radius:999px;padding:0 13px;display:flex;align-items:center;gap:6px;background:var(--md-sys-color-error-container);color:var(--md-sys-color-on-error-container);font:700 .7rem inherit;cursor:pointer;flex-shrink:0}.route-state.on{background:var(--green-bg);color:var(--green-t)}.route-network{margin:0 14px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr) auto;align-items:center;gap:10px;background:var(--md-sys-color-surface-container-high);border-radius:20px}.route-network>div{min-width:0}.route-network span,.route-data span{display:block;font-size:.62rem;letter-spacing:.07em;text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);margin-bottom:4px}.route-network strong{display:block;font:650 .76rem/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.route-arrow{color:var(--md-sys-color-tertiary);font-size:18px}.route-port{padding-inline-start:10px;border-inline-start:1px solid var(--md-sys-color-outline-variant)}.route-data{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;padding:16px 18px}.route-usage{min-width:0}.route-data-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.route-data-head b{font-size:.7rem}.route-meter{height:6px;margin-top:10px;border-radius:99px;background:var(--md-sys-color-surface-container-highest);overflow:hidden}.route-meter i{height:100%;display:block;background:var(--md-sys-color-primary);border-radius:inherit}.route-fact{padding-inline-start:10px;border-inline-start:1px solid var(--md-sys-color-outline-variant);min-width:0}.route-fact strong{font-size:.77rem;white-space:nowrap}.route-fact .exp-chip{font-size:.64rem!important;padding:5px 7px!important}.route-uuid{margin:0 18px 16px;min-height:42px;border:1px dashed var(--md-sys-color-outline-variant);border-radius:14px;background:transparent;color:var(--md-sys-color-on-surface-variant);display:flex;align-items:center;gap:8px;padding:0 12px;cursor:pointer}.route-uuid code{flex:1;min-width:0;text-align:left;direction:ltr;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.68rem}.route-uuid span{font-size:.66rem;font-weight:700;color:var(--md-sys-color-primary)}.route-actions{display:grid;grid-template-columns:minmax(125px,1.2fr) minmax(145px,1fr) repeat(4,48px);gap:7px;padding:12px;background:var(--md-sys-color-surface-container);border-top:1px solid var(--md-sys-color-outline-variant)}.route-action{min-height:48px;border:0;border-radius:16px;background:var(--md-sys-color-surface-container-highest);color:var(--md-sys-color-on-surface);display:flex;align-items:center;justify-content:center;gap:7px;padding:0 12px;cursor:pointer;font:700 .7rem inherit;transition:transform 160ms var(--md-sys-motion-easing-emphasized),border-radius 160ms,background 160ms}.route-action:hover{transform:translateY(-2px)}.route-action:active{transform:scale(.96);border-radius:10px}.route-action.primary{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);border-radius:18px 18px 7px 18px}.route-action.secondary{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}.route-action.compact{padding:0}.route-action.danger{background:var(--md-sys-color-error-container);color:var(--md-sys-color-on-error-container)}
 /* RTL and keyboard */
@@ -1159,15 +1160,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <div class="fg" style="flex:1"><label>Address (IPv4 / IPv6 / domain)</label><input class="fi endpoint-ltr" id="el-address" placeholder="Empty = current service" style="width:100%"></div>
       <div class="fg" style="flex:1"><label>TLS SNI (domain only)</label><input class="fi endpoint-ltr" id="el-sni" placeholder="Empty = automatic" style="width:100%"></div>
     </div>
-    <div class="fg config-proxy-edit" style="margin-bottom:13px">
-      <label>ProxyIP for this config</label>
-      <select class="fs" id="el-proxy-mode" onchange="syncConfigProxy('el')" style="width:100%"><option value="direct">Direct — safest default</option><option value="proxyip">ProxyIP — automatic direct fallback</option></select>
-      <div id="el-proxy-fields" style="display:none;margin-top:9px">
-        <textarea class="fi endpoint-ltr" id="el-proxyip" rows="2" placeholder="proxy.example.com:443, 1.2.3.4:443" style="width:100%;resize:vertical"></textarea>
-        <select class="fs" id="el-proxy-concurrency" style="width:100%;margin-top:8px"><option value="1">1 parallel check</option><option value="2">2 parallel checks</option><option value="4">4 parallel checks</option><option value="6">6 parallel checks</option></select>
-      </div>
-      <div class="field-caption"><i class="ti ti-shield-check"></i> Direct fallback is always enabled and cannot be disabled.</div>
-    </div>
+    <div class="fg config-proxy-edit" style="margin-bottom:13px"><label>Exit IP settings</label><select class="fs" id="el-exit-mode" onchange="syncExitProxy('el')" style="width:100%"><option value="direct">Direct — safest default</option><option value="repository">Managed proxy repository</option><option value="custom">Custom proxy — unsafe</option></select><div id="el-repository-fields" style="display:none;margin-top:9px"><select class="fs" id="el-proxy-id" style="width:100%"></select></div><div id="el-custom-fields" style="display:none;margin-top:9px"><input class="fi endpoint-ltr" id="el-custom-proxy" placeholder="http://user:pass@host:port" style="width:100%"><div class="field-caption" style="color:var(--md-sys-color-error)"><i class="ti ti-alert-triangle"></i> Unsafe custom proxy; configuration may fail or traffic may be exposed.</div></div></div>
     <div class="form-row" style="margin-bottom:13px">
       <div class="fg" style="flex:1"><label>Fingerprint (uTLS)</label>
         <select class="fs" id="el-fp" style="width:100%">
@@ -1216,7 +1209,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   <button class="sb-close" id="close-sb"><i class="ti ti-x"></i></button>
   <div class="logo">
     <div class="logo-img"><i class="ti ti-shield-bolt"></i></div>
-    <div><div class="logo-name">Lumen Relay</div><div class="logo-sub">Command Console · v13</div></div>
+    <div><div class="logo-name">Lumen Relay</div><div class="logo-sub">Command Console · v15</div></div>
   </div>
   <nav class="nav-wrap" aria-label="Workspace navigation">
     <div class="nav-sec">Workspace</div>
@@ -1279,7 +1272,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <div class="card-title"><i class="ti ti-activity"></i> Service status</div>
       <div class="sr"><span class="sr-k"><i class="ti ti-shield-check"></i> UUID Auth</span><span class="sr-v" style="color:var(--green-t)">● Active · strict</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-circle-check"></i> VLESS / WS Tunnel</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v13</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v15</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-rss"></i> Subscription API</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-clock"></i> Uptime</span><span class="sr-v" id="uptime-inline">—</span></div>
       <div class="sr" style="flex-direction:column;align-items:flex-start;gap:4px">
@@ -1293,7 +1286,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
   </div>
   <div class="dash-footer">
-    <span class="df-text">Lumen Relay · Version 13.0</span>
+    <span class="df-text">Lumen Relay · Version 15.0</span>
     <a class="df-link" href="https://t.me/Farajian2004f" target="_blank"><i class="ti ti-brand-telegram"></i> t.me/Farajian2004f</a>
     
   </div>
@@ -1355,7 +1348,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       </div>
       <div class="cp-block mb16">
         <div class="cp-block-label"><i class="ti ti-plug-connected"></i> Transport protocol</div>
-        <select id="nl-proto" style="display:none">
+        <select id="nl-proto" style="display: none">
           <option value="vless-ws">VLESS / WebSocket Turbo</option>
         </select>
         <div class="proto-cards">
@@ -1382,7 +1375,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
               <option value="__auto__">Auto — current service</option>
               <option value="__custom__">Custom address…</option>
             </select>
-            <div class="endpoint-custom" id="nl-address-custom-row" style="display:none">
+            <div class="endpoint-custom" id="nl-address-custom-row" style="display: none">
               <input class="cp-input-full endpoint-ltr" id="nl-address-custom" autocomplete="off" spellcheck="false" placeholder="IPv4, IPv6 or domain" oninput="updateEndpointPreview()">
             </div>
             <div class="endpoint-help">The address after <code>@</code>. Ports, paths and URL schemes are intentionally separate.</div>
@@ -1393,7 +1386,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
               <option value="__auto__">Auto — safest TLS routing</option>
               <option value="__custom__">Custom SNI…</option>
             </select>
-            <div class="endpoint-custom" id="nl-sni-custom-row" style="display:none">
+            <div class="endpoint-custom" id="nl-sni-custom-row" style="display: none">
               <input class="cp-input-full endpoint-ltr" id="nl-sni-custom" autocomplete="off" spellcheck="false" placeholder="front.example.com" oninput="updateEndpointPreview()">
             </div>
             <div class="endpoint-help">SNI must be a domain. With a raw IP address, Auto keeps the service domain for TLS.</div>
@@ -1405,26 +1398,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
           <div><span>TLS identity</span><code id="endpoint-preview-sni">current service</code></div>
         </div>
       </div>
-      <div class="cp-block config-proxy-studio">
-        <div class="config-proxy-head">
-          <div><div class="cp-block-label"><i class="ti ti-shield-share"></i> ProxyIP for this config</div><div class="endpoint-studio-sub">Optional reverse-SNI exit path, isolated from every other user.</div></div>
-          <span class="config-scope-badge"><i class="ti ti-user-shield"></i> Only this config</span>
-        </div>
-        <div class="config-proxy-grid">
-          <div class="proxy-mode-card">
-            <label for="nl-proxy-mode">Connection mode</label>
-            <select class="cp-input-full fs" id="nl-proxy-mode" onchange="syncConfigProxy('nl')">
-              <option value="direct" selected>Direct — safest default</option>
-              <option value="proxyip">ProxyIP — automatic direct fallback</option>
-            </select>
-          </div>
-          <div class="config-proxy-fields" id="nl-proxy-fields" style="display:none">
-            <div><label for="nl-proxyip">ProxyIP candidates</label><textarea class="cp-input-full endpoint-ltr" id="nl-proxyip" rows="2" placeholder="proxy.example.com:443, 1.2.3.4:443"></textarea></div>
-            <div><label for="nl-proxy-concurrency">Parallel checks</label><select class="cp-input-full fs" id="nl-proxy-concurrency"><option value="1">1</option><option value="2" selected>2</option><option value="4">4</option><option value="6">6</option></select></div>
-          </div>
-        </div>
-        <div class="proxy-safe-note"><i class="ti ti-shield-check"></i><span>Failure-safe: invalid, silent, non-TLS, or unreachable ProxyIP automatically uses the direct connection. This setting never affects another config.</span></div>
-      </div>
+      <div class="cp-block config-proxy-studio"><div class="config-proxy-head"><div><div class="cp-block-label"><i class="ti ti-world-cog"></i> Exit IP settings</div><div class="endpoint-studio-sub">Choose a managed HTTP, HTTPS, or SOCKS5 proxy for this config only.</div></div><div class="config-proxy-actions"><span class="config-scope-badge"><i class="ti ti-user-shield"></i> Only this config</span><button class="repository-refresh-btn" id="proxy-recheck-btn" style="display:none" onclick="refreshProxyCatalogNow()"><i class="ti ti-refresh"></i><span>Recheck now</span></button></div></div><div class="config-proxy-grid"><div class="proxy-mode-card"><label>Connection mode</label><select class="cp-input-full fs" id="nl-exit-mode" onchange="syncExitProxy('nl')"><option value="direct">Direct — safest default</option><option value="repository">Managed proxy repository</option><option value="custom">Custom proxy — unsafe</option></select></div><div class="config-proxy-fields" id="nl-repository-fields" style="display: none"><div><label>Managed proxy</label><select class="cp-input-full fs" id="nl-proxy-id"><option value="">Loading managed proxies…</option></select></div><div class="managed-safe"><i class="ti ti-shield-check"></i> Managed and verified</div></div><div class="config-proxy-fields" id="nl-custom-fields" style="display: none"><div><label>Custom proxy URL</label><input class="cp-input-full endpoint-ltr" id="nl-custom-proxy" placeholder="socks5://user:pass@host:port"></div><div class="custom-danger"><i class="ti ti-alert-triangle"></i> Warning: leaving the managed safety boundary. This proxy may expose traffic or stop the config.</div></div></div><div class="proxy-safe-note"><i class="ti ti-eye-off"></i><span>Managed endpoints stay server-side. Only flag, country, protocol, and health are shown.</span></div></div>
       <div class="cp-row">
         <div class="cp-block">
           <div class="cp-block-label"><i class="ti ti-fingerprint"></i> Fingerprint (uTLS)</div>
@@ -1449,7 +1423,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             <option value="__custom__">Custom...</option>
           </select>
           <div class="cp-mini-row">
-            <input class="cp-input-full" id="nl-alpn" placeholder="Custom ALPN value" style="display:none">
+            <input class="cp-input-full" id="nl-alpn" placeholder="Custom ALPN value" style="display: none">
           </div>
         </div>
       </div>
@@ -1496,7 +1470,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
   </div>
   <div class="cfg-grid" id="links-grid"></div>
-  <div class="empty" id="links-empty" style="display:none"><i class="ti ti-link-off"></i><p>No configs yet</p></div>
+  <div class="empty" id="links-empty" style="display: none"><i class="ti ti-link-off"></i><p>No configs yet</p></div>
 </section>
 <section class="pg" id="pg-subgroups">
   <div class="topbar">
@@ -1610,7 +1584,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   </div>
 
   <div class="conn-grid-v2" id="conns-grid"></div>
-  <div class="conn-empty-v2" id="conns-empty" style="display:none">
+  <div class="conn-empty-v2" id="conns-empty" style="display: none">
     <div class="conn-empty-v2-icon"><i class="ti ti-plug-off"></i></div>
     <div class="conn-empty-v2-title">No active connections</div>
     <div class="conn-empty-v2-sub">Clients will appear here as soon as they connect</div>
@@ -1629,7 +1603,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
     <div class="card">
       <div class="card-title"><i class="ti ti-shield-check"></i> Access control</div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-id-badge"></i> UUID Auth strict</span><span class="sr-v" style="color:var(--green-t)">● Active v13</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-id-badge"></i> UUID Auth strict</span><span class="sr-v" style="color:var(--green-t)">● Active v15</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-toggle-right"></i> Enable / disable config</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-gauge"></i> Traffic quota</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-calendar-x"></i> Expiry date</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
@@ -1639,7 +1613,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 </section>
 <section class="pg" id="pg-logs">
   <div class="topbar"><div><div class="tb-title"><i class="ti ti-history"></i> Activity Log</div><div class="tb-sub">Complete history of panel events</div></div><div class="tb-right"><button class="btn btn-p btn-sm" onclick="loadActivity()"><i class="ti ti-refresh"></i></button></div></div>
-  <div class="card"><div class="log-timeline" id="logs-list">—</div><div class="empty" id="logs-empty" style="display:none"><i class="ti ti-history-toggle"></i><p>No log entries yet</p></div></div>
+  <div class="card"><div class="log-timeline" id="logs-list">—</div><div class="empty" id="logs-empty" style="display: none"><i class="ti ti-history-toggle"></i><p>No log entries yet</p></div></div>
 </section>
 <section class="pg" id="pg-errors">
   <div class="topbar"><div><div class="tb-title"><i class="ti ti-alert-triangle"></i> Errors</div></div><div class="tb-right"><span class="badge bg-red" id="errs-badge">0</span><button class="btn btn-p btn-sm" onclick="refreshAll()"><i class="ti ti-refresh"></i></button></div></div>
@@ -1676,7 +1650,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       </div>
       <div class="srv-tiles">
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-route"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Default port</div><div class="srv-tile-val">443 (TLS) · can be overridden per config</div></div></div>
-        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version</div><div class="srv-tile-val">v13.0</div></div></div>
+        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version</div><div class="srv-tile-val">v15.0</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-brand-fastapi"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Framework</div><div class="srv-tile-val">FastAPI + Uvicorn</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-cloud"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Platform</div><div class="srv-tile-val">Railway</div></div></div>
         <div class="srv-tile" style="grid-column:1/-1"><div class="srv-tile-icon"><i class="ti ti-device-floppy"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Storage</div><div class="srv-tile-val">JSON File (/data)</div></div></div>
@@ -1945,13 +1919,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   "Upper & lower case": "حروف بزرگ و کوچک",
   "Repeat new password": "تکرار رمز جدید",
   "Save new password": "ذخیره رمز جدید",
-  "Exit IP · ProxyIP": "IP خروجی · ProxyIP",
   "The IP address seen by destination websites": "IP دیده‌شده توسط سایت‌های مقصد",
   "Outbound mode": "حالت خروجی",
   "Direct — server connection (default)": "مستقیم — اتصال سرور (پیش‌فرض)",
-  "ProxyIP — reverse relay (edgetunnel method)": "ProxyIP — رله معکوس (روش edgetunnel)",
   "SOCKS5 — chained proxy": "SOCKS5 — پروکسی زنجیره‌ای",
-  "ProxyIP list": "فهرست ProxyIP",
   "Default port 443 · supports": "پورت پیش‌فرض ۴۴۳ · پشتیبانی از",
   "and TXT records. Separate with commas or new lines (up to 8 candidates are selected).": "و رکورد TXT. با کاما یا خط جدید جدا کنید (تا ۸ گزینه انتخاب می‌شود).",
   "Chained proxy address": "آدرس پروکسی زنجیره‌ای",
@@ -1998,22 +1969,27 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   "Open": "بازکردن",
   ",": "،",
   ", suffix": "، پسوند",
-  "ProxyIP for this config": "ProxyIP برای همین کانفیگ",
   "Optional reverse-SNI exit path, isolated from every other user.": "مسیر خروجی اختیاری مبتنی بر SNI که از تمام کاربران دیگر جداست.",
   "Only this config": "فقط همین کانفیگ",
   "Connection mode": "حالت اتصال",
   "Direct — safest default": "مستقیم — امن‌ترین پیش‌فرض",
-  "ProxyIP — automatic direct fallback": "ProxyIP — بازگشت خودکار به اتصال مستقیم",
-  "ProxyIP candidates": "گزینه‌های ProxyIP",
   "Parallel checks": "بررسی‌های موازی",
-  "Failure-safe: invalid, silent, non-TLS, or unreachable ProxyIP automatically uses the direct connection. This setting never affects another config.": "ایمن در برابر خرابی: ProxyIP نامعتبر، بی‌پاسخ، غیر TLS یا خارج از دسترس خودکار به اتصال مستقیم برمی‌گردد و روی هیچ کانفیگ دیگری اثر ندارد.",
   "Direct fallback is always enabled and cannot be disabled.": "بازگشت مستقیم همیشه فعال است و غیرفعال نمی‌شود.",
   "Direct · fallback ready": "مستقیم · آماده بازگشت",
-  "ProxyIP · this config only": "ProxyIP · فقط همین کانفیگ",
   "1 parallel check": "۱ بررسی موازی",
   "2 parallel checks": "۲ بررسی موازی",
   "4 parallel checks": "۴ بررسی موازی",
-  "6 parallel checks": "۶ بررسی موازی"
+  "6 parallel checks": "۶ بررسی موازی",
+  "Exit IP settings": "تنظیم آیپی خروجی",
+  "Managed proxy repository": "مخزن پروکسی مدیریت‌شده",
+  "Custom proxy — unsafe": "پروکسی دلخواه — ناامن",
+  "Managed proxy": "پروکسی مدیریت‌شده",
+  "Managed and verified": "مدیریت‌شده و تأییدشده",
+  "Custom proxy URL": "آدرس پروکسی دلخواه",
+  "Managed endpoints stay server-side. Only flag, country, protocol, and health are shown.": "آدرس‌های مدیریت‌شده فقط در سرور می‌مانند؛ فقط پرچم، کشور، پروتکل و سلامت نمایش داده می‌شود.",
+  "Recheck now": "بررسی جدید",
+  "Repository checked again": "مخزن دوباره بررسی شد",
+  "Refresh failed": "بررسی جدید ناموفق بود"
 }</script>
 <script>
 const I18N_FA=JSON.parse(document.getElementById('dashboard-i18n').textContent);
@@ -2083,16 +2059,13 @@ async function authF(url,opts={}){
   return r;
 }
 
-/* ===== Per-config ProxyIP ===== */
-function syncConfigProxy(prefix){
-  const mode=document.getElementById(prefix+'-proxy-mode');
-  const fields=document.getElementById(prefix+'-proxy-fields');
-  if(fields)fields.style.display=mode&&mode.value==='proxyip'?'':'none';
-}
-function configProxyValues(prefix){
-  const enabled=document.getElementById(prefix+'-proxy-mode')?.value==='proxyip';
-  return {proxyip_enabled:enabled,proxyip:document.getElementById(prefix+'-proxyip')?.value.trim()||'',proxyip_concurrency:Number(document.getElementById(prefix+'-proxy-concurrency')?.value)||2};
-}
+/* ===== Managed proxy repository per config ===== */
+let managedProxyCatalog=[];
+function managedOption(p){return `<option value="${esc(p.id)}">${esc((p.flag||'🌐')+' '+p.country+' · '+p.health+'% · '+p.type.toUpperCase())}</option>`}
+async function loadProxyCatalog(){try{const r=await authF('/api/proxy-catalog');const d=await r.json();managedProxyCatalog=d.proxies||[];const btn=document.getElementById('proxy-recheck-btn');if(btn)btn.style.display=d.status?.manual_refresh_enabled?'inline-flex':'none';['nl-proxy-id','el-proxy-id'].forEach(id=>{const e=document.getElementById(id);if(!e)return;const old=e.value;e.innerHTML='<option value="">— Choose managed proxy —</option>'+managedProxyCatalog.map(managedOption).join('');if(managedProxyCatalog.some(p=>p.id===old))e.value=old})}catch(e){toast('Managed proxy repository unavailable','err')}}
+async function refreshProxyCatalogNow(){const btn=document.getElementById('proxy-recheck-btn');if(btn)btn.disabled=true;try{const r=await authF('/api/proxy-catalog/refresh',{method:'POST'});const d=await r.json();if(!r.ok)throw new Error(d.detail||'Refresh failed');toast('Repository checked again','ok');await loadProxyCatalog()}catch(e){toast(e.message||'Refresh failed','err')}finally{if(btn)btn.disabled=false}}
+function syncExitProxy(prefix){const m=document.getElementById(prefix+'-exit-mode')?.value||'direct';document.getElementById(prefix+'-repository-fields').style.display=m==='repository'?'':'none';document.getElementById(prefix+'-custom-fields').style.display=m==='custom'?'':'none';if(m==='custom')toast('Warning: custom proxy is outside the managed safety boundary','err')}
+function exitProxyValues(prefix){return {exit_proxy_mode:document.getElementById(prefix+'-exit-mode')?.value||'direct',proxy_id:document.getElementById(prefix+'-proxy-id')?.value||'',custom_proxy:document.getElementById(prefix+'-custom-proxy')?.value.trim()||''}}
 function setQuota(val,unit,el){
   document.getElementById('nl-val').value = val===0?'':val;
   document.getElementById('nl-unit').value = unit;
@@ -2281,7 +2254,7 @@ async function loadLinks(){
           <div><span>TLS SNI</span><strong>${esc(routeSni)}</strong></div>
           <div class="route-port"><span>Port</span><strong>${l.port||443}</strong></div>
         </div>
-        <div class="route-proxy ${l.proxyip_enabled?'enabled':'direct'}"><i class="ti ${l.proxyip_enabled?'ti-shield-share':'ti-route'}"></i><span>${l.proxyip_enabled?'ProxyIP · this config only':'Direct · fallback ready'}</span>${l.proxyip_enabled?`<code>${esc(l.proxyip||'')}</code>`:''}</div>
+        <div class="route-proxy ${l.exit_proxy_mode==='repository'?'enabled':(l.exit_proxy_mode==='custom'?'custom':'direct')}"><i class="ti ${l.exit_proxy_mode==='repository'?'ti-shield-check':(l.exit_proxy_mode==='custom'?'ti-alert-triangle':'ti-route')}"></i><span>${l.exit_proxy_mode==='repository'&&l.exit_proxy?`${esc(l.exit_proxy.flag||'🌐')} ${esc(l.exit_proxy.country)} · ${l.exit_proxy.health}% · ${esc(l.exit_proxy.type.toUpperCase())}`:(l.exit_proxy_mode==='custom'?'Custom proxy · unsafe':'Direct')}</span></div>
         <div class="route-data">
           <div class="route-usage">
             <div class="route-data-head"><span>Traffic used</span><b>${fmtB(l.used_bytes)} / ${lim}</b></div>
@@ -2321,9 +2294,9 @@ async function createLink(){
   const speed_limit_value=Number(document.getElementById('nl-speed').value)||0;
   const speed_limit_unit=document.getElementById('nl-speed-unit').value;
   const {address,sni}=selectedCreateEndpoints();
-  const {proxyip_enabled,proxyip,proxyip_concurrency}=configProxyValues('nl');
+  const {exit_proxy_mode,proxy_id,custom_proxy}=exitProxyValues('nl');
   try{
-    const r=await authF('/api/links',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label,remark,limit_value:val||0,limit_unit:unit,expires_days:exp||0,note,sub_id,protocol,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni,proxyip_enabled,proxyip,proxyip_concurrency})});
+    const r=await authF('/api/links',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label,remark,limit_value:val||0,limit_unit:unit,expires_days:exp||0,note,sub_id,protocol,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni,exit_proxy_mode,proxy_id,custom_proxy})});
     const d=await r.json().catch(()=>({}));
     if(!r.ok)throw new Error(d.detail||'Could not create config');
     ['nl-label','nl-remark','nl-val','nl-exp','nl-note','nl-alpn'].forEach(id=>document.getElementById(id).value='');
@@ -2332,9 +2305,7 @@ async function createLink(){
     document.getElementById('nl-speed').value='0';
     document.getElementById('nl-alpn-preset').value='';
     document.getElementById('nl-alpn').style.display='none';
-    document.getElementById('nl-proxy-mode').value='direct';
-    document.getElementById('nl-proxyip').value='';
-    document.getElementById('nl-proxy-concurrency').value='2';syncConfigProxy('nl');
+    document.getElementById('nl-exit-mode').value='direct';document.getElementById('nl-custom-proxy').value='';syncExitProxy('nl');
     toast('Config created ✓','ok');loadLinks();
   }catch(e){toast(e.message||'Could not create','err')}
 }
@@ -2353,9 +2324,7 @@ function openEditLink(uuid){
   document.getElementById('el-port').value=l.port||443;
   document.getElementById('el-address').value=l.address||'';
   document.getElementById('el-sni').value=l.sni||'';
-  document.getElementById('el-proxy-mode').value=l.proxyip_enabled?'proxyip':'direct';
-  document.getElementById('el-proxyip').value=l.proxyip||'';
-  document.getElementById('el-proxy-concurrency').value=String(l.proxyip_concurrency||2);syncConfigProxy('el');
+  document.getElementById('el-exit-mode').value=l.exit_proxy_mode||'direct';document.getElementById('el-proxy-id').value=l.proxy_id||'';document.getElementById('el-custom-proxy').value=l.custom_proxy||'';syncExitProxy('el');
   document.getElementById('el-iplimit').value=l.ip_limit||0;
   if(!l.speed_limit_bytes){document.getElementById('el-speed').value='0';document.getElementById('el-speed-unit').value='MBIT';}
   else{document.getElementById('el-speed').value=(l.speed_limit_bytes*8/1024/1024).toFixed(2);document.getElementById('el-speed-unit').value='MBIT';}
@@ -2377,8 +2346,8 @@ async function saveEditLink(){
   const speed_limit_unit=document.getElementById('el-speed-unit').value;
   const address=document.getElementById('el-address').value.trim();
   const sni=document.getElementById('el-sni').value.trim();
-  const {proxyip_enabled,proxyip,proxyip_concurrency}=configProxyValues('el');
-  const body={label,remark,note,limit_value:val||0,limit_unit:unit,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni,proxyip_enabled,proxyip,proxyip_concurrency};
+  const {exit_proxy_mode,proxy_id,custom_proxy}=exitProxyValues('el');
+  const body={label,remark,note,limit_value:val||0,limit_unit:unit,fingerprint,alpn,port,ip_limit,speed_limit_value,speed_limit_unit,address,sni,exit_proxy_mode,proxy_id,custom_proxy};
   if(exp&&Number(exp)>0)body.expires_days=Number(exp);
   try{
     const r=await authF('/api/links/'+uuid,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
@@ -2764,7 +2733,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   initCharts();
   document.getElementById('set-host').textContent=location.host;
   document.getElementById('sub-all-url')&&(document.getElementById('sub-all-url').textContent=location.protocol+'//'+location.host+'/sub-all');
-  fetchStats();fetchDefaultVless();loadEndpointChoices();loadLinks();loadSubs();
+  fetchStats();fetchDefaultVless();loadEndpointChoices();loadProxyCatalog();loadLinks();loadSubs();
   setInterval(fetchStats,4000);
   setInterval(()=>{
     if(document.getElementById('pg-links').classList.contains('on'))loadLinks();

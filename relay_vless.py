@@ -34,7 +34,7 @@ from main import (
 )
 from speed_limit import QuotaGate, throttle
 import outbound
-from outbound import open_outbound, link_uses_proxyip
+from outbound import open_outbound
 
 # ── Bulk data-plane tuning ───────────────────────────────────────────────────
 READ_MIN = 128 * 1024
@@ -529,8 +529,8 @@ async def _open_upstream(address: str, port: int):
     return reader, writer
 
 
-# لایه‌ی «آی‌پی خروجی» (ProxyIP / پروکسی زنجیره‌ای) از همین کانکتور استفاده می‌کند،
-# پس اتصال به ProxyIP هم Happy-Eyeballs، حافظه‌ی مسیر و تیونینگ سوکت را می‌گیرد.
+# لایه‌ی «آی‌پی خروجی» (پروکسی HTTP/HTTPS/SOCKS5) از همین کانکتور استفاده می‌کند،
+# پس اتصال به پروکسی هم Happy-Eyeballs، حافظه‌ی مسیر و تیونینگ سوکت را می‌گیرد.
 outbound.set_dialer(_open_upstream)
 outbound.set_tuner(lambda writer: _tune_socket(writer, WRITE_HW_START))
 
@@ -801,69 +801,23 @@ async def relay_tcp_to_ws(
 
 
 # ── Tunnel lifecycle ─────────────────────────────────────────────────────────
-async def _collect_header(
-    io: _WSIO, early: bytes, *, prefetch_payload: bool = False
-):
-    """Collect a VLESS header and, for per-config ProxyIP, a complete TLS record.
-
-    Clients may split the ClientHello into the next WS frame. We wait only a
-    small bounded window; on timeout the outbound layer chooses direct mode.
-    Consumed bytes stay in `payload` and are counted once via header_bytes.
-    """
-    buffer = bytearray(early)
-    prefetch_deadline: float | None = None
+async def _collect_header(io: _WSIO, early: bytes):
+    buffer=bytearray(early)
     while True:
-        parsed = None
-        if len(buffer) >= 19:
+        if len(buffer)>=19:
             try:
-                parsed = _parse_vless_header(buffer)
+                parsed=_parse_vless_header(buffer)
+                return (*parsed,len(buffer))
             except ValueError:
-                parsed = None
-        if parsed is not None:
-            payload = parsed[3]
-            if not prefetch_payload:
-                return (*parsed, len(buffer))
-            # Reverse-SNI ProxyIP only makes sense for TLS. Non-TLS goes direct.
-            if payload:
-                # One or two bytes may be the beginning of a TLS prefix split
-                # across WS frames. Reject only when the bytes already prove
-                # this is not a TLS handshake record.
-                if payload[0] != 0x16 or (len(payload) >= 2 and payload[1] != 0x03):
-                    return (*parsed, len(buffer))
-            if len(payload) >= 5:
-                record_size = 5 + int.from_bytes(payload[3:5], "big")
-                if len(payload) >= record_size:
-                    return (*parsed, len(buffer))
-            if prefetch_deadline is None:
-                prefetch_deadline = time.monotonic() + 0.55
-            remaining = prefetch_deadline - time.monotonic()
-            if remaining <= 0:
-                return (*parsed, len(buffer))
-            timeout = min(remaining, HEADER_TIMEOUT)
-        else:
-            if len(buffer) >= HEADER_MAX:
-                raise ValueError("vless header too large or invalid")
-            timeout = HEADER_TIMEOUT
-
-        try:
-            message = await asyncio.wait_for(io.receive(), timeout=timeout)
-        except asyncio.TimeoutError:
-            if parsed is not None:
-                return (*parsed, len(buffer))
-            raise
-        if message["type"] == "websocket.disconnect":
-            raise WebSocketDisconnect(1006)
-        chunk = message.get("bytes")
-        if chunk is None:
-            text = message.get("text")
-            chunk = text.encode() if text else b""
-        if chunk:
-            buffer.extend(chunk)
-            if len(buffer) > HEADER_MAX + 128 * 1024:
-                # A first TLS record should be far below this guard.
-                if parsed is not None:
-                    return (*_parse_vless_header(buffer), len(buffer))
-                raise ValueError("initial request too large")
+                pass
+        if len(buffer)>=HEADER_MAX: raise ValueError("vless header too large or invalid")
+        message=await asyncio.wait_for(io.receive(),timeout=HEADER_TIMEOUT)
+        if message["type"]=="websocket.disconnect": raise WebSocketDisconnect(1006)
+        chunk=message.get("bytes")
+        if chunk is None and message.get("text") is not None:
+            try: chunk=base64.b64decode(message["text"],validate=True)
+            except Exception: chunk=message["text"].encode()
+        if chunk: buffer.extend(chunk)
 
 
 async def websocket_tunnel(ws: WebSocket, uuid: str):
@@ -916,7 +870,7 @@ async def websocket_tunnel(ws: WebSocket, uuid: str):
     writer: asyncio.StreamWriter | None = None
     try:
         _command, address, port, payload, header_bytes = await _collect_header(
-            io, early, prefetch_payload=link_uses_proxyip(link)
+            io, early
         )
         if not await check_and_use(uuid, header_bytes):
             await ws.close(code=1008, reason="quota/disabled")

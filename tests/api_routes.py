@@ -92,8 +92,8 @@ for u in urls:
     check("panel calls " + u, hit, "-> NO REGISTERED ROUTE (would 404)")
 
 print()
-print("[outbound endpoints present]")
-for need in ("/api/outbound", "/api/outbound/test"):
+print("[proxy repository endpoints present]")
+for need in ("/api/proxy-catalog", "/api/proxy-catalog/refresh"):
     check("route " + need, need in routes)
 
 print()

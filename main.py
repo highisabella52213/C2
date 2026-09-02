@@ -26,9 +26,9 @@ import uvicorn
 import httpx
 import logging
 
-# لایه‌ی آی‌پی خروجی (ProxyIP / relay IP). این ماژول عمداً هیچ چیزی از main import
-# نمی‌کند، پس اینجا import کردنش حلقه‌ی circular درست نمی‌کند.
+# اتصال خروجی هر کانفیگ از مخزن پروکسی مدیریت‌شده.
 import outbound
+import proxy_repository
 from config_address import (
     address_kind,
     authority_host,
@@ -104,19 +104,13 @@ async def load_state():
                 _link.setdefault("address", "")
                 _link.setdefault("sni", "")
                 _link.setdefault("remark", _link.get("label") or "Lumen Relay")
-                _link.setdefault("proxyip", "")
-                _link.setdefault("proxyip_enabled", bool(_link.get("proxyip")))
-                _link.setdefault("proxyip_concurrency", 2)
+                _link.pop("proxy"+"ip", None); _link.pop("proxy"+"ip_enabled", None); _link.pop("proxy"+"ip_concurrency", None); _link.pop("outbound", None)
+                _link.setdefault("exit_proxy_mode", "direct"); _link.setdefault("proxy_id", ""); _link.setdefault("custom_proxy", "")
                 if not _link.get("alpn") or "h2" in str(_link.get("alpn")):
                     _link["alpn"] = "http/1.1"
             SUBS.update(data.get("subs", {}))
             if "password_hash" in data:
                 AUTH["password_hash"] = data["password_hash"]
-            saved_outbound = data.get("outbound")
-            if isinstance(saved_outbound, dict) and saved_outbound:
-                # تنظیمات ذخیره‌شده‌ی پنل بر متغیرهای محیطی اولویت دارند.
-                outbound.configure(**saved_outbound)
-                logger.info("Outbound mode: %s", outbound.SETTINGS.get("mode"))
             logger.info(f"State loaded: {len(LINKS)} links, {len(SUBS)} subs")
     except Exception as e:
         logger.warning(f"Could not load state: {e}")
@@ -129,7 +123,6 @@ async def save_state():
                 "links": dict(LINKS),
                 "subs": dict(SUBS),
                 "password_hash": AUTH["password_hash"],
-                "outbound": outbound.export_settings(),
                 "saved_at": datetime.now().isoformat(),
             }
             tmp = DATA_FILE.with_suffix(".tmp")
@@ -235,13 +228,16 @@ async def startup():
         limits=limits, timeout=timeout, follow_redirects=True,
     )
     await load_state()
+    asyncio.create_task(proxy_repository.refresh(force=True))
+    proxy_repository.start_periodic_refresh()
     await _tg_start_bot()
     log_activity("system", "سرور راه‌اندازی شد", "ok")
-    logger.info(f"Lumen Relay WS-only v13 started on port {CONFIG['port']}")
+    logger.info(f"Lumen Relay WS-only v15 started on port {CONFIG['port']}")
 
 @app.on_event("shutdown")
 async def shutdown():
     await save_state()
+    await proxy_repository.stop_periodic_refresh()
     await _tg_stop_bot()
     if http_client:
         await http_client.aclose()
@@ -267,22 +263,17 @@ def get_host(request: Request | None = None) -> str:
 
 BUILTIN_VLESS_ADDRESSES = ("railway.com", "69.46.46.18", "69.46.46.126")
 
-def normalize_link_proxyip(enabled, raw, concurrency=2) -> tuple[bool, str, int]:
-    """Validate an isolated config ProxyIP. Direct fallback is always implicit."""
-    value = str(raw or "").strip()[:1200]
-    active = bool(enabled)
-    try:
-        parallel = max(1, min(6, int(concurrency or 2)))
-    except (TypeError, ValueError):
-        parallel = 2
-    if value and any(token in value for token in ("://", "/", "@", "?")):
-        raise ValueError("ProxyIP فقط باید host، host:port، IPv4 یا [IPv6]:port باشد")
-    parsed = outbound.parse_endpoint_list(value) if value else []
-    if active and not parsed:
-        raise ValueError("برای فعال‌کردن ProxyIP حداقل یک آدرس معتبر وارد کنید")
-    for host, _port in parsed:
-        normalize_address(outbound.strip_brackets(host))
-    return active and bool(parsed), value, parallel
+async def normalize_exit_proxy(mode, proxy_id="", custom_proxy=""):
+    mode=str(mode or "direct").lower()
+    if mode=="repository":
+        pid=str(proxy_id or "").strip()
+        if not pid or await proxy_repository.resolve(pid) is None: raise ValueError("پروکسی مدیریت‌شده پیدا نشد")
+        return mode,pid,""
+    if mode=="custom":
+        try:return mode,"",proxy_repository.validate_url(custom_proxy)
+        except ValueError as e:raise ValueError("پروکسی دلخواه نامعتبر است: "+str(e))
+    if mode!="direct":raise ValueError("حالت تنظیم آیپی خروجی نامعتبر است")
+    return "direct","",""
 
 
 def configured_endpoint_catalog(request: Request | None = None) -> dict:
@@ -477,9 +468,7 @@ async def ensure_default_link():
                     "speed_limit_bytes": DEFAULT_SPEED_LIMIT,
                     "address": "",
                     "sni": "",
-                    "proxyip": "",
-                    "proxyip_enabled": False,
-                    "proxyip_concurrency": 2,
+                    "exit_proxy_mode": "direct", "proxy_id": "", "custom_proxy": "",
                 }
                 asyncio.create_task(save_state())
         _default_link_created = True
@@ -495,7 +484,7 @@ async def health():
     return {
         "status": "ok",
         "service": "Lumen Relay",
-        "version": "13.0",
+        "version": "15.0",
         "transport": "VLESS / WebSocket",
         "connections": len(connections),
         "active_configs": active_links,
@@ -718,111 +707,14 @@ async def api_change_password(request: Request, token=Depends(require_auth)):
     log_activity("auth", "رمز عبور پنل تغییر کرد", "ok")
     return {"ok": True}
 
-# ── Outbound / Exit IP (ProxyIP) ────────────────────────────────
-OUTBOUND_KEYS = ("mode", "proxyip", "concurrency", "fallback", "global_proxy", "force_hosts", "proxy_url")
-
-
-def _validate_outbound(payload: dict) -> dict:
-    """اعتبارسنجی قبل از configure — configure مقادیر نامعتبر را بی‌صدا رد می‌کند."""
-    clean: dict = {}
-    for key in OUTBOUND_KEYS:
-        if key in payload:
-            clean[key] = payload[key]
-
-    if "mode" in clean:
-        mode = str(clean["mode"] or "direct").strip().lower()
-        if mode not in outbound.MODES:
-            raise HTTPException(status_code=400, detail="مد نامعتبر است: " + mode)
-        clean["mode"] = mode
-
-    if "concurrency" in clean:
-        try:
-            clean["concurrency"] = max(1, min(16, int(clean["concurrency"] or 1)))
-        except (TypeError, ValueError):
-            raise HTTPException(status_code=400, detail="دایال موازی باید عدد باشد")
-
-    if "proxyip" in clean:
-        raw = str(clean["proxyip"] or "").strip()
-        clean["proxyip"] = raw
-        if raw:
-            try:
-                pool = outbound.parse_endpoint_list(raw)
-            except Exception:
-                pool = []
-            if not pool:
-                raise HTTPException(status_code=400, detail="لیست ProxyIP قابل تحلیل نیست")
-
-    if "proxy_url" in clean:
-        raw = str(clean["proxy_url"] or "").strip()
-        clean["proxy_url"] = raw
-        if raw:
-            pmode = clean.get("mode") or outbound.SETTINGS.get("mode") or "socks5"
-            if pmode not in ("socks5", "http", "https"):
-                pmode = "socks5"
-            try:
-                outbound.parse_proxy_url(raw, pmode)
-            except Exception as exc:
-                raise HTTPException(status_code=400, detail="آدرس پروکسی نامعتبر است: " + str(exc))
-
-    if "force_hosts" in clean:
-        clean["force_hosts"] = str(clean["force_hosts"] or "").strip()
-
-    for key in ("fallback", "global_proxy"):
-        if key in clean:
-            clean[key] = bool(clean[key])
-
-    final_mode = clean.get("mode") or outbound.SETTINGS.get("mode") or "direct"
-    if final_mode == "proxyip":
-        pip = clean.get("proxyip", outbound.SETTINGS.get("proxyip"))
-        if not str(pip or "").strip():
-            raise HTTPException(status_code=400, detail="برای مد ProxyIP حداقل یک آی‌پی یا دامنه لازم است")
-    if final_mode in ("socks5", "http", "https"):
-        purl = clean.get("proxy_url", outbound.SETTINGS.get("proxy_url"))
-        if not str(purl or "").strip():
-            raise HTTPException(status_code=400, detail="آدرس پروکسی زنجیره‌ای وارد نشده است")
-    return clean
-
-
-@app.get("/api/outbound")
-async def get_outbound(_=Depends(require_auth)):
-    return {
-        "ok": True,
-        "settings": outbound.settings_summary(),
-        "modes": list(outbound.MODES),
-        "active": outbound.is_active(),
-    }
-
-
-@app.post("/api/outbound")
-async def set_outbound(request: Request, _=Depends(require_auth)):
-    body = await request.json()
-    if not isinstance(body, dict):
-        raise HTTPException(status_code=400, detail="بدنه‌ی درخواست نامعتبر است")
-    clean = _validate_outbound(body)
-    if not clean:
-        raise HTTPException(status_code=400, detail="چیزی برای تغییر ارسال نشده است")
-    outbound.configure(**clean)
-    await save_state()
-    mode_now = str(outbound.SETTINGS.get("mode") or "direct")
-    log_activity("outbound", "آی‌پی خروجی روی مد «" + mode_now + "» تنطیم شد", "ok")
-    return {
-        "ok": True,
-        "settings": outbound.settings_summary(),
-        "active": outbound.is_active(),
-    }
-
-
-@app.post("/api/outbound/test")
-async def test_outbound(request: Request, _=Depends(require_auth)):
-    try:
-        body = await request.json()
-    except Exception:
-        body = {}
-    if not isinstance(body, dict):
-        body = {}
-    target = str(body.get("target") or "").strip() or "www.cloudflare.com"
-    result = await outbound.probe(target_host=target)
-    return {"ok": True, "result": result}
+# ── مخزن پروکسی / تنظیم آیپی خروجی ─────────────────────────────────────────
+@app.get("/api/proxy-catalog")
+async def proxy_catalog(_=Depends(require_auth)): return await proxy_repository.catalog()
+@app.post("/api/proxy-catalog/refresh")
+async def proxy_catalog_refresh(_=Depends(require_auth)):
+    if not proxy_repository.manual_refresh_enabled():
+        raise HTTPException(status_code=403, detail="بررسی دستی مخزن فعال نیست")
+    return await proxy_repository.catalog(force=True)
 
 # ── Stats ─────────────────────────────────────────────────────────────────────
 @app.get("/stats")
@@ -927,9 +819,7 @@ async def make_link(
     speed_limit_bytes: int = 0,
     address: str = "",
     sni: str = "",
-    proxyip: str = "",
-    proxyip_enabled: bool = False,
-    proxyip_concurrency: int = 2,
+    exit_proxy_mode: str = "direct", proxy_id: str = "", custom_proxy: str = "",
 ) -> tuple[str, dict]:
     if protocol not in PROTOCOLS:
         protocol = DEFAULT_PROTOCOL
@@ -940,9 +830,7 @@ async def make_link(
         port = DEFAULT_PORT
     address = normalize_address(address) if str(address or "").strip() else ""
     sni = normalize_sni(sni) if str(sni or "").strip() else ""
-    proxyip_enabled, proxyip, proxyip_concurrency = normalize_link_proxyip(
-        proxyip_enabled, proxyip, proxyip_concurrency
-    )
+    exit_proxy_mode, proxy_id, custom_proxy = await normalize_exit_proxy(exit_proxy_mode, proxy_id, custom_proxy)
     uid = generate_uuid()
     async with LINKS_LOCK:
         LINKS[uid] = {
@@ -964,9 +852,7 @@ async def make_link(
             "speed_limit_bytes": max(0, speed_limit_bytes),
             "address": address,
             "sni": sni,
-            "proxyip": proxyip,
-            "proxyip_enabled": proxyip_enabled,
-            "proxyip_concurrency": proxyip_concurrency,
+            "exit_proxy_mode": exit_proxy_mode, "proxy_id": proxy_id, "custom_proxy": custom_proxy,
         }
     if sub_id:
         async with SUBS_LOCK:
@@ -1116,13 +1002,8 @@ async def create_link(request: Request, _=Depends(require_auth)):
     su = body.get("speed_limit_unit") or "MBIT"
     speed_limit_bytes = 0 if sv <= 0 else parse_speed_to_bytes(sv, su)
     try:
-        proxyip_enabled, proxyip_value, proxyip_concurrency = normalize_link_proxyip(
-            body.get("proxyip_enabled", False),
-            body.get("proxyip", ""),
-            body.get("proxyip_concurrency", 2),
-        )
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
+        exit_proxy_mode, proxy_id, custom_proxy = await normalize_exit_proxy(body.get("exit_proxy_mode","direct"),body.get("proxy_id",""),body.get("custom_proxy",""))
+    except ValueError as exc: raise HTTPException(status_code=400,detail=str(exc))
 
     uid, link = await make_link(
         label=body.get("label") or "لینک جدید",
@@ -1139,9 +1020,7 @@ async def create_link(request: Request, _=Depends(require_auth)):
         speed_limit_bytes=speed_limit_bytes,
         address=selected_address,
         sni=selected_sni,
-        proxyip=proxyip_value,
-        proxyip_enabled=proxyip_enabled,
-        proxyip_concurrency=proxyip_concurrency,
+        exit_proxy_mode=exit_proxy_mode, proxy_id=proxy_id, custom_proxy=custom_proxy,
     )
 
     return {
@@ -1160,10 +1039,11 @@ async def list_links(request: Request, _=Depends(require_auth)):
     result = []
     for uid, d in snap.items():
         proto = d.get("protocol", DEFAULT_PROTOCOL)
+        summary = await proxy_repository.summary(d.get("proxy_id")) if d.get("exit_proxy_mode")=="repository" else (proxy_repository.custom_summary(d.get("custom_proxy")) if d.get("exit_proxy_mode")=="custom" else None)
         result.append({
             "uuid": uid,
             **d,
-            "protocol": proto,
+            "protocol": proto, "exit_proxy": summary,
             "expired": is_link_expired(d),
             "vless_link": vless_link_for_link(d, uid, host),
             "sub_url": f"https://{host}/sub/{uid}",
@@ -1175,6 +1055,11 @@ async def list_links(request: Request, _=Depends(require_auth)):
 @app.patch("/api/links/{uid}")
 async def update_link(uid: str, request: Request, _=Depends(require_auth)):
     body = await request.json()
+    selection=None
+    if any(k in body for k in ("exit_proxy_mode","proxy_id","custom_proxy")):
+        cur=LINKS.get(uid,{})
+        try: selection=await normalize_exit_proxy(body.get("exit_proxy_mode",cur.get("exit_proxy_mode","direct")),body.get("proxy_id",cur.get("proxy_id","")),body.get("custom_proxy",cur.get("custom_proxy","")))
+        except ValueError as exc: raise HTTPException(status_code=400,detail=str(exc))
     async with LINKS_LOCK:
         if uid not in LINKS:
             raise HTTPException(status_code=404, detail="link not found")
@@ -1233,27 +1118,8 @@ async def update_link(uid: str, request: Request, _=Depends(require_auth)):
                 link["sni"] = normalize_sni(body["sni"]) if str(body.get("sni") or "").strip() else ""
             except ValueError as exc:
                 raise HTTPException(status_code=400, detail=str(exc))
-        if "outbound" in body:
-            ob = body["outbound"]
-            if not ob:
-                link.pop("outbound", None)
-            elif isinstance(ob, dict):
-                link["outbound"] = _validate_outbound(ob)
-            else:
-                raise HTTPException(status_code=400, detail="outbound باید آبجکت باشد")
-        if any(key in body for key in ("proxyip", "proxyip_enabled", "proxyip_concurrency")):
-            try:
-                penabled, pvalue, pconcurrency = normalize_link_proxyip(
-                    body.get("proxyip_enabled", link.get("proxyip_enabled", False)),
-                    body.get("proxyip", link.get("proxyip", "")),
-                    body.get("proxyip_concurrency", link.get("proxyip_concurrency", 2)),
-                )
-            except ValueError as exc:
-                raise HTTPException(status_code=400, detail=str(exc))
-            link["proxyip"] = pvalue
-            link["proxyip_enabled"] = penabled
-            link["proxyip_concurrency"] = pconcurrency
-        if any(k in body for k in ("label", "note", "remark", "limit_value", "expires_days", "fingerprint", "alpn", "port", "ip_limit", "speed_limit_value", "address", "sni", "proxyip", "proxyip_enabled", "proxyip_concurrency")):
+        if selection is not None: link["exit_proxy_mode"],link["proxy_id"],link["custom_proxy"]=selection
+        if any(k in body for k in ("label", "note", "remark", "limit_value", "expires_days", "fingerprint", "alpn", "port", "ip_limit", "speed_limit_value", "address", "sni", "exit_proxy_mode", "proxy_id", "custom_proxy")):
             log_activity("link", f"کانفیگ «{link['label']}» ویرایش شد", "info")
         new_sub = body.get("sub_id", "UNCHANGED")
         if new_sub != "UNCHANGED":
