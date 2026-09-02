@@ -32,30 +32,7 @@ https://proxy.example.com:443#US - 91%
 
 بررسی هنگام startup و سپس هر ۲ ساعت انجام می‌شود. اگر دریافت جدید شکست بخورد، آخرین لیست سالم حفظ می‌شود. مسیر اتصال کاربر هیچ‌وقت منتظر S3 نمی‌ماند.
 
-## فعال‌کردن دکمه «بررسی جدید»
-
-در PowerShell این دستور را **بدون `\\`** اجرا کنید:
-
-```powershell
-python .\tools\hash_manual_refresh_key.py "YOUR-LONG-RANDOM-SECRET"
-```
-
-خروجی ۶۴ کاراکتری را در `proxy_repository.py` بگذارید:
-
-```python
-MANUAL_REFRESH_TOKEN_SHA256 = "OUTPUT_SHA256"
-```
-
-سپس در Railway یکی از این Variableها را تعریف کنید:
-
-```text
-PROXY_REPOSITORY_MANUAL_REFRESH_KEY=YOUR-LONG-RANDOM-SECRET
-```
-
-نام قدیمی/نمونه‌ای `ENV_SECRET_KEY_TO_BUTTON_ON_N` نیز برای سازگاری پذیرفته می‌شود. مقدار Railway می‌تواند مقدار خام یا همان SHA-256 باشد؛ فاصله و کوتیشن دور مقدار هم پاک‌سازی می‌شود. پس از تغییر کد یا Variable حتماً Redeploy کنید.
-
-پنل ابتدا endpoint سبک وضعیت را می‌خواند تا دکمه بدون منتظرماندن برای S3 ظاهر شود. خود endpoint بررسی دستی نیز در صورت نامعتبر بودن کلید پاسخ 403 می‌دهد.
-
+## 
 ## سازگاری و Fail-open پروکسی
 
 - HTTP CONNECT، SOCKS5 و هر دو برداشت رایج از لیبل HTTPS پشتیبانی می‌شوند.
