@@ -18,6 +18,7 @@ from zoneinfo import ZoneInfo
 from urllib.parse import quote
 from collections import deque, defaultdict
 from pathlib import Path
+from uuid import UUID, uuid4
 
 from fastapi import FastAPI, Request, HTTPException, WebSocket, WebSocketDisconnect, Depends
 from fastapi.responses import Response, HTMLResponse, JSONResponse, RedirectResponse
@@ -80,6 +81,9 @@ CONFIG = {
     "secret": _load_or_create_secret(),
     "host": os.environ.get("RAILWAY_PUBLIC_DOMAIN", "localhost"),
 }
+
+import updater
+updater.configure(DATA_DIR, CONFIG["secret"])
 
 app.add_middleware(
     CORSMiddleware,
@@ -228,11 +232,12 @@ async def startup():
         limits=limits, timeout=timeout, follow_redirects=True,
     )
     await load_state()
+    await updater.load()
     asyncio.create_task(proxy_repository.refresh(force=True))
     proxy_repository.start_periodic_refresh()
     await _tg_start_bot()
     log_activity("system", "سرور راه‌اندازی شد", "ok")
-    logger.info(f"Lumen Relay WS-only v16 started on port {CONFIG['port']}")
+    logger.info(f"Lumen Relay WS-only v17 started on port {CONFIG['port']}")
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -292,12 +297,23 @@ def configured_endpoint_catalog(request: Request | None = None) -> dict:
     extra_sni = parse_address_list(os.environ.get("VLESS_SNI_NAMES", ""))
     domain_addresses = [value for value in addresses if address_kind(value) == "domain"]
     snis = unique_valid([service_host, *domain_addresses, *extra_sni], sni=True)
-    return {"service_host": service_host, "addresses": addresses, "snis": snis}
+    return {"service_host": service_host, "transport_host": service_host, "addresses": addresses, "snis": snis}
 
 
 def generate_uuid() -> str:
-    h = secrets.token_hex(16)
-    return f"{h[:8]}-{h[8:12]}-{h[12:16]}-{h[16:20]}-{h[20:32]}"
+    return str(uuid4())
+
+def normalize_requested_uuid(value: str) -> str:
+    raw = str(value or "").strip()
+    if not raw:
+        return ""
+    try:
+        parsed = UUID(raw)
+    except (ValueError, AttributeError, TypeError):
+        raise ValueError("UUID نامعتبر است؛ قالب استاندارد 36 کاراکتری وارد کنید")
+    if parsed.int == 0:
+        raise ValueError("UUID صفر مجاز نیست")
+    return str(parsed)
     
 def now_ir() -> datetime:
     return datetime.now(IRAN_TZ)
@@ -323,15 +339,19 @@ def generate_vless_link(
     if not (MIN_PORT <= port_val <= MAX_PORT):
         port_val = DEFAULT_PORT
 
-    # Address is the dial target. SNI/Host are independent so a Railway/edge IP
-    # can still present the certificate and route for an attached domain.
+    # Address, TLS SNI, and WebSocket Host are three independent values.
+    # Changing SNI must never rewrite the transport Host header.
     dial_address, tls_name = link_hosts(address, sni, host)
+    try:
+        transport_host = normalize_address(host)
+    except ValueError:
+        transport_host = str(host or "").strip()
     path = f"/ws/{uuid}?ed=4096"
     params = {
         "encryption": "none",
         "security": "tls",
         "type": "ws",
-        "host": tls_name,
+        "host": transport_host,
         "path": path,
         "sni": tls_name,
         "fp": fp,
@@ -546,7 +566,7 @@ async def create_sub(request: Request, _=Depends(require_auth)):
         "sub_id": sub_id,
         **SUBS[sub_id],
         "public_url": f"https://{host}/p/{uuid_key}",
-        "sub_url": f"https://{host}/sub-group/{uuid_key}",
+        "sub_url": "https://" + host + "/sub-group/" + str(uuid_key),
     }
 
 @app.get("/api/subs")
@@ -571,7 +591,7 @@ async def list_subs(request: Request, _=Depends(require_auth)):
             "total_used_bytes": total_used,
             "total_used_fmt": fmt_bytes(total_used),
             "public_url": f"https://{host}/p/{s['uuid_key']}",
-            "sub_url": f"https://{host}/sub-group/{s['uuid_key']}",
+            "sub_url": "https://" + host + "/sub-group/" + str(uuid_key),
         })
     result.sort(key=lambda x: x["created_at"], reverse=True)
     return {"subs": result}
@@ -823,6 +843,7 @@ async def make_link(
     address: str = "",
     sni: str = "",
     exit_proxy_mode: str = "direct", proxy_id: str = "", custom_proxy: str = "",
+    requested_uuid: str = "",
 ) -> tuple[str, dict]:
     if protocol not in PROTOCOLS:
         protocol = DEFAULT_PROTOCOL
@@ -834,8 +855,10 @@ async def make_link(
     address = normalize_address(address) if str(address or "").strip() else ""
     sni = normalize_sni(sni) if str(sni or "").strip() else ""
     exit_proxy_mode, proxy_id, custom_proxy = await normalize_exit_proxy(exit_proxy_mode, proxy_id, custom_proxy)
-    uid = generate_uuid()
+    uid = normalize_requested_uuid(requested_uuid) or generate_uuid()
     async with LINKS_LOCK:
+        if uid in LINKS:
+            raise ValueError("این UUID قبلاً استفاده شده است")
         LINKS[uid] = {
             "label": (label or "لینک جدید").strip()[:60] or "لینک جدید",
             "limit_bytes": max(0, limit_bytes),
@@ -977,6 +1000,39 @@ async def api_config_endpoints(request: Request, _=Depends(require_auth)):
     }
 
 
+# ── Version updates ───────────────────────────────────────────────────────────
+@app.get("/api/update/setup")
+async def update_setup_status(_=Depends(require_auth)):
+    return updater.setup_status()
+
+@app.post("/api/update/setup")
+async def update_setup_save(request: Request, _=Depends(require_auth)):
+    try:
+        return await updater.save_setup(await request.json())
+    except updater.UpdateError as exc:
+        raise HTTPException(status_code=exc.status, detail=str(exc))
+
+@app.delete("/api/update/setup")
+async def update_setup_clear(_=Depends(require_auth)):
+    return await updater.clear_setup()
+
+@app.get("/api/update/status")
+async def update_status(_=Depends(require_auth)):
+    try:
+        return await updater.check_latest()
+    except updater.UpdateError as exc:
+        raise HTTPException(status_code=exc.status, detail=str(exc))
+
+@app.post("/api/update/apply")
+async def update_apply(_=Depends(require_auth)):
+    try:
+        result = await updater.apply_latest()
+        if result.get("started"):
+            log_activity("system", "به‌روزرسانی نسخه جدید آغاز شد", "ok")
+        return result
+    except updater.UpdateError as exc:
+        raise HTTPException(status_code=exc.status, detail=str(exc))
+
 # ── Link Management ───────────────────────────────────────────────────────────
 @app.post("/api/links")
 async def create_link(request: Request, _=Depends(require_auth)):
@@ -1008,8 +1064,9 @@ async def create_link(request: Request, _=Depends(require_auth)):
         exit_proxy_mode, proxy_id, custom_proxy = await normalize_exit_proxy(body.get("exit_proxy_mode","direct"),body.get("proxy_id",""),body.get("custom_proxy",""))
     except ValueError as exc: raise HTTPException(status_code=400,detail=str(exc))
 
-    uid, link = await make_link(
-        label=body.get("label") or "لینک جدید",
+    try:
+        uid, link = await make_link(
+            label=body.get("label") or "لینک جدید",
         limit_bytes=limit_bytes,
         expires_at=expires_at,
         note=body.get("note") or "",
@@ -1024,14 +1081,17 @@ async def create_link(request: Request, _=Depends(require_auth)):
         address=selected_address,
         sni=selected_sni,
         exit_proxy_mode=exit_proxy_mode, proxy_id=proxy_id, custom_proxy=custom_proxy,
-    )
+            requested_uuid=body.get("uuid") or "",
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
     return {
         "uuid": uid,
         **link,
         "expired": False,
         "vless_link": vless_link_for_link(link, uid, host),
-        "sub_url": f"https://{host}/sub/{uid}",
+        "sub_url": "https://" + host + "/sub/" + str(uid),
     }
 
 @app.get("/api/links")
@@ -1049,7 +1109,7 @@ async def list_links(request: Request, _=Depends(require_auth)):
             "protocol": proto, "exit_proxy": summary,
             "expired": is_link_expired(d),
             "vless_link": vless_link_for_link(d, uid, host),
-            "sub_url": f"https://{host}/sub/{uid}",
+            "sub_url": "https://" + host + "/sub/" + str(uid),
             "connected_ips": len(unique_ips_for_uuid(uid)),
         })
     result.sort(key=lambda x: x["created_at"], reverse=True)
@@ -1236,7 +1296,7 @@ async def public_sub_data(uuid_key: str, request: Request):
             "limit_fmt": "∞" if link.get("limit_bytes", 0) == 0 else fmt_bytes(link["limit_bytes"]),
             "expires_at": link.get("expires_at"),
             "vless_link": vless_link_for_link(link, lid, host),
-            "sub_url": f"https://{host}/sub/{lid}",
+            "sub_url": "https://" + host + "/sub/" + str(lid),
             "connections": conn_count,
             "ip_limit": link.get("ip_limit", 0),
             "speed_limit_bytes": link.get("speed_limit_bytes", 0),
@@ -1247,7 +1307,7 @@ async def public_sub_data(uuid_key: str, request: Request):
         "locked": False,
         "name": sub["name"],
         "desc": sub.get("desc", ""),
-        "sub_url": f"https://{host}/sub-group/{uuid_key}",
+        "sub_url": "https://" + host + "/sub-group/" + str(uuid_key),
         "active_connections": active_conns,
         "total_used_fmt": fmt_bytes(total_used),
         "links": links_out,
