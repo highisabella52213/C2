@@ -23,7 +23,8 @@ S3_SECRET_ACCESS_KEY = "aID0sUgRZPle6RmGsxbOaULOwwYpACBMAs39vkjH"
 
 # Railway: set PROXY_REPOSITORY_MANUAL_REFRESH_KEY to your long random secret.
 # Store only its SHA-256 below; generate it with tools/hash_manual_refresh_key.py.
-MANUAL_REFRESH_ENV_NAME = "15383413518976302"
+MANUAL_REFRESH_ENV_NAME = "PROXY_REPOSITORY_MANUAL_REFRESH_KEY"
+MANUAL_REFRESH_ENV_ALIASES = (MANUAL_REFRESH_ENV_NAME, "ENV_SECRET_KEY_TO_BUTTON_ON_N")
 MANUAL_REFRESH_TOKEN_SHA256 = "78865b831eb56b71a96e907f7914d37e3934a8aec408882f82a8eb24635d6c7e"
 
 FETCH_TIMEOUT = 10
@@ -59,13 +60,39 @@ _lock = asyncio.Lock()
 _refresh_task: asyncio.Task | None = None
 
 
+def _clean_secret(value: str) -> str:
+    value = str(value or "").strip()
+    quote_pairs = (("\"", "\""), ("'", "'"), ("“", "”"), ("‘", "’"))
+    for left, right in quote_pairs:
+        if len(value) >= 2 and value.startswith(left) and value.endswith(right):
+            value = value[len(left):-len(right)].strip()
+            break
+    return value
+
+
 def manual_refresh_enabled() -> bool:
-    expected = MANUAL_REFRESH_TOKEN_SHA256.strip().lower()
-    value = os.environ.get(MANUAL_REFRESH_ENV_NAME, "")
-    if not value or not re.fullmatch(r"[0-9a-f]{64}", expected):
+    expected = _clean_secret(MANUAL_REFRESH_TOKEN_SHA256).lower()
+    if not re.fullmatch(r"[0-9a-f]{64}", expected):
         return False
-    actual = hashlib.sha256(value.encode()).hexdigest()
-    return hmac.compare_digest(actual, expected)
+    for name in MANUAL_REFRESH_ENV_ALIASES:
+        value = _clean_secret(os.environ.get(name, ""))
+        if not value:
+            continue
+        # Accept the documented raw secret and, for deployment ergonomics, the
+        # digest itself. Both comparisons are constant-time.
+        actual = hashlib.sha256(value.encode()).hexdigest()
+        if hmac.compare_digest(actual, expected) or hmac.compare_digest(value.lower(), expected):
+            return True
+    return False
+
+def manual_refresh_state() -> dict:
+    expected = _clean_secret(MANUAL_REFRESH_TOKEN_SHA256).lower()
+    present = any(bool(_clean_secret(os.environ.get(name, ""))) for name in MANUAL_REFRESH_ENV_ALIASES)
+    return {
+        "enabled": manual_refresh_enabled(),
+        "env_present": present,
+        "hash_configured": bool(re.fullmatch(r"[0-9a-f]{64}", expected)),
+    }
 
 
 def validate_url(value: str) -> str:
@@ -180,6 +207,7 @@ def status() -> dict:
         "configured": S3_ACCESS_KEY_ID != "KEY_ID" and S3_SECRET_ACCESS_KEY != "SECRET_ACCESS",
         "refresh_seconds": REFRESH_SECONDS,
         "manual_refresh_enabled": manual_refresh_enabled(),
+        "manual_refresh_state": manual_refresh_state(),
     }
 
 
@@ -233,7 +261,8 @@ async def catalog(force: bool = False) -> dict:
 
 
 async def resolve(proxy_id: str) -> Record | None:
-    await refresh()
+    # Data-plane lookups are cache-only. Startup/background/catalog refreshes
+    # own all S3 I/O so a slow bucket can never make a client ping=-1.
     return _records.get(str(proxy_id or ""))
 
 

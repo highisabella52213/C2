@@ -232,7 +232,7 @@ async def startup():
     proxy_repository.start_periodic_refresh()
     await _tg_start_bot()
     log_activity("system", "سرور راه‌اندازی شد", "ok")
-    logger.info(f"Lumen Relay WS-only v15 started on port {CONFIG['port']}")
+    logger.info(f"Lumen Relay WS-only v16 started on port {CONFIG['port']}")
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -484,7 +484,7 @@ async def health():
     return {
         "status": "ok",
         "service": "Lumen Relay",
-        "version": "15.0",
+        "version": "16.0",
         "transport": "VLESS / WebSocket",
         "connections": len(connections),
         "active_configs": active_links,
@@ -503,7 +503,7 @@ async def subscription_single(uuid: str, request: Request):
     vless = vless_link_for_link(link, uuid, host)
     content = base64.b64encode(vless.encode()).decode()
     return Response(content=content, media_type="text/plain",
-                    headers={"profile-title": quote(link["label"]), "support-url": ""})
+                    headers={"profile-title": quote(link["label"])})
 
 @app.get("/sub-all")
 async def subscription_all(request: Request, _=Depends(require_auth)):
@@ -661,7 +661,6 @@ async def sub_group_subscription(uuid_key: str, request: Request):
         media_type="text/plain",
         headers={
             "profile-title": quote(sub["name"]),
-            "support-url": "https://t.me/Farajian2004f",
             "profile-update-interval": "12",
         }
     )
@@ -710,6 +709,10 @@ async def api_change_password(request: Request, token=Depends(require_auth)):
 # ── مخزن پروکسی / تنظیم آیپی خروجی ─────────────────────────────────────────
 @app.get("/api/proxy-catalog")
 async def proxy_catalog(_=Depends(require_auth)): return await proxy_repository.catalog()
+@app.get("/api/proxy-catalog/manual-status")
+async def proxy_catalog_manual_status(_=Depends(require_auth)):
+    return proxy_repository.manual_refresh_state()
+
 @app.post("/api/proxy-catalog/refresh")
 async def proxy_catalog_refresh(_=Depends(require_auth)):
     if not proxy_repository.manual_refresh_enabled():

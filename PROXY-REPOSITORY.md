@@ -1,10 +1,17 @@
-# مخزن خصوصی پروکسی — v15
+# مخزن خصوصی پروکسی — v16
 
-مخزن با AWS Signature Version 4 مستقیماً از S3-compatible خوانده می‌شود. هیچ اطلاعات اتصال باکت یا endpoint پروکسی به مرورگر ارسال نمی‌شود.
+مخزن با AWS Signature Version 4 مستقیماً از S3-compatible خوانده می‌شود. اطلاعات باکت و endpoint واقعی پروکسی‌های مدیریت‌شده به مرورگر ارسال نمی‌شود.
 
 ## تنظیم iDrive E2 در کد
 
-فایل `proxy_repository.py` را باز و بخش `PRIVATE S3 CONFIGURATION` را پیدا کنید. Endpoint، Region، Bucket و Object Key از قبل تنظیم شده‌اند:
+در `proxy_repository.py` بخش `PRIVATE S3 CONFIGURATION` را پیدا کنید. فقط دو placeholder زیر را عوض کنید:
+
+```python
+S3_ACCESS_KEY_ID = "KEY_ID"
+S3_SECRET_ACCESS_KEY = "SECRET_ACCESS"
+```
+
+Endpoint و مسیر از قبل روی این مقادیر است:
 
 ```python
 S3_ENDPOINT = "https://s3.us-west-2.idrivee2.com"
@@ -13,16 +20,9 @@ S3_BUCKET = "bt2"
 S3_OBJECT_KEY = "www-32k-ort-org-021/proxy.txt"
 ```
 
-فقط این دو placeholder را با مقادیر واقعی عوض کنید:
+کلید S3 را read-only و فقط با مجوز `GetObject` برای همین object بسازید.
 
-```python
-S3_ACCESS_KEY_ID = "KEY_ID"
-S3_SECRET_ACCESS_KEY = "SECRET_ACCESS"
-```
-
-برای امنیت انتقال، Endpoint عمداً از HTTPS استفاده می‌کند. کلید باید فقط مجوز `GetObject` برای همین شیء را داشته باشد و مجوز نوشتن/حذف نداشته باشد.
-
-## قالب proxy.txt
+## قالب `proxy.txt`
 
 ```text
 http://1.2.3.4:8080#Finland - 75%
@@ -30,28 +30,38 @@ socks5://user:pass@1.2.3.4:8181#DE|Germany - 32%
 https://proxy.example.com:443#US - 91%
 ```
 
-بررسی خودکار هنگام startup و سپس هر ۲ ساعت انجام می‌شود. اگر fetch جدید شکست بخورد، آخرین لیست سالم در حافظه حفظ می‌شود.
+بررسی هنگام startup و سپس هر ۲ ساعت انجام می‌شود. اگر دریافت جدید شکست بخورد، آخرین لیست سالم حفظ می‌شود. مسیر اتصال کاربر هیچ‌وقت منتظر S3 نمی‌ماند.
 
 ## فعال‌کردن دکمه «بررسی جدید»
 
-نام Variable در Railway:
+در PowerShell این دستور را **بدون `\\`** اجرا کنید:
 
-```text
-PROXY_REPOSITORY_MANUAL_REFRESH_KEY
+```powershell
+python .\tools\hash_manual_refresh_key.py "YOUR-LONG-RANDOM-SECRET"
 ```
 
-یک مقدار تصادفی طولانی انتخاب کنید و SHA-256 آن را بسازید:
-
-```bash
-python tools/hash_manual_refresh_key.py 'YOUR-LONG-RANDOM-SECRET'
-```
-
-خروجی را در `proxy_repository.py` جایگزین این مقدار کنید:
+خروجی ۶۴ کاراکتری را در `proxy_repository.py` بگذارید:
 
 ```python
-MANUAL_REFRESH_TOKEN_SHA256 = "PASTE_SHA256_OF_RAILWAY_SECRET_HERE"
+MANUAL_REFRESH_TOKEN_SHA256 = "OUTPUT_SHA256"
 ```
 
-سپس مقدار خام `YOUR-LONG-RANDOM-SECRET` را به Variable بالا در Railway بدهید. فقط در صورت تطابق امن هش‌ها، دکمه **بررسی جدید** در پنل ظاهر می‌شود. خود endpoint بررسی دستی نیز سمت سرور 403 می‌دهد؛ مخفی‌کردن دکمه تنها کنترل امنیتی نیست.
+سپس در Railway یکی از این Variableها را تعریف کنید:
 
-> چون برنامه برای امضای S3 به Access Key و Secret Key نیاز دارد، اگر آن‌ها مستقیم داخل سورس باشند از دارنده کامل سورس قابل مخفی‌کردن نیستند. برای کاهش ریسک، کلید read-only و محدود به همان object بسازید.
+```text
+PROXY_REPOSITORY_MANUAL_REFRESH_KEY=YOUR-LONG-RANDOM-SECRET
+```
+
+نام قدیمی/نمونه‌ای `ENV_SECRET_KEY_TO_BUTTON_ON_N` نیز برای سازگاری پذیرفته می‌شود. مقدار Railway می‌تواند مقدار خام یا همان SHA-256 باشد؛ فاصله و کوتیشن دور مقدار هم پاک‌سازی می‌شود. پس از تغییر کد یا Variable حتماً Redeploy کنید.
+
+پنل ابتدا endpoint سبک وضعیت را می‌خواند تا دکمه بدون منتظرماندن برای S3 ظاهر شود. خود endpoint بررسی دستی نیز در صورت نامعتبر بودن کلید پاسخ 403 می‌دهد.
+
+## سازگاری و Fail-open پروکسی
+
+- HTTP CONNECT، SOCKS5 و هر دو برداشت رایج از لیبل HTTPS پشتیبانی می‌شوند.
+- TLS-to-proxy با گواهی self-signed/نامنطبق هم برای endpoint مدیریت‌شده قابل استفاده است.
+- اگر پروکسی دامنه مقصد را نپذیرد، اتصال با IPهای resolve‌شده دوباره امتحان می‌شود.
+- ClientHello تکه‌تکه‌شده برای مدت کوتاه جمع می‌شود و تونل فقط پس از دریافت اولین بایت واقعی مقصد معتبر محسوب می‌شود.
+- پروکسی‌ای که CONNECT را قبول کند ولی ترافیک ندهد، با timeout محدود بسته می‌شود و اتصال به Direct برمی‌گردد؛ بنابراین نباید کانفیگ را در حالت بی‌پایان `-1` نگه دارد.
+
+> کلید S3 که برای امضا لازم است، اگر داخل سورس قرار بگیرد از دارنده کامل سورس قابل مخفی‌کردن نیست. محدودکردن دسترسی کلید، کنترل امنیتی اصلی است.

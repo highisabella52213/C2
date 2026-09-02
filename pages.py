@@ -1,4 +1,4 @@
-# pages.py  -  Lumen Relay UI v15
+# pages.py  -  Lumen Relay UI v16
 # contains: LOGIN_HTML, DASHBOARD_HTML, get_public_page_html()
 
 
@@ -1051,7 +1051,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;ba
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Lumen Relay v15 · command rail + route studio
+   Lumen Relay v16 · command rail + route studio
    A second expressive composition, intentionally unlike the v11 sidebar.
    ═══════════════════════════════════════════════════════════════════════════ */
 :root{--command-rail-w:108px;--v12-card-gap:18px}
@@ -1125,7 +1125,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     <div class="modal-v2-body">
       <div class="modal-v2-field">
         <label><i class="ti ti-tag"></i> Group name</label>
-        <input class="modal-v2-input" id="ns-name" placeholder="e.g. Telegram channel">
+        <input class="modal-v2-input" id="ns-name" placeholder="e.g. Premium users">
       </div>
       <div class="modal-v2-field">
         <label><i class="ti ti-align-left"></i> Description (optional)</label>
@@ -1209,7 +1209,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   <button class="sb-close" id="close-sb"><i class="ti ti-x"></i></button>
   <div class="logo">
     <div class="logo-img"><i class="ti ti-shield-bolt"></i></div>
-    <div><div class="logo-name">Lumen Relay</div><div class="logo-sub">Command Console · v15</div></div>
+    <div><div class="logo-name">Lumen Relay</div><div class="logo-sub">Command Console · v16</div></div>
   </div>
   <nav class="nav-wrap" aria-label="Workspace navigation">
     <div class="nav-sec">Workspace</div>
@@ -1226,7 +1226,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     <div class="nav-it" data-pg="security" title="Security"><i class="ti ti-shield-lock"></i><span>Security</span></div>
     <div class="nav-it" data-pg="testws" title="WebSocket Test"><i class="ti ti-wave-sine"></i><span>WebSocket Test</span></div>
     <div class="nav-it" data-pg="settings" title="Settings"><i class="ti ti-adjustments-horizontal"></i><span>Settings</span></div>
-    <div class="nav-it" data-pg="support" title="Support"><i class="ti ti-message-circle-question"></i><span>Support</span></div>
   </nav>
   <div class="sb-foot">
     <button class="lang-switch" onclick="toggleLanguage()" title="Change language"><i class="ti ti-language"></i><span id="lang-label">فارسی</span></button>
@@ -1272,7 +1271,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <div class="card-title"><i class="ti ti-activity"></i> Service status</div>
       <div class="sr"><span class="sr-k"><i class="ti ti-shield-check"></i> UUID Auth</span><span class="sr-v" style="color:var(--green-t)">● Active · strict</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-circle-check"></i> VLESS / WS Tunnel</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v15</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● Active v16</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-rss"></i> Subscription API</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-clock"></i> Uptime</span><span class="sr-v" id="uptime-inline">—</span></div>
       <div class="sr" style="flex-direction:column;align-items:flex-start;gap:4px">
@@ -1286,8 +1285,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
   </div>
   <div class="dash-footer">
-    <span class="df-text">Lumen Relay · Version 15.0</span>
-    <a class="df-link" href="https://t.me/Farajian2004f" target="_blank"><i class="ti ti-brand-telegram"></i> t.me/Farajian2004f</a>
+    <span class="df-text">Lumen Relay · Version 16.0</span>
     
   </div>
 </section>
@@ -1603,7 +1601,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
     <div class="card">
       <div class="card-title"><i class="ti ti-shield-check"></i> Access control</div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-id-badge"></i> UUID Auth strict</span><span class="sr-v" style="color:var(--green-t)">● Active v15</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-id-badge"></i> UUID Auth strict</span><span class="sr-v" style="color:var(--green-t)">● Active v16</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-toggle-right"></i> Enable / disable config</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-gauge"></i> Traffic quota</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-calendar-x"></i> Expiry date</span><span class="sr-v" style="color:var(--green-t)">● Active</span></div>
@@ -1650,7 +1648,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       </div>
       <div class="srv-tiles">
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-route"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Default port</div><div class="srv-tile-val">443 (TLS) · can be overridden per config</div></div></div>
-        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version</div><div class="srv-tile-val">v15.0</div></div></div>
+        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Version</div><div class="srv-tile-val">v16.0</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-brand-fastapi"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Framework</div><div class="srv-tile-val">FastAPI + Uvicorn</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-cloud"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Platform</div><div class="srv-tile-val">Railway</div></div></div>
         <div class="srv-tile" style="grid-column:1/-1"><div class="srv-tile-icon"><i class="ti ti-device-floppy"></i></div><div class="srv-tile-text"><div class="srv-tile-label">Storage</div><div class="srv-tile-val">JSON File (/data)</div></div></div>
@@ -1695,40 +1693,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   </div>
 
 </section>
-<section class="pg" id="pg-support">
-  <div class="topbar"><div><div class="tb-title"><i class="ti ti-headset"></i> Support</div></div></div>
-  <div class="srv-panel">
-    <div class="srv-hero">
-      <div class="srv-hero-icon"><i class="ti ti-headset"></i></div>
-      <div class="srv-hero-text">
-        <div class="srv-hero-domain">Support center</div>
-        <div class="srv-hero-sub"><span class="dot dg pulse"></span> Ways to reach the support team</div>
-      </div>
-    </div>
-    <div class="srv-tiles">
-      <a class="srv-tile" href="https://www.youtube.com/@X4GHUB" target="_blank" style="text-decoration:none;cursor:pointer">
-        <div class="srv-tile-icon"><i class="ti ti-brand-youtube"></i></div>
-        <div class="srv-tile-text"><div class="srv-tile-label">YouTube</div><div class="srv-tile-val">Video guides and setup walkthroughs</div></div>
-      </a>
-      <a class="srv-tile" href="https://t.me/Farajian2004m" target="_blank" style="text-decoration:none;cursor:pointer">
-        <div class="srv-tile-icon"><i class="ti ti-brand-telegram"></i></div>
-        <div class="srv-tile-text"><div class="srv-tile-label">Telegram ID</div><div class="srv-tile-val">@Farajian2004m</div></div>
-      </a>
-      <a class="srv-tile" href="https://t.me/x4g_group" target="_blank" style="text-decoration:none;cursor:pointer">
-        <div class="srv-tile-icon"><i class="ti ti-users-group"></i></div>
-        <div class="srv-tile-text"><div class="srv-tile-label">Telegram group</div><div class="srv-tile-val">Q&A and community support</div></div>
-      </a>
-      <a class="srv-tile" href="https://t.me/vpnfreev2rayconfig" target="_blank" style="text-decoration:none;cursor:pointer">
-        <div class="srv-tile-icon"><i class="ti ti-speakerphone"></i></div>
-        <div class="srv-tile-text"><div class="srv-tile-label">Telegram channel</div><div class="srv-tile-val">t.me/vpnfreev2rayconfig</div></div>
-      </a>
-      <a class="srv-tile" href="https://github.com/x4gKing" target="_blank" style="text-decoration:none;cursor:pointer">
-        <div class="srv-tile-icon"><i class="ti ti-brand-github"></i></div>
-        <div class="srv-tile-text"><div class="srv-tile-label">GitHub</div><div class="srv-tile-val">Project repository and technical docs</div></div>
-      </a>
-    </div>
-  </div>
-</section>
+
 </main>
 <script type="application/json" id="dashboard-i18n">{
   "Manage configs of": "مدیریت کانفیگ‌های",
@@ -1779,7 +1744,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   "Security": "امنیت",
   "WebSocket Test": "تست WebSocket",
   "Settings": "تنظیمات",
-  "Support": "پشتیبانی",
   "Change language": "تغییر زبان",
   "Change theme": "تغییر پوسته",
   "Light mode": "حالت روشن",
@@ -1936,13 +1900,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   "Use chained proxy for every destination (global)": "استفاده از پروکسی زنجیره‌ای برای همه مقصدها (global)",
   "Save settings": "ذخیره تنظیمات",
   "Test connection": "تست اتصال",
-  "Support center": "مرکز پشتیبانی",
-  "Ways to reach the support team": "راه‌های ارتباط با تیم پشتیبانی",
-  "Video guides and setup walkthroughs": "ویدیوهای راهنما و آموزش راه‌اندازی",
-  "Telegram group": "گروه تلگرام",
-  "Q&A and community support": "پرسش‌وپاسخ و پشتیبانی جامعه",
-  "Telegram channel": "کانال تلگرام",
-  "Project repository and technical docs": "مخزن پروژه و مستندات فنی",
   "Port": "پورت",
   "Traffic used": "ترافیک مصرف‌شده",
   "Expiry": "انقضا",
@@ -2062,7 +2019,7 @@ async function authF(url,opts={}){
 /* ===== Managed proxy repository per config ===== */
 let managedProxyCatalog=[];
 function managedOption(p){return `<option value="${esc(p.id)}">${esc((p.flag||'🌐')+' '+p.country+' · '+p.health+'% · '+p.type.toUpperCase())}</option>`}
-async function loadProxyCatalog(){try{const r=await authF('/api/proxy-catalog');const d=await r.json();managedProxyCatalog=d.proxies||[];const btn=document.getElementById('proxy-recheck-btn');if(btn)btn.style.display=d.status?.manual_refresh_enabled?'inline-flex':'none';['nl-proxy-id','el-proxy-id'].forEach(id=>{const e=document.getElementById(id);if(!e)return;const old=e.value;e.innerHTML='<option value="">— Choose managed proxy —</option>'+managedProxyCatalog.map(managedOption).join('');if(managedProxyCatalog.some(p=>p.id===old))e.value=old})}catch(e){toast('Managed proxy repository unavailable','err')}}
+async function loadProxyCatalog(){const btn=document.getElementById('proxy-recheck-btn');try{const sr=await authF('/api/proxy-catalog/manual-status');const state=await sr.json();if(btn)btn.style.display=state.enabled?'inline-flex':'none'}catch(e){if(btn)btn.style.display='none'}try{const r=await authF('/api/proxy-catalog');const d=await r.json();managedProxyCatalog=d.proxies||[];if(btn&&d.status?.manual_refresh_enabled)btn.style.display='inline-flex';['nl-proxy-id','el-proxy-id'].forEach(id=>{const e=document.getElementById(id);if(!e)return;const old=e.value;e.innerHTML='<option value="">— Choose managed proxy —</option>'+managedProxyCatalog.map(managedOption).join('');if(managedProxyCatalog.some(p=>p.id===old))e.value=old})}catch(e){toast('Managed proxy repository unavailable','err')}}
 async function refreshProxyCatalogNow(){const btn=document.getElementById('proxy-recheck-btn');if(btn)btn.disabled=true;try{const r=await authF('/api/proxy-catalog/refresh',{method:'POST'});const d=await r.json();if(!r.ok)throw new Error(d.detail||'Refresh failed');toast('Repository checked again','ok');await loadProxyCatalog()}catch(e){toast(e.message||'Refresh failed','err')}finally{if(btn)btn.disabled=false}}
 function syncExitProxy(prefix){const m=document.getElementById(prefix+'-exit-mode')?.value||'direct';document.getElementById(prefix+'-repository-fields').style.display=m==='repository'?'':'none';document.getElementById(prefix+'-custom-fields').style.display=m==='custom'?'':'none';if(m==='custom')toast('Warning: custom proxy is outside the managed safety boundary','err')}
 function exitProxyValues(prefix){return {exit_proxy_mode:document.getElementById(prefix+'-exit-mode')?.value||'direct',proxy_id:document.getElementById(prefix+'-proxy-id')?.value||'',custom_proxy:document.getElementById(prefix+'-custom-proxy')?.value.trim()||''}}

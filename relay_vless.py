@@ -34,7 +34,7 @@ from main import (
 )
 from speed_limit import QuotaGate, throttle
 import outbound
-from outbound import open_outbound
+from outbound import open_outbound, link_uses_proxy
 
 # ── Bulk data-plane tuning ───────────────────────────────────────────────────
 READ_MIN = 128 * 1024
@@ -801,23 +801,61 @@ async def relay_tcp_to_ws(
 
 
 # ── Tunnel lifecycle ─────────────────────────────────────────────────────────
-async def _collect_header(io: _WSIO, early: bytes):
-    buffer=bytearray(early)
+async def _collect_header(
+    io: _WSIO, early: bytes, *, prefetch_payload: bool = False
+):
+    """Collect VLESS header and a bounded complete TLS record for proxies.
+
+    Many clients put the ClientHello in the next WS frame. Without this small
+    prefetch window a proxy can accept CONNECT but never be verified, leaving
+    the client at ping=-1. Direct configs do not wait here.
+    """
+    buffer = bytearray(early)
+    prefetch_deadline = None
     while True:
-        if len(buffer)>=19:
+        parsed = None
+        if len(buffer) >= 19:
             try:
-                parsed=_parse_vless_header(buffer)
-                return (*parsed,len(buffer))
+                parsed = _parse_vless_header(buffer)
             except ValueError:
-                pass
-        if len(buffer)>=HEADER_MAX: raise ValueError("vless header too large or invalid")
-        message=await asyncio.wait_for(io.receive(),timeout=HEADER_TIMEOUT)
-        if message["type"]=="websocket.disconnect": raise WebSocketDisconnect(1006)
-        chunk=message.get("bytes")
+                parsed = None
+        if parsed is not None:
+            payload = parsed[3]
+            if not prefetch_payload:
+                return (*parsed, len(buffer))
+            if payload:
+                if payload[0] != 0x16 or (len(payload) >= 2 and payload[1] != 0x03):
+                    return (*parsed, len(buffer))
+            if len(payload) >= 5:
+                record_size = 5 + int.from_bytes(payload[3:5], "big")
+                if len(payload) >= record_size:
+                    return (*parsed, len(buffer))
+            if prefetch_deadline is None:
+                prefetch_deadline = time.monotonic() + 0.8
+            remaining = prefetch_deadline - time.monotonic()
+            if remaining <= 0:
+                return (*parsed, len(buffer))
+            timeout = min(remaining, HEADER_TIMEOUT)
+        else:
+            if len(buffer) >= HEADER_MAX:
+                raise ValueError("vless header too large or invalid")
+            timeout = HEADER_TIMEOUT
+        try:
+            message = await asyncio.wait_for(io.receive(), timeout=timeout)
+        except asyncio.TimeoutError:
+            if parsed is not None:
+                return (*parsed, len(buffer))
+            raise
+        if message["type"] == "websocket.disconnect":
+            raise WebSocketDisconnect(1006)
+        chunk = message.get("bytes")
         if chunk is None and message.get("text") is not None:
-            try: chunk=base64.b64decode(message["text"],validate=True)
-            except Exception: chunk=message["text"].encode()
-        if chunk: buffer.extend(chunk)
+            try:
+                chunk = base64.b64decode(message["text"], validate=True)
+            except Exception:
+                chunk = message["text"].encode()
+        if chunk:
+            buffer.extend(chunk)
 
 
 async def websocket_tunnel(ws: WebSocket, uuid: str):
@@ -870,7 +908,7 @@ async def websocket_tunnel(ws: WebSocket, uuid: str):
     writer: asyncio.StreamWriter | None = None
     try:
         _command, address, port, payload, header_bytes = await _collect_header(
-            io, early
+            io, early, prefetch_payload=link_uses_proxy(link)
         )
         if not await check_and_use(uuid, header_bytes):
             await ws.close(code=1008, reason="quota/disabled")
@@ -888,6 +926,7 @@ async def websocket_tunnel(ws: WebSocket, uuid: str):
         _tune_socket(writer, WRITE_HW_START)
         if payload and not payload_sent:
             writer.write(payload)
+            await writer.drain()
 
         upload = asyncio.create_task(
             relay_ws_to_tcp(ws, writer, conn_id, uuid, io), name=f"ws-up-{conn_id}"
